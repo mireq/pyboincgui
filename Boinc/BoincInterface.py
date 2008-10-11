@@ -23,13 +23,13 @@ class BoincInterface:
         try:
             self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error, msg:
-            sys.stderr("Error %s\n" %msg[1])
+            sys.stderr.write("Error %s\n" %msg[1])
             return -1
-            
+
         try:
             self.__sock.connect((self.__host,  self.__port))
         except socket.error,  msg:
-            sys.stderr("Error %s\n" %msg[1])
+            sys.stderr.write("Error %s\n" %msg[1])
             return -2
 
         (doc,  boincGuiRpcRequestElement) = self.createRpcRequest();

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from boincinterface import BoincInterface
+from Boinc.BoincInterface import BoincInterface
 
 def main():
     b = BoincInterface();
