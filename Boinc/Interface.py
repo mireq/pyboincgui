@@ -1,8 +1,9 @@
 import socket
 import sys
 import xml.dom.minidom
+import Connect
 
-class BoincInterface:
+class Interface:
     "Pripojenie na boinc."
 
     __host = "127.0.0.1"

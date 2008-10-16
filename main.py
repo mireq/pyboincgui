@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from Boinc.BoincInterface import BoincInterface
+from Boinc.Interface import Interface
 
 def main():
-    b = BoincInterface();
+    b = Interface();
     b.connect()
     pass
 
