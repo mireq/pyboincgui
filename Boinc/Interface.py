@@ -1,42 +1,30 @@
 import socket
 import sys
 import xml.dom.minidom
-import Connect
+from Connection import Connection
 
 class Interface:
     "Pripojenie na boinc."
 
     __host = "127.0.0.1"
     __port = 31416
-    __sock = None
+    __conn = None
 
     def __init__(self):
+        self.__conn = Connection(self.__host,  self.__port)
         pass
 
     def __del__(self):
-        if not self.__sock is None:
-            self.__sock.close()
-            self.__sock = None
+        if not self.__conn is None:
+            del self.__conn
+            self.__conn = None
         pass
 
     def connect(self):
-        "Inicializacia spojenia, v pripade uspechu vracia 0"
-        try:
-            self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        except socket.error, msg:
-            sys.stderr.write("Error %s\n" %msg[1])
-            return -1
-
-        try:
-            self.__sock.connect((self.__host,  self.__port))
-        except socket.error,  msg:
-            sys.stderr.write("Error %s\n" %msg[1])
-            return -2
-
         (doc,  boincGuiRpcRequestElement) = self.createRpcRequest();
         auth1Element = doc.createElement("auth1")
         boincGuiRpcRequestElement.appendChild(auth1Element)
-        reply = self.sendData(doc.toxml())
+        reply = self.__conn.sendData(doc.toxml())
         return 0
 
     def sendData(self, data):
