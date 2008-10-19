@@ -34,7 +34,7 @@ class Connection:
             self.__sock.close()
             self.__sock = None
 
-    def sendData(self, data):
+    def sendData(self, data,  recvHandler):
         data = data + "\003"
         print(data)
         while len(data) > 0:
@@ -46,4 +46,5 @@ class Connection:
             rec = self.__sock.recv(1024)
             string = string + recv
         print(string)
-        return string
+        if not recvHandler is None:
+            recvHandler(string[:-1])
