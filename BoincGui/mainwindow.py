@@ -5,6 +5,7 @@ from addclientwizard import addClientWizard
 class MainWindow(QMainWindow):
     def __init__(self,  parent = None):
         QMainWindow.__init__(self,  parent)
+        self.setWindowTitle(self.tr("Boinc gui"))
         self.createActions()
         self.createMenu()
         

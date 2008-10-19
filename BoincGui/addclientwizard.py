@@ -62,7 +62,7 @@ class connectionPage(QWizardPage):
             self.urlText.show()
 
     def getDirectory(self):
-        dir = QFileDialog.getExistingDirectory(self, self.tr("Adresar s klientom BOINC"))
+        dir = QFileDialog.getExistingDirectory(self, self.tr("Adresar s beziacim klientom BOINC"))
         if not dir.isNull():
             self.urlLineEdit.setText(dir)
 
@@ -85,6 +85,7 @@ class connectionPage(QWizardPage):
 class addClientWizard(QWizard):
     def __init__(self, parent = None):
         QWizardPage.__init__(self, parent)
+        self.setWindowTitle(self.tr("Pridat klienta"))
         self.addPage(introPage())
         self.addPage(connectionPage())
         self.addPage(QWizardPage())
