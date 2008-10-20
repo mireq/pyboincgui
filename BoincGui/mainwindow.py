@@ -27,5 +27,13 @@ class MainWindow(QMainWindow):
 
     def showWizard(self):
         self.wizardWin = addClientWizard(self)
+        self.connect(self.wizardWin, SIGNAL("wizardFinished(bool, QString, QString, int, QString)"), self.processWizard)
         self.wizardWin.setModal(True)
         self.wizardWin.show()
+
+    def processWizard(self, local, path, host, port, password):
+        print(local)
+        print(path)
+        print(host)
+        print(port)
+        print(password)
