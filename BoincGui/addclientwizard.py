@@ -7,17 +7,17 @@ class introPage(QWizardPage):
 		self.setTitle(self.tr("Pridat klienta"))
 		self.label = QLabel(self.tr("Vyberte prosim typ klienta."))
 		self.label.setWordWrap(True)
-		
+
 		self.localRadioButton  = QRadioButton(self.tr("Lokalny klient"), self)
 		self.remoteRadioButton = QRadioButton(self.tr("Vzdialeny klient"),  self)
 		self.localRadioButton.setChecked(True)
-		
+
 		self.mainLayout = QVBoxLayout();
 		self.mainLayout.addWidget(self.label)
 		self.mainLayout.addWidget(self.localRadioButton)
 		self.mainLayout.addWidget(self.remoteRadioButton)
 		self.setLayout(self.mainLayout)
-		
+
 		self.registerField("localClient",  self.localRadioButton)
 
 class connectionPage(QWizardPage):

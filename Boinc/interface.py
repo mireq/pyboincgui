@@ -38,7 +38,7 @@ class Interface:
 		boincGuiRpcRequestElement = doc.createElement("boinc_gui_rpc_request")
 		doc.appendChild(boincGuiRpcRequestElement)
 		return (doc,  boincGuiRpcRequestElement)
-		
+
 	def getReply(self,  data):
 		dataDom = xml.dom.minidom.parseString(data)
 		reply = dataDom.documentElement

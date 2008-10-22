@@ -9,7 +9,7 @@ class Connection:
 	
 	Tato trieda zabezpecuje len pripojenie ku klientovi.
 	O veci ako autorizacia sa musi starat uzivatel tejto triedy."""
-	
+
 	__host = None
 	__port = None
 	__sock = None

@@ -1,6 +1,7 @@
 from PyQt4.QtCore import SIGNAL, SLOT
-from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp
+from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget
 from addclientwizard import addClientWizard
+from mainwidget import mainWidget
 
 class MainWindow(QMainWindow):
 	connManager = None
@@ -10,14 +11,20 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle(self.tr("Boinc gui"))
 		self.createActions()
 		self.createMenu()
-		
+		self.createMainWin()
+		self.statusBar().showMessage(self.tr("Ready"), 3000)
+
+	def createMainWin(self):
+		self.centralWidget = mainWidget()
+		self.setCentralWidget(self.centralWidget)
+
 	def createActions(self):
 		self.addClientAction = QAction(self.tr("&Add Client"),  self)
 		self.quitAction = QAction(self.tr("&Quit"), self)
-		
+
 		#pridavame klavesove skratky
 		self.quitAction.setShortcut(QKeySequence(self.tr("Ctrl+Q")))
-		
+
 		#prepojime akcie so slotmi
 		self.connect(self.addClientAction, SIGNAL("triggered()"), self.showWizard)
 		self.connect(self.quitAction, SIGNAL("triggered()"), qApp, SLOT("quit()"))
