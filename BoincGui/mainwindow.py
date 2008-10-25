@@ -13,9 +13,13 @@ class MainWindow(QMainWindow):
 		self.createMenu()
 		self.createMainWin()
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
+		self.connManager.addConnection(False, "", "localhost", 2, "heslo")
+		self.connManager.addConnection(False, "", "localhost", 3, "heslo")
+		self.connManager.addConnection(False, "", "localhost", 4, "heslo")
+		self.connManager.removeConnection(1)
 
 	def createMainWin(self):
-		self.centralWidget = mainWidget()
+		self.centralWidget = mainWidget(self.connManager)
 		self.setCentralWidget(self.centralWidget)
 
 	def createActions(self):
