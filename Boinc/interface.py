@@ -13,13 +13,15 @@ class Interface:
 	__port = None
 	__conn = None
 	__password = None
+	__queue = None
 
 	__connStateFunc = None
 
-	def __init__(self,  host = "127.0.0.1",  port = 31416,  password = None):
+	def __init__(self,  host = "127.0.0.1",  port = 31416,  password = None, queue = None):
 		self.__host = host
 		self.__port = port
 		self.__password = password
+		self.__queue = queue
 
 	def __del__(self):
 		if not self.__conn is None:
@@ -30,7 +32,7 @@ class Interface:
 		self.__connStateFunc = connStateFunc
 		if not self.__connStateFunc is None:
 			self.__connStateFunc(False)
-		self.__conn = Connection(self.__host,  self.__port)
+		self.__conn = Connection(self.__host,  self.__port, self.__queue)
 		(doc,  boincGuiRpcRequestElement) = self.createRpcRequest();
 		auth1Element = doc.createElement("auth1")
 		boincGuiRpcRequestElement.appendChild(auth1Element)

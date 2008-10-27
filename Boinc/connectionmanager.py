@@ -2,9 +2,10 @@ from PyQt4.QtCore import QObject, QSettings, SIGNAL
 from interface import Interface
 from Boinc.connection import BoincConnectionException
 from Boinc.interface import BoincCommException
+import Queue
 
 class BoincConnectionStruct(QObject):
-	def __init__(self, local, path, host, port, password):
+	def __init__(self, local, path, host, port, password, queue):
 		QObject.__init__(self)
 		self.__local = local
 		self.__path = path
@@ -12,8 +13,7 @@ class BoincConnectionStruct(QObject):
 		self.__port = port
 		self.__password = password
 		self.__connected = False
-		self.bInterface = Interface(host, port, password)
-
+		self.bInterface = Interface(host, port, password, queue)
 
 	def boincConnect(self):
 		self.bInterface.boincConnect(self.__connectStateChanged)
@@ -39,6 +39,7 @@ class BoincConnectionStruct(QObject):
 class ConnectionManager(QObject):
 
 	connections = []
+	__queue = Queue.Queue()
 
 	def saveConnections(self):
 		pass
@@ -54,7 +55,11 @@ class ConnectionManager(QObject):
 		self.emit(SIGNAL('clientRemoved(int)'), connId)
 
 	def addConnection(self, local, path, host, port, password):
-		self.connections.append(BoincConnectionStruct(local, path, host, port, password))
+		self.connections.append(BoincConnectionStruct(local, path, host, port, password, self.__queue))
 		self.saveConnections()
 		self.emit(SIGNAL('clientAdded(int)'), len(self.connections) - 1)
 		return len(self.connections) - 1
+
+	def queue(self):
+		return self.__queue
+	
