@@ -2,6 +2,8 @@ from PyQt4.QtCore import SIGNAL, SLOT
 from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget
 from addclientwizard import addClientWizard
 from mainwidget import mainWidget
+from Boinc.connection import BoincConnectionException
+from Boinc.interface import BoincCommException
 
 class MainWindow(QMainWindow):
 	connManager = None
@@ -13,10 +15,15 @@ class MainWindow(QMainWindow):
 		self.createMenu()
 		self.createMainWin()
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
-		self.connManager.addConnection(False, "", "localhost", 2, "heslo")
-		self.connManager.addConnection(False, "", "localhost", 3, "heslo")
-		self.connManager.addConnection(False, "", "localhost", 4, "heslo")
-		self.connManager.removeConnection(1)
+		index = self.connManager.addConnection(False, "", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56")
+		try:
+			self.connManager.getConnection(index).boincConnect()
+		except BoincConnectionException, msg:
+			print("Chyba spojenia: " + msg[0])
+		except BoincCommException, msg:
+			print("Chyba komunikacie: " + msg[0])
+		except Exception, msg:
+			print("Neznama chyba: " + msg[0])
 
 	def createMainWin(self):
 		self.centralWidget = mainWidget(self.connManager)

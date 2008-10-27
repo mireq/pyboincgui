@@ -14,19 +14,22 @@ class Interface:
 	__conn = None
 	__password = None
 
+	__connStateFunc = None
+
 	def __init__(self,  host = "127.0.0.1",  port = 31416,  password = None):
 		self.__host = host
 		self.__port = port
 		self.__password = password
-		pass
 
 	def __del__(self):
 		if not self.__conn is None:
 			del self.__conn
 			self.__conn = None
-		pass
 
-	def connect(self):
+	def boincConnect(self, connStateFunc = None):
+		self.__connStateFunc = connStateFunc
+		if not self.__connStateFunc is None:
+			self.__connStateFunc(False)
 		self.__conn = Connection(self.__host,  self.__port)
 		(doc,  boincGuiRpcRequestElement) = self.createRpcRequest();
 		auth1Element = doc.createElement("auth1")
@@ -61,5 +64,14 @@ class Interface:
 		auth2Element.appendChild(nHashElement)
 		nHText = doc.createTextNode(reply)
 		nHashElement.appendChild(nHText)
-		self.__conn.sendData(doc.toxml(),  None)
+		self.__conn.sendData(doc.toxml(),  self.auth2)
 		pass
+
+	def auth2(self, data):
+		reply = self.getReply(data)
+		authNodes = reply.getElementsByTagName("authorized")
+		if authNodes.length != 1:
+			raise BoincCommException("unauthorized")
+		else:
+			if not self.__connStateFunc is None:
+				self.__connStateFunc(True)

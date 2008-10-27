@@ -20,13 +20,13 @@ class Connection:
 		try:
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
-			sys.stderr.write("Error %s\n" %msg[1])
+			sys.stderr.write("Error " + msg[1] + "\n")
 			raise BoincConnectionException(msg[1])
 
 		try:
 			self.__sock.connect((self.__host,  self.__port))
-		except socket.error,  msg:
-			sys.stderr.write("Error %s\n" %msg[1])
+		except socket.error, msg:
+			sys.stderr.write("Error " + msg[1] + "\n")
 			raise BoincConnectionException(msg[1])
 
 	def __del__(self):
