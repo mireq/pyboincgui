@@ -18,15 +18,8 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
 		self.queueThread = Thread(target = self.processQueue, args = (self.connManager.queue(), ))
 		self.queueThread.start()
-		index = self.connManager.addConnection(False, "", "localhost", 31416, "Xa721410eeb1aefb913a3766a9297ce56")
-		try:
-			self.connManager.getConnection(index).boincConnect()
-		except BoincConnectionException, msg:
-			print("Chyba spojenia: " + msg[0])
-		except BoincCommException, msg:
-			print("Chyba komunikacie: " + msg[0])
-		except Exception, msg:
-			print("Neznama chyba: " + msg[0])
+		index = self.connManager.addConnection(False, "", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56")
+		self.connManager.getConnection(index).boincConnect()
 
 	def processQueue(self, queue):
 		while True:
