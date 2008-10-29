@@ -1,5 +1,6 @@
 from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject
+import resources
 
 class clientTreeWidgetItem(QTreeWidgetItem):
 	pass
@@ -7,8 +8,9 @@ class clientTreeWidgetItem(QTreeWidgetItem):
 class clientTreeWidget(QTreeWidget):
 	def __init__(self, connManager, parent = None):
 		QTreeWidget.__init__(self, parent)
+		self.header().hide()
 		self.connManager = connManager
-		self.setIconSize(QSize(64, 64))
+		self.setIconSize(QSize(32, 32))
 		self.connect(self.connManager, SIGNAL("clientAdded(int)"), self.addClient)
 		self.connect(self.connManager, SIGNAL("clientRemoved(int)"), self.removeClient)
 
@@ -30,13 +32,26 @@ class clientTreeWidget(QTreeWidget):
 		self.__clientItemData(conn, item)
 
 	def __clientItemData(self, conn, item):
+		icon = None
 		name = conn.host()
 		name = name + ':' + str(conn.port()) + " "
-		if conn.connected():
+		if conn.connected() == 2:
 			name = name + self.tr("(connected)")
-		else:
+			icon = QIcon(QPixmap(":connect_established.png"))
+		elif conn.connected() == 1:
+			name = name + self.tr("(connecting)")
+			icon = QIcon(QPixmap(":connect_creating.png"))
+		elif conn.connected() == 0:
 			name = name + self.tr("(disconnected)")
+			icon = QIcon(QPixmap(":connect_no.png"))
+		else:
+			name = name + self.tr("(unauthorized)")
+			icon = QIcon(QPixmap(":connect_no.png"))
 		item.setData(0, Qt.DisplayRole, QVariant(name))
+		if icon is None:
+			item.setData(0, Qt.DecorationRole, QVariant())
+		else:
+			item.setData(0, Qt.DecorationRole, QVariant(icon))
 
 	def removeClient(self, clId):
 		item = self.topLevelItem(clId)

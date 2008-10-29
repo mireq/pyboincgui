@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="sk">
+<defaultcodec></defaultcodec>
 <context>
     <name>MainWindow</name>
     <message>
@@ -13,39 +14,24 @@
         <translation>Pripravený</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="43"/>
+        <location filename="BoincGui/mainwindow.py" line="42"/>
         <source>&amp;Add Client</source>
         <translation>&amp;Pridať klienta</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="44"/>
+        <location filename="BoincGui/mainwindow.py" line="43"/>
         <source>&amp;Quit</source>
         <translation>&amp;Koniec</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="47"/>
+        <location filename="BoincGui/mainwindow.py" line="46"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="54"/>
+        <location filename="BoincGui/mainwindow.py" line="53"/>
         <source>&amp;File</source>
         <translation>&amp;Súbor</translation>
-    </message>
-    <message>
-        <location filename="BoincGui/mainwindow.py" line="30"/>
-        <source>Connection error: %1</source>
-        <translation type="obsolete">Chyba spojenia: %1</translation>
-    </message>
-    <message>
-        <location filename="BoincGui/mainwindow.py" line="32"/>
-        <source>Communication error: %1</source>
-        <translation type="obsolete">Chyba komunikácie: %1</translation>
-    </message>
-    <message>
-        <location filename="BoincGui/mainwindow.py" line="34"/>
-        <source>Unknown error: %1</source>
-        <translation type="obsolete">Neznáma chyba: %1</translation>
     </message>
 </context>
 <context>
@@ -59,14 +45,24 @@
 <context>
     <name>clientTreeWidget</name>
     <message>
-        <location filename="BoincGui/clienttree.py" line="37"/>
+        <location filename="BoincGui/clienttree.py" line="40"/>
         <source>(connected)</source>
         <translation>(pripojený)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="39"/>
+        <location filename="BoincGui/clienttree.py" line="46"/>
         <source>(disconnected)</source>
         <translation>(nepripojený)</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/clienttree.py" line="43"/>
+        <source>(connecting)</source>
+        <translation>(pripájanie)</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/clienttree.py" line="49"/>
+        <source>(unauthorized)</source>
+        <translation>(neautorizovaný)</translation>
     </message>
 </context>
 <context>

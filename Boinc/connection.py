@@ -2,6 +2,7 @@ import socket
 import sys
 import thread
 from Queue import Queue
+import time
 
 class BoincConnectionException(Exception):
 	pass
@@ -34,6 +35,7 @@ class Connection:
 	def connectThread(self, callback):
 		try:
 			self.__sock = None
+			time.sleep(0.3)
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
 			sys.stderr.write("Error " + msg[1] + "\n")
@@ -42,6 +44,7 @@ class Connection:
 			return
 
 		try:
+			time.sleep(0.3)
 			self.__sock.connect((self.__host,  self.__port))
 		except socket.error, msg:
 			self.__sock = None
@@ -64,11 +67,13 @@ class Connection:
 				data = data + "\003"
 				print(data)
 				while len(data) > 0:
+					time.sleep(0.3)
 					ns = self.__sock.send(data)
 					data = data[ns:]
 				rec = self.__sock.recv(1024)
 				string = rec
 				while rec[-1] != "\003":
+					time.sleep(0.3)
 					rec = self.__sock.recv(1024)
 					string = string + recv
 				print(string)
