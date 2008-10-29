@@ -34,8 +34,6 @@ class mainWidget(QWidget):
 		self.layout.addWidget(self.infoWidget)
 
 		self.connect(self.tree, SIGNAL("currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)"), self.changeActive)
-		connManager.addConnection(True, "/home/mirec/Documents/Moje/Programy/python/test", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56", True)
-		connManager.addConnection(True, "/home/mirec/.boinc", "localhost", 31416, "a721410eefb1aefb913a3766a9297ce56", True)
 
 	def changeActive(self, next, prev):
 		if next.data(0, Qt.UserRole).toInt()[0] == clientTreeWidget.Client:

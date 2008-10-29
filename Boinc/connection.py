@@ -24,6 +24,7 @@ class Connection:
 		self.__port = port
 		self.__commLock = thread.allocate_lock()
 		self.__queue = queue
+		time.sleep(0.3)
 		thread.start_new_thread(self.connectThread, (callback, ))
 
 

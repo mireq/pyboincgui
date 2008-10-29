@@ -1,6 +1,7 @@
 from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon
 from PyQt4.QtCore import QAbstractItemModel, QModelIndex, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject
 import resources
+from Boinc.interface import Interface
 
 class clientTreeWidgetItem(QTreeWidgetItem):
 	pass
@@ -39,13 +40,13 @@ class clientTreeWidget(QTreeWidget):
 		icon = None
 		name = conn.host()
 		name = name + ':' + str(conn.port()) + " "
-		if conn.connected() == 2:
+		if conn.connected() == Interface.connected:
 			name = name + self.tr("(connected)")
 			icon = QIcon(QPixmap(":connect_established.png"))
-		elif conn.connected() == 1:
+		elif conn.connected() == Interface.connecting:
 			name = name + self.tr("(connecting)")
 			icon = QIcon(QPixmap(":connect_creating.png"))
-		elif conn.connected() == 0:
+		elif conn.connected() == Interface.disconnected:
 			name = name + self.tr("(disconnected)")
 			icon = QIcon(QPixmap(":connect_no.png"))
 		else:
