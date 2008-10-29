@@ -1,25 +1,8 @@
 from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, QVariant, Qt, QString, QSize, SIGNAL, SLOT
+from PyQt4.QtCore import QAbstractItemModel, QModelIndex, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject
 
 class clientTreeWidgetItem(QTreeWidgetItem):
-	__connection = None
-	def __init__(self, clId, connection):
-		QTreeWidgetItem.__init__(self)
-		self.__connection = connection;
-		self.setData(0, Qt.DisplayRole, QVariant(self.name()))
-
-	def name(self):
-		name = self.__connection.host()
-		name = name + ':' + str(self.__connection.port()) + ' ('
-		if self.__connection.connected():
-			name = name + "connected"
-		else:
-			name = name + "disconnected"
-		name = name + ")"
-		return name
-
-	def changeConnectionState(self, state):
-		self.setData(0, Qt.DisplayRole, QVariant(self.name()))
+	pass
 
 class clientTreeWidget(QTreeWidget):
 	def __init__(self, connManager, parent = None):
@@ -30,9 +13,30 @@ class clientTreeWidget(QTreeWidget):
 		self.connect(self.connManager, SIGNAL("clientRemoved(int)"), self.removeClient)
 
 	def addClient(self, clId):
-		item = clientTreeWidgetItem(clId, self.connManager.getConnection(clId))
-		self.connect(self.connManager.getConnection(clId), SIGNAL("connectStateChanged(bool)"), item.changeConnectionState)
+		item = clientTreeWidgetItem()
+		conn = self.connManager.getConnection(clId)
+		conn.treeItem = item
+		self.connect(conn, SIGNAL("connectStateChanged()"), self.__changeConnectionState)
+		self.__changeConnectionState(conn)
 		self.addTopLevelItem(item)
+
+	def __changeConnectionState(self, cn = None):
+		conn = None
+		if cn is None:
+			conn = self.sender()
+		else:
+			conn = cn
+		item = conn.treeItem
+		self.__clientItemData(conn, item)
+
+	def __clientItemData(self, conn, item):
+		name = conn.host()
+		name = name + ':' + str(conn.port()) + " "
+		if conn.connected():
+			name = name + self.tr("(connected)")
+		else:
+			name = name + self.tr("(disconnected)")
+		item.setData(0, Qt.DisplayRole, QVariant(name))
 
 	def removeClient(self, clId):
 		item = self.topLevelItem(clId)

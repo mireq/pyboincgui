@@ -5,6 +5,7 @@ from mainwidget import mainWidget
 from Boinc.connection import BoincConnectionException
 from Boinc.interface import BoincCommException
 from threading import Thread
+import sys
 
 class MainWindow(QMainWindow):
 	connManager = None
@@ -18,21 +19,19 @@ class MainWindow(QMainWindow):
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
 		self.queueThread = Thread(target = self.processQueue, args = (self.connManager.queue(), ))
 		self.queueThread.start()
-		index = self.connManager.addConnection(False, "", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56")
-		self.connManager.getConnection(index).boincConnect()
+		self.connManager.loadConnections()
 
 	def processQueue(self, queue):
 		while True:
 			item = queue.get()
 			if isinstance(item, Exception):
-				try:
-					raise item
-				except BoincConnectionException, msg:
-					print("Chyba spojenia: " + msg[0])
-				except BoincCommException, msg:
-					print("Chyba komunikacie: " + msg[0])
-				except Exception, msg:
-					print("Neznama chyba: " + msg[0])
+				if isinstance(item, BoincConnectionException):
+					sys.stdout.write(self.tr(u"Connection error: %1").arg(item[0]))
+				elif isinstance(item, BoincCommException):
+					sys.stdout.write(self.tr(u"Communication error: %1").arg(item[0]))
+				elif isinstance(ite, Exception):
+					sys.stdout.write(self.tr(u"Unknown error: %1").arg(item[0]))
+				sys.stdout.flush()
 			queue.task_done()
 
 	def createMainWin(self):

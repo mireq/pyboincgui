@@ -17,10 +17,15 @@ class Interface:
 
 	__connStateFunc = None
 
+	unauthorized = -1
+	disconnected = 0
+	connecting   = 1
+	connected    = 2
+
 	def __init__(self,  host = "127.0.0.1",  port = 31416,  password = None, queue = None):
-		self.__host = host
+		self.__host = str(host)
 		self.__port = port
-		self.__password = password
+		self.__password = str(password)
 		self.__queue = queue
 
 	def __del__(self):
@@ -31,12 +36,20 @@ class Interface:
 	def boincConnect(self, connStateFunc = None):
 		self.__connStateFunc = connStateFunc
 		if not self.__connStateFunc is None:
-			self.__connStateFunc(False)
-		self.__conn = Connection(self.__host,  self.__port, self.__queue)
+			self.__connStateFunc(self.disconnected)
+
+		self.__conn = Connection(self.__host,  self.__port, self.__queue, self.__connInfo)
+		self.__connStateFunc(self.connecting)
+
 		(doc,  boincGuiRpcRequestElement) = self.createRpcRequest();
 		auth1Element = doc.createElement("auth1")
 		boincGuiRpcRequestElement.appendChild(auth1Element)
 		self.__conn.sendData(doc.toxml(),  self.auth1)
+
+	def __connInfo(self, info):
+		if isinstance(info, Exception):
+			self.__queue.put(info)
+			self.__connStateFunc(0)
 
 	def createRpcRequest(self):
 		doc = xml.dom.minidom.Document();
@@ -73,7 +86,8 @@ class Interface:
 		reply = self.getReply(data)
 		authNodes = reply.getElementsByTagName("authorized")
 		if authNodes.length != 1:
+			self.__connStateFunc(self.unauthorized)
 			raise BoincCommException("unauthorized")
 		else:
 			if not self.__connStateFunc is None:
-				self.__connStateFunc(True)
+				self.__connStateFunc(self.connected)

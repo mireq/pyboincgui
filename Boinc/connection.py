@@ -18,12 +18,12 @@ class Connection:
 
 	__sendQueue = Queue()
 	
-	def __init__(self,  host,  port, queue):
+	def __init__(self,  host,  port, queue, callback = None):
 		self.__host = host
 		self.__port = port
 		self.__commLock = thread.allocate_lock()
 		self.__queue = queue
-		thread.start_new_thread(self.connectThread, ())
+		thread.start_new_thread(self.connectThread, (callback, ))
 
 
 	def __del__(self):
@@ -31,20 +31,25 @@ class Connection:
 			self.__sock.close()
 			self.__sock = None
 
-	def connectThread(self):
+	def connectThread(self, callback):
 		try:
 			self.__sock = None
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
 			sys.stderr.write("Error " + msg[1] + "\n")
-			self.__queue.put(BoincConnectionException(msg[1]))
+			if not callback is None:
+				callback(BoincConnectionException(msg[1]))
+			return
 
 		try:
 			self.__sock.connect((self.__host,  self.__port))
 		except socket.error, msg:
 			self.__sock = None
 			sys.stderr.write("Error " + msg[1] + "\n")
-			self.__queue.put(BoincConnectionException(msg[1]))
+			if not callback is None:
+				callback(BoincConnectionException(msg[1]))
+			return
+
 		thread.start_new_thread(self.sendDataThread, ())
 
 	def sendData(self, data, recvHandler = None):

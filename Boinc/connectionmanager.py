@@ -12,7 +12,7 @@ class BoincConnectionStruct(QObject):
 		self.__host = host
 		self.__port = port
 		self.__password = password
-		self.__connected = False
+		self.__connected = 0
 		self.bInterface = Interface(host, port, password, queue)
 
 	def boincConnect(self):
@@ -21,7 +21,7 @@ class BoincConnectionStruct(QObject):
 	def __connectStateChanged(self, state):
 		if self.__connected != state:
 			self.__connected = state
-			self.emit(SIGNAL('connectStateChanged(bool)'), self.__connected)
+			self.emit(SIGNAL('connectStateChanged()'), ())
 
 	def local(self):
 		return self.__local
@@ -39,9 +39,12 @@ class BoincConnectionStruct(QObject):
 class ConnectionManager(QObject):
 
 	connections = []
-	__queue = Queue.Queue()
+	__queue = Queue.Queue(0)
 
 	def saveConnections(self):
+		pass
+
+	def loadConnections(self):
 		pass
 
 	def getConnection(self, index):
@@ -53,11 +56,15 @@ class ConnectionManager(QObject):
 	def removeConnection(self, connId):
 		self.connections.pop(connId)
 		self.emit(SIGNAL('clientRemoved(int)'), connId)
+		self.saveConnections()
 
-	def addConnection(self, local, path, host, port, password):
-		self.connections.append(BoincConnectionStruct(local, path, host, port, password, self.__queue))
+	def addConnection(self, local, path, host, port, password, autoConnect = True):
+		conn = BoincConnectionStruct(local, path, host, port, password, self.__queue)
+		self.connections.append(conn)
 		self.saveConnections()
 		self.emit(SIGNAL('clientAdded(int)'), len(self.connections) - 1)
+		if autoConnect:
+			conn.boincConnect()
 		return len(self.connections) - 1
 
 	def queue(self):

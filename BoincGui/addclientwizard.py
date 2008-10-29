@@ -4,12 +4,12 @@ from PyQt4.QtGui import QWizard, QWizardPage, QLabel, QVBoxLayout, QHBoxLayout, 
 class introPage(QWizardPage):
 	def __init__(self, parent = None):
 		QWizardPage.__init__(self, parent)
-		self.setTitle(self.tr("Pridat klienta"))
-		self.label = QLabel(self.tr("Vyberte prosim typ klienta."))
+		self.setTitle(self.tr("Add Client"))
+		self.label = QLabel(self.tr("Please select a type of your client."))
 		self.label.setWordWrap(True)
 
-		self.localRadioButton  = QRadioButton(self.tr("Lokalny klient"), self)
-		self.remoteRadioButton = QRadioButton(self.tr("Vzdialeny klient"),  self)
+		self.localRadioButton  = QRadioButton(self.tr("Local client"), self)
+		self.remoteRadioButton = QRadioButton(self.tr("Remote client"),  self)
 		self.localRadioButton.setChecked(True)
 
 		self.mainLayout = QVBoxLayout();
@@ -23,29 +23,33 @@ class introPage(QWizardPage):
 class connectionPage(QWizardPage):
 	def __init__(self, parent = None):
 		QWizardPage.__init__(self,  parent)
-		self.setTitle(self.tr("Pripojenie na BOINC"))
-		self.setSubTitle(self.tr("Nastavenie pripojenia na klienta BOINC"))
+		self.setTitle(self.tr("Connect to BOINC"))
+		self.setSubTitle(self.tr("Settings for connection to BOINC client"))
 
-		self.urlLabel = QLabel(self.tr("Cesta ku klientovi"))
+		self.urlLabel = QLabel(self.tr("Path to client"))
 		self.urlLayout = QHBoxLayout()
 		
 		self.urlLineEdit = QLineEdit()
-		self.urlButton = QPushButton(self.tr("Vybrat adresar"))
+		self.urlButton = QPushButton(self.tr("..."))
 		self.urlLayout.addWidget(self.urlLineEdit)
 		self.urlLayout.addWidget(self.urlButton)
 		self.urlText = QLabel()
+		self.urlLabel.setBuddy(self.urlLineEdit)
 		
-		self.hostLabel = QLabel(self.tr("Adresa pocitacaa na ktorom bezi BOINC"))
-		self.hostLineEdit = QLineEdit(self.tr("localhost"))
+		self.hostLabel = QLabel(self.tr("&Address of computer where BOINC is  running"))
+		self.hostLineEdit = QLineEdit("localhost")
+		self.hostLabel.setBuddy(self.hostLineEdit)
 		
-		self.portLabel = QLabel(self.tr("Port na ktorom bezi BOINC"))
+		self.portLabel = QLabel(self.tr("&Port"))
 		self.portSpinBox = QSpinBox()
 		self.portSpinBox.setMinimum(1)
 		self.portSpinBox.setMaximum(65535)
 		self.portSpinBox.setValue(31416)
+		self.portLabel.setBuddy(self.portSpinBox)
 		
-		self.passLabel = QLabel(self.tr("Heslo na pristup ku klientovi"))
+		self.passLabel = QLabel(self.tr("P&assword"))
 		self.passLineEdit = QLineEdit()
+		self.passLabel.setBuddy(self.passLineEdit)
 		#self.passLineEdit.setEchoMode(QLineEdit.PasswordEchoOnEdit)
 
 		self.mainLayout = QGridLayout()
@@ -87,7 +91,7 @@ class connectionPage(QWizardPage):
 			self.passLineEdit.setReadOnly(True)
 
 	def getDirectory(self):
-		dir = QFileDialog.getExistingDirectory(self, self.tr("Adresar s beziacim klientom BOINC"))
+		dir = QFileDialog.getExistingDirectory(self, self.tr("Choose dir where BOINC is running"))
 		if not dir.isNull():
 			self.urlLineEdit.setText(dir)
 
@@ -104,10 +108,10 @@ class connectionPage(QWizardPage):
 			return True
 		fullPath = self.getFullPath(self.urlLineEdit.text()+"/gui_rpc_auth.cfg")
 		if not QFile.exists(fullPath):
-			self.setFileText(QString("Subor %1 neexistuje").arg(fullPath))
+			self.setFileText(QString(self.tr("File %1 does not exist")).arg(fullPath))
 			return False
 		else:
-			self.setFileText(QString("Autorizacny subor je %1").arg(fullPath))
+			self.setFileText(QString(self.tr("Authorisation file is %1")).arg(fullPath))
 			try:
 				file = open(fullPath, "r")
 				text = file.read()
@@ -120,7 +124,7 @@ class connectionPage(QWizardPage):
 class addClientWizard(QWizard):
 	def __init__(self, parent = None):
 		QWizardPage.__init__(self, parent)
-		self.setWindowTitle(self.tr("Pridat klienta"))
+		self.setWindowTitle(self.tr("Add Client"))
 		self.addPage(introPage())
 		self.addPage(connectionPage())
 	
