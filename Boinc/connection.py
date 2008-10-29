@@ -36,7 +36,7 @@ class Connection:
 	def connectThread(self, callback):
 		try:
 			self.__sock = None
-			time.sleep(0.3)
+			#time.sleep(0.1)
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
 			sys.stderr.write("Error " + msg[1] + "\n")
@@ -45,7 +45,7 @@ class Connection:
 			return
 
 		try:
-			time.sleep(0.3)
+			#time.sleep(0.1)
 			self.__sock.connect((self.__host,  self.__port))
 		except socket.error, msg:
 			self.__sock = None
@@ -67,22 +67,22 @@ class Connection:
 					raise BoincConnectionException("Socket nebol nastaveny")
 
 				data = data + "\003"
-				sys.stdout.write(data)
+				sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
 				sys.stdout.flush()
 
-				time.sleep(0.3)
 				while len(data) > 0:
+					#time.sleep(0.1)
 					ns = self.__sock.send(data)
 					data = data[ns:]
 
 				rec = self.__sock.recv(1024)
 				string = rec
-				time.sleep(0.3)
 				while rec[-1] != "\003":
+					#time.sleep(0.1)
 					rec = self.__sock.recv(1024)
 					string = string + rec
 
-				sys.stdout.write(string)
+				sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
 				sys.stdout.flush()
 				if not recvHandler is None:
 					recvHandler(string[:-1])

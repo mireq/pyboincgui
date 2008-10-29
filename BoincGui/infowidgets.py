@@ -38,11 +38,11 @@ class clientInfoWidget(QWidget):
 		self.__mainLayout.addWidget(self.__stateLabel, 4, 0, Qt.AlignRight)
 		self.__mainLayout.addWidget(self.__stateLabelInf, 4, 1)
 
-		self.__mainLayout.setRowStretch(5, 1)
+		self.__mainLayout.setRowStretch(6, 1)
 
 		self.connect(client, SIGNAL("connectStateChanged()"), self.__connectStateChanged)
+		self.__connectStateChanged()
 
-		self.__stateLabelInf.setText(self.__getConnStateString(client.connected()))
 
 	def __getConnStateString(self, conn):
 		if conn == Interface.connected:
@@ -58,3 +58,8 @@ class clientInfoWidget(QWidget):
 		conn = self.__client.connected()
 		str = self.__getConnStateString(conn)
 		self.__stateLabelInf.setText(str)
+		if conn == Interface.connected:
+			self.__client.bInterface().get_state(self.__changeState)
+
+	def __changeState(self, state):
+		pass

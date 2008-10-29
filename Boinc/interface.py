@@ -91,3 +91,6 @@ class Interface:
 		else:
 			if not self.__connStateFunc is None:
 				self.__connStateFunc(self.connected)
+
+	def get_state(self, callback):
+		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_state /></boinc_gui_rpc_request>", None)

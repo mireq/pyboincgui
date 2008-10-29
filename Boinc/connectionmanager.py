@@ -13,10 +13,10 @@ class BoincConnectionStruct(QObject):
 		self.__port = port
 		self.__password = password
 		self.__connected = 0
-		self.bInterface = Interface(host, port, password, queue)
+		self.__bInterface = Interface(host, port, password, queue)
 
 	def boincConnect(self):
-		self.bInterface.boincConnect(self.__connectStateChanged)
+		self.__bInterface.boincConnect(self.__connectStateChanged)
 
 	def __connectStateChanged(self, state):
 		if self.__connected != state:
@@ -35,6 +35,8 @@ class BoincConnectionStruct(QObject):
 		return self.__password
 	def connected(self):
 		return self.__connected
+	def bInterface(self):
+		return self.__bInterface
 
 class ConnectionManager(QObject):
 
