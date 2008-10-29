@@ -6,6 +6,9 @@ class clientTreeWidgetItem(QTreeWidgetItem):
 	pass
 
 class clientTreeWidget(QTreeWidget):
+	#konstanty
+	Client = 0
+
 	def __init__(self, connManager, parent = None):
 		QTreeWidget.__init__(self, parent)
 		self.header().hide()
@@ -16,6 +19,7 @@ class clientTreeWidget(QTreeWidget):
 
 	def addClient(self, clId):
 		item = clientTreeWidgetItem()
+		item.setData(0, Qt.UserRole, QVariant(self.Client))
 		conn = self.connManager.getConnection(clId)
 		conn.treeItem = item
 		self.connect(conn, SIGNAL("connectStateChanged()"), self.__changeConnectionState)
