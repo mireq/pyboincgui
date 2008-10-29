@@ -37,8 +37,9 @@ class headerFrame(QFrame):
 		self.__mainLayout.addWidget(self.__label)
 		self.__mainLayout.addStretch(1)
 
-		self.setFrameStyle(QFrame.StyledPanel)
 		self.setAutoFillBackground(True)
+		self.setFrameStyle(QFrame.StyledPanel)
+		self.setFrameShadow(QFrame.Plain)
 		self.setBackgroundRole(QPalette.Base)
 
 		self.setLayout(self.__mainLayout)

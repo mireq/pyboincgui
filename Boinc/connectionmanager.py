@@ -21,7 +21,7 @@ class BoincConnectionStruct(QObject):
 	def __connectStateChanged(self, state):
 		if self.__connected != state:
 			self.__connected = state
-			self.emit(SIGNAL('connectStateChanged()'), ())
+			self.emit(SIGNAL('connectStateChanged()'))
 
 	def local(self):
 		return self.__local

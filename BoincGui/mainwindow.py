@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
 		self.queueThread = Thread(target = self.processQueue, args = (self.connManager.queue(), ))
 		self.queueThread.start()
 		self.connManager.loadConnections()
+		self.connManager.addConnection(True, "/home/mirec/Documents/Moje/Programy/python/test", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56", True)
 
 	def processQueue(self, queue):
 		while True:
@@ -29,7 +30,7 @@ class MainWindow(QMainWindow):
 					sys.stdout.write(self.tr(u"Connection error: %1").arg(item[0]))
 				elif isinstance(item, BoincCommException):
 					sys.stdout.write(self.tr(u"Communication error: %1").arg(item[0]))
-				elif isinstance(ite, Exception):
+				elif isinstance(item, Exception):
 					sys.stdout.write(self.tr(u"Unknown error: %1").arg(item[0]))
 				sys.stdout.flush()
 			queue.task_done()

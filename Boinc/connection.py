@@ -57,7 +57,7 @@ class Connection:
 		thread.start_new_thread(self.sendDataThread, ())
 
 	def sendData(self, data, recvHandler = None):
-		self.__sendQueue.put((data, recvHandler))
+		self.__sendQueue.put((data, recvHandler, ))
 
 	def sendDataThread(self):
 		while True:
@@ -65,19 +65,25 @@ class Connection:
 			try:
 				if self.__sock is None:
 					raise BoincConnectionException("Socket nebol nastaveny")
+
 				data = data + "\003"
-				print(data)
+				sys.stdout.write(data)
+				sys.stdout.flush()
+
+				time.sleep(0.3)
 				while len(data) > 0:
-					time.sleep(0.3)
 					ns = self.__sock.send(data)
 					data = data[ns:]
+
 				rec = self.__sock.recv(1024)
 				string = rec
+				time.sleep(0.3)
 				while rec[-1] != "\003":
-					time.sleep(0.3)
 					rec = self.__sock.recv(1024)
-					string = string + recv
-				print(string)
+					string = string + rec
+
+				sys.stdout.write(string)
+				sys.stdout.flush()
 				if not recvHandler is None:
 					recvHandler(string[:-1])
 			except Exception, msg:
