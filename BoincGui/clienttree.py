@@ -51,7 +51,7 @@ class clientTreeWidget(QTreeWidget):
 			icon = QIcon(QPixmap(":connect_no.png"))
 		else:
 			name = name + self.tr("(unauthorized)")
-			icon = QIcon(QPixmap(":connect_no.png"))
+			icon = QIcon(QPixmap(":connect_established.png"))
 		item.setData(0, Qt.DisplayRole, QVariant(name))
 		if icon is None:
 			item.setData(0, Qt.DecorationRole, QVariant())
