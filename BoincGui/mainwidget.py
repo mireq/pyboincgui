@@ -38,7 +38,11 @@ class mainWidget(QWidget):
 	def changeActive(self, next, prev):
 		if next.data(0, Qt.UserRole).toInt()[0] == clientTreeWidget.Client:
 			index = self.tree.indexOfTopLevelItem(next)
-			connection = self.__connManager.getConnection(index)
-			self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
+			# nie je to top level polozka
+			if index == -1:
+				self.infoWidget.unsetWidget()
+			else:
+				connection = self.__connManager.getConnection(index)
+				self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
 		else:
 			self.infoWidget.unsetWidget()

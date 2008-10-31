@@ -29,13 +29,13 @@ class clientInfoWidget(QWidget):
 		self.__stateLabelInf = QLabel()
 
 		self.__mainLayout.addWidget(headerFrame("Informacie o klientovi"), 0, 0, 1, 2)
-		self.__mainLayout.addWidget(self.__hostLabel, 1, 0, Qt.AlignRight)
+		self.__mainLayout.addWidget(self.__hostLabel, 1, 0)
 		self.__mainLayout.addWidget(self.__hostLabelInf, 1, 1)
-		self.__mainLayout.addWidget(self.__portLabel, 2, 0, Qt.AlignRight)
+		self.__mainLayout.addWidget(self.__portLabel, 2, 0)
 		self.__mainLayout.addWidget(self.__portLabelInf, 2, 1)
-		self.__mainLayout.addWidget(self.__localLabel, 3, 0, Qt.AlignRight)
+		self.__mainLayout.addWidget(self.__localLabel, 3, 0)
 		self.__mainLayout.addWidget(self.__localLabelInf, 3, 1)
-		self.__mainLayout.addWidget(self.__stateLabel, 4, 0, Qt.AlignRight)
+		self.__mainLayout.addWidget(self.__stateLabel, 4, 0)
 		self.__mainLayout.addWidget(self.__stateLabelInf, 4, 1)
 
 		self.__mainLayout.setRowStretch(6, 1)
