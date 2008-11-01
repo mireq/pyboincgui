@@ -66,6 +66,6 @@ class headerFrame(QWidget):
 
 	def setIcon(self, icon):
 		if self.__kde:
-			self.__titleWidget.setPixmap(icon)
+			self.__titleWidget.setPixmap(QPixmap(icon))
 		else:
 			self.__iconLabel.setPixmap(QPixmap(icon))
