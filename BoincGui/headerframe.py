@@ -1,7 +1,8 @@
-from PyQt4.QtGui import QLabel, QWidget, QSizePolicy, QFont, QHBoxLayout, QFrame, QPalette, QPixmap
+from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QSizePolicy, QFont, QHBoxLayout, QFrame, QPalette, QPixmap, QIcon
 from PyQt4.QtCore import Qt
 
-class headerFrame(QFrame):
+
+class headerFrame(QWidget):
 	__text = ""
 	__icon = None
 
@@ -10,20 +11,33 @@ class headerFrame(QFrame):
 	__label = None
 	__iconLabel = None
 
+	__kde = False
+
 	def __init__(self, text, icon = None, parent = None):
-		QFrame.__init__(self, parent)
+		QWidget.__init__(self, parent)
 		self.__text = text
 		self.__icon = icon
 
-		self.__label = QLabel()
-		self.__iconLabel = QLabel()
+		self.__topLayout = QVBoxLayout()
+		self.setLayout(self.__topLayout)
 
-		self.__mainLayout = QHBoxLayout()
+		try:
+			from PyKDE4.kdeui import KTitleWidget
+			self.__titleWidget = KTitleWidget()
+			self.__topLayout.addWidget(self.__titleWidget)
+			self.__kde = True
+		except:
+			self.__mainFrame = QFrame()
+			self.__topLayout.addWidget(self.__mainFrame)
+			self.__label = QLabel()
+			self.__iconLabel = QLabel()
+
+			self.__mainLayout = QHBoxLayout()
+			self.init()
 
 		self.setText(text)
 		if not icon is None:
 			self.setIcon(icon)
-		self.init()
 
 	def init(self):
 		self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -37,15 +51,21 @@ class headerFrame(QFrame):
 		self.__mainLayout.addWidget(self.__label)
 		self.__mainLayout.addStretch(1)
 
-		self.setAutoFillBackground(True)
-		self.setFrameStyle(QFrame.StyledPanel)
-		self.setFrameShadow(QFrame.Plain)
-		self.setBackgroundRole(QPalette.Base)
+		self.__mainFrame.setAutoFillBackground(True)
+		self.__mainFrame.setFrameStyle(QFrame.Box)
+		self.__mainFrame.setFrameShadow(QFrame.Sunken)
+		self.__mainFrame.setBackgroundRole(QPalette.Base)
 
-		self.setLayout(self.__mainLayout)
+		self.__mainFrame.setLayout(self.__mainLayout)
 
 	def setText(self, text):
-		self.__label.setText(text)
+		if self.__kde:
+			self.__titleWidget.setText(text)
+		else:
+			self.__label.setText(text)
 
 	def setIcon(self, icon):
-		self.__iconLabel.setPixmap(QPixmap(icon))
+		if self.__kde:
+			self.__titleWidget.setPixmap(icon)
+		else:
+			self.__iconLabel.setPixmap(QPixmap(icon))
