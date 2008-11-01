@@ -18,13 +18,14 @@ class Connection:
 	__sock = None
 
 	__sendQueue = Queue()
+	__callback = None
 	
 	def __init__(self,  host,  port, queue, callback = None):
 		self.__host = host
 		self.__port = port
 		self.__commLock = thread.allocate_lock()
 		self.__queue = queue
-		time.sleep(0.3)
+		self.__callback = callback
 		thread.start_new_thread(self.connectThread, (callback, ))
 
 
@@ -67,7 +68,7 @@ class Connection:
 					raise BoincConnectionException("Socket nebol nastaveny")
 
 				data = data + "\003"
-				sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
+				#sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
 				sys.stdout.flush()
 
 				while len(data) > 0:
@@ -76,13 +77,20 @@ class Connection:
 					data = data[ns:]
 
 				rec = self.__sock.recv(1024)
+				if len(rec) == 0:
+					self.__sock.close()
+					self.__sock = None
+					if not self.__callback is None:
+						self.__callback(0)
+					return
+
 				string = rec
 				while rec[-1] != "\003":
 					#time.sleep(0.1)
 					rec = self.__sock.recv(1024)
 					string = string + rec
 
-				sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
+				#sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
 				sys.stdout.flush()
 				if not recvHandler is None:
 					recvHandler(string[:-1])

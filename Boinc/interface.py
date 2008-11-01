@@ -38,7 +38,7 @@ class Interface:
 		if not self.__connStateFunc is None:
 			self.__connStateFunc(self.disconnected)
 
-		self.__conn = Connection(self.__host,  self.__port, self.__queue, self.__connInfo)
+		self.__conn = Connection(self.__host,  self.__port, self.__queue, self.__connStateChanged)
 		self.__connStateFunc(self.connecting)
 
 		(doc,  boincGuiRpcRequestElement) = self.createRpcRequest();
@@ -46,10 +46,12 @@ class Interface:
 		boincGuiRpcRequestElement.appendChild(auth1Element)
 		self.__conn.sendData(doc.toxml(),  self.auth1)
 
-	def __connInfo(self, info):
+	def __connStateChanged(self, info):
 		if isinstance(info, Exception):
 			self.__queue.put(info)
 			self.__connStateFunc(0)
+		else:
+			self.__connStateFunc(info)
 
 	def createRpcRequest(self):
 		doc = xml.dom.minidom.Document();
