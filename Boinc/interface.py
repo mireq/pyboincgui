@@ -6,6 +6,9 @@ from connection import Connection
 class BoincCommException(Exception):
 	pass
 
+class BoincMissingElementException(Exception):
+	pass
+
 class Interface:
 	"Pripojenie na boinc."
 
@@ -21,6 +24,8 @@ class Interface:
 	disconnected = 0
 	connecting   = 1
 	connected    = 2
+
+	__stateData = None
 
 	def __init__(self,  host = "127.0.0.1",  port = 31416,  password = None, queue = None):
 		self.__host = str(host)
@@ -95,4 +100,20 @@ class Interface:
 				self.__connStateFunc(self.connected)
 
 	def get_state(self, callback):
-		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_state /></boinc_gui_rpc_request>", None)
+		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_state /></boinc_gui_rpc_request>", self.__recvState, callback)
+
+	def __getNodeText(self, parent, nodeName):
+		pass
+
+	def __recvState(self, data, call = None):
+		print(data)
+		reply = self.getReply(data)
+		clientStateNodes = reply.getElementsByTagName("client_state")
+		if clientStateNodes.length != 1:
+			raise BoncCommException("client_state")
+		clientState = clientStateNodes[0]
+		self.__stateData = {}
+		host_info = clientState.getElementsByTagName('host_info')
+		if host_info.length != 1:
+			raise BoincMissingElementException('host_info')
+		self.__stateData['host_info'] = {}
