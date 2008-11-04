@@ -23,7 +23,7 @@ class clientTreeWidget(QTreeWidget):
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
 
 	def addClient(self, clId):
-		item = clientTreeWidgetItem()
+		item = clientTreeWidgetItem(self)
 		item.setData(0, Qt.UserRole, QVariant(self.Client))
 		conn = self.connManager.getConnection(clId)
 		conn.treeItem = item
@@ -45,14 +45,14 @@ class clientTreeWidget(QTreeWidget):
 		connectedState = conn.connected()
 		if connectedState == 2 or connectedState == -1:
 			self.__removeSubNodes(item)
-			subNodes = self.__createClientSubNodes(conn)
+			subNodes = self.__createClientSubNodes(item, conn)
 			self.__addSubNodes(item, subNodes)
 		else:
 			self.__removeSubNodes(item)
 
-	def __createClientSubNodes(self, conn):
+	def __createClientSubNodes(self, rodic, conn):
 		subitems = []
-		cpuItem = clientSubTreeWidgetItem()
+		cpuItem = clientSubTreeWidgetItem(rodic)
 		cpuItem.setData(0, Qt.DisplayRole, QVariant(self.tr("CPU")))
 		cpuItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":cpu.png"))))
 		subitems.append(cpuItem)

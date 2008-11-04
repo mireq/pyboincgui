@@ -1,5 +1,6 @@
 import sys
-import xml.dom.minidom
+from xml.dom import minidom
+from xml.dom import Node
 import md5
 from connection import Connection
 
@@ -59,13 +60,13 @@ class Interface:
 			self.__connStateFunc(info)
 
 	def createRpcRequest(self):
-		doc = xml.dom.minidom.Document();
+		doc = minidom.Document();
 		boincGuiRpcRequestElement = doc.createElement("boinc_gui_rpc_request")
 		doc.appendChild(boincGuiRpcRequestElement)
 		return (doc,  boincGuiRpcRequestElement)
 
 	def getReply(self,  data):
-		dataDom = xml.dom.minidom.parseString(data)
+		dataDom = minidom.parseString(data)
 		reply = dataDom.documentElement
 		if reply.nodeName != "boinc_gui_rpc_reply":
 			raise BoincCommException("boinc_gui_rpc_reply not found")
@@ -105,15 +106,23 @@ class Interface:
 	def __getNodeText(self, parent, nodeName):
 		pass
 
+	def __xmlToDict(self, node):
+		slovnik = {}
+		childNodes = node.childNodes;
+		if childNodes.length == 1 and childNodes[0].nodeType == Node.TEXT_NODE:
+			return childNodes[0].nodeValue
+
+		for n in childNodes:
+			if n.nodeType == Node.ELEMENT_NODE:
+				slovnik[n.nodeName] = self.__xmlToDict(n)
+		return slovnik
+
 	def __recvState(self, data, call = None):
-		print(data)
 		reply = self.getReply(data)
 		clientStateNodes = reply.getElementsByTagName("client_state")
 		if clientStateNodes.length != 1:
 			raise BoncCommException("client_state")
 		clientState = clientStateNodes[0]
-		self.__stateData = {}
-		host_info = clientState.getElementsByTagName('host_info')
-		if host_info.length != 1:
-			raise BoincMissingElementException('host_info')
-		self.__stateData['host_info'] = {}
+		self.__stateData = self.__xmlToDict(clientState)
+		if not call is None:
+			call(self.__stateData)

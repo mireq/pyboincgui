@@ -1,14 +1,67 @@
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from headerframe import headerFrame
 from Boinc.interface import Interface
 
-class clientInfoWidget(QWidget):
-	def __init__(self, client, parent = None):
+class infoWidget(QWidget):
+
+	__mainLayout = None
+	__title  = None
+	__layout = None
+
+	__scrollArea   = None
+	__scrollWidget = None
+
+	def __init__(self, parent = None):
 		QWidget.__init__(self, parent)
+		self.__mainLayout = QVBoxLayout(self)
+
+	def setMainLayout(self, layout, scroll = True):
+		if not self.__layout is None:
+			self.__mainLayout.removeItem(self.__layout)
+			self.__layout.setParent(None)
+		if not self.__scrollArea is None:
+			self.__mainLayout.removeWidget(self.__scrollArea)
+			self.__scrollArea.setParent(None)
+
+		self.__layout = None
+		self.__scrollArea   = None
+		self.__scrollWidget = None
+
+		if not layout is None:
+			if scroll:
+				self.__scrollWidget = QWidget()
+				self.__scrollWidget.setLayout(layout)
+
+				self.__scrollArea = QScrollArea()
+				self.__scrollArea.setWidgetResizable(True)
+				self.__scrollArea.setWidget(self.__scrollWidget)
+
+				self.__mainLayout.addWidget(self.__scrollArea)
+
+			else:
+				self.__mainLayout.addLayout(layout)
+			self.__layout = layout
+		else:
+			self.__layout = layout
+
+	def setTitle(self, title):
+		if not self.__title is None:
+			self.__mainLayout.removeWidget(self.__title)
+			self.__title.setParent(None)
+
+		if not title is None:
+			self.__mainLayout.insertWidget(0, title)
+		self.__title = title;
+
+class clientInfoWidget(infoWidget):
+	def __init__(self, client, parent = None):
+		infoWidget.__init__(self, parent)
 		self.__client = client;
 		self.__mainLayout = QGridLayout()
-		self.setLayout(self.__mainLayout)
+
+
+		#self.setLayout(self.__mainLayout)
 
 		hostStr = client.host()
 		portStr = str(client.port())
@@ -28,7 +81,6 @@ class clientInfoWidget(QWidget):
 		self.__localLabelInf = QLabel(localStr)
 		self.__stateLabelInf = QLabel()
 
-		self.__mainLayout.addWidget(headerFrame("Informacie o klientovi"), 0, 0, 1, 2)
 		self.__mainLayout.addWidget(self.__hostLabel, 1, 0)
 		self.__mainLayout.addWidget(self.__hostLabelInf, 1, 1)
 		self.__mainLayout.addWidget(self.__portLabel, 2, 0)
@@ -39,6 +91,9 @@ class clientInfoWidget(QWidget):
 		self.__mainLayout.addWidget(self.__stateLabelInf, 4, 1)
 
 		self.__mainLayout.setRowStretch(6, 1)
+
+		self.setMainLayout(self.__mainLayout)
+		self.setTitle(headerFrame("Informacie o klientovi"))
 
 		self.connect(client, SIGNAL("connectStateChanged()"), self.__connectStateChanged)
 		self.__connectStateChanged()
@@ -62,4 +117,5 @@ class clientInfoWidget(QWidget):
 			self.__client.bInterface().get_state(self.__changeState)
 
 	def __changeState(self, state):
+		
 		pass
