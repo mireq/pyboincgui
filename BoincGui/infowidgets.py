@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea
 from PyQt4.QtCore import QString, Qt, SIGNAL
-from headerframe import headerFrame
+from titleframe import titleFrame
 from Boinc.interface import Interface
 
 class infoWidget(QWidget):
@@ -93,7 +93,7 @@ class clientInfoWidget(infoWidget):
 		self.__mainLayout.setRowStretch(6, 1)
 
 		self.setMainLayout(self.__mainLayout)
-		self.setTitle(headerFrame("Informacie o klientovi"))
+		self.setTitle(titleFrame("Informacie o klientovi"))
 
 		self.connect(client, SIGNAL("connectStateChanged()"), self.__connectStateChanged)
 		self.__connectStateChanged()

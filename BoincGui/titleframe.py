@@ -2,7 +2,7 @@ from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QSizePolicy, QFont, QHBoxL
 from PyQt4.QtCore import Qt
 
 
-class headerFrame(QWidget):
+class titleFrame(QWidget):
 	__text = ""
 	__icon = None
 
