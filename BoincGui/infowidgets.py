@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
@@ -36,6 +36,8 @@ class infoWidget(QWidget):
 				self.__scrollArea = QScrollArea()
 				self.__scrollArea.setWidgetResizable(True)
 				self.__scrollArea.setWidget(self.__scrollWidget)
+				self.__scrollArea.setFrameStyle(QFrame.NoFrame)
+				self.__scrollArea.setFrameShadow(QFrame.Plain)
 
 				self.__mainLayout.addWidget(self.__scrollArea)
 
