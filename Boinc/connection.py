@@ -37,7 +37,7 @@ class Connection:
 	def connectThread(self, callback):
 		try:
 			self.__sock = None
-			#time.sleep(0.1)
+			time.sleep(0.5)
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
 			sys.stderr.write("Error " + msg[1] + "\n")
@@ -46,7 +46,7 @@ class Connection:
 			return
 
 		try:
-			#time.sleep(0.1)
+			time.sleep(0.5)
 			self.__sock.connect((self.__host,  self.__port))
 		except socket.error, msg:
 			self.__sock = None
