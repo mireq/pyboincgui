@@ -1,4 +1,5 @@
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame
+# -*- coding: UTF-8 -*-
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
@@ -6,11 +7,17 @@ from Boinc.interface import Interface
 class infoWidget(QWidget):
 
 	__mainLayout = None
+	__connLayout = None
 	__title  = None
 	__layout = None
 
 	__scrollArea   = None
 	__scrollWidget = None
+
+	__connGroupBox = None
+
+	__advClientInfoLayout   = None
+	__advClientInfoGroupBox = None
 
 	def __init__(self, parent = None):
 		QWidget.__init__(self, parent)
@@ -19,10 +26,8 @@ class infoWidget(QWidget):
 	def setMainLayout(self, layout, scroll = True):
 		if not self.__layout is None:
 			self.__mainLayout.removeItem(self.__layout)
-			self.__layout.setParent(None)
 		if not self.__scrollArea is None:
 			self.__mainLayout.removeWidget(self.__scrollArea)
-			self.__scrollArea.setParent(None)
 
 		self.__layout = None
 		self.__scrollArea   = None
@@ -50,7 +55,6 @@ class infoWidget(QWidget):
 	def setTitle(self, title):
 		if not self.__title is None:
 			self.__mainLayout.removeWidget(self.__title)
-			self.__title.setParent(None)
 
 		if not title is None:
 			self.__mainLayout.insertWidget(0, title)
@@ -60,9 +64,6 @@ class clientInfoWidget(infoWidget):
 	def __init__(self, client, parent = None):
 		infoWidget.__init__(self, parent)
 		self.__client = client;
-		self.__mainLayout = QGridLayout()
-
-
 		#self.setLayout(self.__mainLayout)
 
 		hostStr = client.host()
@@ -83,21 +84,32 @@ class clientInfoWidget(infoWidget):
 		self.__localLabelInf = QLabel(localStr)
 		self.__stateLabelInf = QLabel()
 
-		self.__mainLayout.addWidget(self.__hostLabel, 1, 0)
-		self.__mainLayout.addWidget(self.__hostLabelInf, 1, 1)
-		self.__mainLayout.addWidget(self.__portLabel, 2, 0)
-		self.__mainLayout.addWidget(self.__portLabelInf, 2, 1)
-		self.__mainLayout.addWidget(self.__localLabel, 3, 0)
-		self.__mainLayout.addWidget(self.__localLabelInf, 3, 1)
-		self.__mainLayout.addWidget(self.__stateLabel, 4, 0)
-		self.__mainLayout.addWidget(self.__stateLabelInf, 4, 1)
+		self.__connLayout = QGridLayout()
+		self.__connLayout.addWidget(self.__hostLabel, 0, 0)
+		self.__connLayout.addWidget(self.__hostLabelInf, 0, 1)
+		self.__connLayout.addWidget(self.__portLabel, 1, 0)
+		self.__connLayout.addWidget(self.__portLabelInf, 1, 1)
+		self.__connLayout.addWidget(self.__localLabel, 2, 0)
+		self.__connLayout.addWidget(self.__localLabelInf, 2, 1)
+		self.__connLayout.addWidget(self.__stateLabel, 3, 0)
+		self.__connLayout.addWidget(self.__stateLabelInf, 3, 1)
 
-		self.__mainLayout.setRowStretch(6, 1)
+		self.__connGroupBox = QGroupBox(self.tr("Connection details"))
+		self.__connGroupBox.setLayout(self.__connLayout)
 
+		self.__advClientInfoGroupBox = QGroupBox(self.tr("Client Details"))
+		self.__advClientInfoLayout   = QGridLayout();
+		self.__advClientInfoGroupBox.setLayout(self.__advClientInfoLayout)
+
+		self.setTitle(titleFrame(self.tr("Informamtions about Client")))
+		self.__mainLayout = QVBoxLayout()
+		self.__mainLayout.addWidget(self.__connGroupBox)
+		self.__mainLayout.addWidget(self.__advClientInfoGroupBox)
+		self.__mainLayout.addStretch(1)
 		self.setMainLayout(self.__mainLayout)
-		self.setTitle(titleFrame("Informacie o klientovi"))
 
 		self.connect(client, SIGNAL("connectStateChanged()"), self.__connectStateChanged)
+		self.connect(self, SIGNAL('newClientState(PyQt_PyObject)'), self.__newClientState)
 		self.__connectStateChanged()
 
 
@@ -118,6 +130,28 @@ class clientInfoWidget(infoWidget):
 		if conn == Interface.connected:
 			self.__client.bInterface().get_state(self.__changeState)
 
+	def __newClientState(self, state):
+		# odstranime vsetkych potomkov
+		potomok = self.__advClientInfoLayout.takeAt(0)
+		while not potomok is None:
+			self.__advClientInfoLayout.removeWidget(potomok)
+			potomok = self.__advClientInfoLayout.takeAt(0)
+
+		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Host:")), 0, 0)
+		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['domain_name']), 0, 1)
+
+		self.__advClientInfoLayout.addWidget(QLabel(self.tr("OS Name:")), 1, 0)
+		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['os_name']), 1, 1)
+
+		self.__advClientInfoLayout.addWidget(QLabel(self.tr("OS Version:")), 2, 0)
+		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['os_version']), 2, 1)
+
+		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Platform:")), 3, 0)
+		self.__advClientInfoLayout.addWidget(QLabel(state['platform_name']), 3, 1)
+
+		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Client Version:")), 4, 0)
+		clientStr = QString("%1.%2.%3").arg(state['core_client_major_version']).arg(state['core_client_minor_version']).arg(state['core_client_release'])
+		self.__advClientInfoLayout.addWidget(QLabel(clientStr), 4, 1)
+
 	def __changeState(self, state):
-		
-		pass
+		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
