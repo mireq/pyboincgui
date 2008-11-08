@@ -36,13 +36,18 @@ class mainWidget(QWidget):
 		self.connect(self.tree, SIGNAL("currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)"), self.changeActive)
 
 	def changeActive(self, next, prev):
-		if next.data(0, Qt.UserRole).toInt()[0] == clientTreeWidget.Client:
-			index = self.tree.indexOfTopLevelItem(next)
-			# nie je to top level polozka
-			if index == -1:
-				self.infoWidget.unsetWidget()
-			else:
+		index = self.tree.indexOfTopLevelItem(next)
+		if not index == -1:
+			if next.data(0, Qt.UserRole).toInt()[0] == clientTreeWidget.Client:
 				connection = self.__connManager.getConnection(index)
 				self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
+			else:
+				self.infoWidget.unsetWidget()
 		else:
-			self.infoWidget.unsetWidget()
+			# druha uroven
+			if not self.tree.indexFromItem(next).parent().parent().isValid():
+				typ = next.data(0, Qt.UserRole).toString()
+				index = self.tree.indexFromItem(next).parent().row()
+				connection = self.__connManager.getConnection(index)
+				if typ == "cpu":
+					self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))

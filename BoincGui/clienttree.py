@@ -55,6 +55,7 @@ class clientTreeWidget(QTreeWidget):
 		cpuItem = clientSubTreeWidgetItem(rodic)
 		cpuItem.setData(0, Qt.DisplayRole, QVariant(self.tr("CPU")))
 		cpuItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":cpu.png"))))
+		cpuItem.setData(0, Qt.UserRole, QVariant("cpu"))
 		subitems.append(cpuItem)
 		return subitems
 

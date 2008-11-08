@@ -79,10 +79,24 @@ class clientInfoWidget(infoWidget):
 		self.__localLabel = QLabel(self.tr("Local client:"))
 		self.__stateLabel = QLabel(self.tr("Client state:"))
 
-		self.__hostLabelInf  = QLabel(hostStr)
-		self.__portLabelInf  = QLabel(portStr)
-		self.__localLabelInf = QLabel(localStr)
+		self.__hostLabelInf  = QLabel()
+		self.__portLabelInf  = QLabel()
+		self.__localLabelInf = QLabel()
 		self.__stateLabelInf = QLabel()
+
+		self.__hostLabelInf.setTextFormat(Qt.PlainText)
+		self.__portLabelInf.setTextFormat(Qt.PlainText)
+		self.__localLabelInf.setTextFormat(Qt.PlainText)
+		self.__stateLabelInf.setTextFormat(Qt.PlainText)
+
+		self.__hostLabelInf.setWordWrap(True)
+		self.__portLabelInf.setWordWrap(True)
+		self.__localLabelInf.setWordWrap(True)
+		self.__stateLabelInf.setWordWrap(True)
+
+		self.__hostLabelInf.setText(hostStr)
+		self.__portLabelInf.setText(portStr)
+		self.__localLabelInf.setText(localStr)
 
 		self.__connLayout = QGridLayout()
 		self.__connLayout.addWidget(self.__hostLabel, 0, 0)
@@ -138,20 +152,90 @@ class clientInfoWidget(infoWidget):
 			potomok = self.__advClientInfoLayout.takeAt(0)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Host:")), 0, 0)
-		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['domain_name']), 0, 1)
+		domainName = QLabel(state['host_info']['domain_name'])
+		domainName.setTextFormat(Qt.PlainText)
+		domainName.setWordWrap(True)
+		self.__advClientInfoLayout.addWidget(domainName, 0, 1)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("OS Name:")), 1, 0)
-		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['os_name']), 1, 1)
+		hostInfo = QLabel(state['host_info']['os_name'])
+		hostInfo.setTextFormat(Qt.PlainText)
+		hostInfo.setWordWrap(True)
+		self.__advClientInfoLayout.addWidget(hostInfo, 1, 1)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("OS Version:")), 2, 0)
-		self.__advClientInfoLayout.addWidget(QLabel(state['host_info']['os_version']), 2, 1)
+		osVersion = QLabel(state['host_info']['os_version'])
+		osVersion.setTextFormat(Qt.PlainText)
+		osVersion.setWordWrap(True)
+		self.__advClientInfoLayout.addWidget(osVersion, 2, 1)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Platform:")), 3, 0)
-		self.__advClientInfoLayout.addWidget(QLabel(state['platform_name']), 3, 1)
+		platformName = QLabel(state['platform_name'])
+		platformName.setTextFormat(Qt.PlainText)
+		platformName.setWordWrap(True)
+		self.__advClientInfoLayout.addWidget(platformName, 3, 1)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Client Version:")), 4, 0)
 		clientStr = QString("%1.%2.%3").arg(state['core_client_major_version']).arg(state['core_client_minor_version']).arg(state['core_client_release'])
-		self.__advClientInfoLayout.addWidget(QLabel(clientStr), 4, 1)
+		clientVersion = QLabel(clientStr)
+		clientVersion.setTextFormat(Qt.PlainText)
+		clientVersion.setWordWrap(True)
+		self.__advClientInfoLayout.addWidget(clientVersion, 4, 1)
+
+	def __changeState(self, state):
+		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
+
+class cpuInfoWidget(infoWidget):
+	__client = None
+	__mainLayout = None
+
+	__vendorLabel   = None
+	__modelLabel    = None
+	__ncpusLabel    = None
+	__featuresLabel = None
+
+	def __init__(self, client, parent = None):
+		infoWidget.__init__(self, parent)
+		self.__client = client
+
+		self.__mainLayout = QGridLayout();
+
+		self.__vendorLabel   = QLabel()
+		self.__modelLabel    = QLabel()
+		self.__ncpusLabel    = QLabel()
+		self.__featuresLabel = QLabel()
+
+		self.__vendorLabel.setTextFormat(Qt.PlainText)
+		self.__modelLabel.setTextFormat(Qt.PlainText)
+		self.__ncpusLabel.setTextFormat(Qt.PlainText)
+		self.__featuresLabel.setTextFormat(Qt.PlainText)
+
+		self.__vendorLabel.setWordWrap(True)
+		self.__modelLabel.setWordWrap(True)
+		self.__ncpusLabel.setWordWrap(True)
+		self.__featuresLabel.setWordWrap(True)
+
+		self.__mainLayout.addWidget(QLabel(self.tr("Vendor: ")), 0, 0, Qt.AlignTop)
+		self.__mainLayout.addWidget(self.__vendorLabel, 0, 1, Qt.AlignTop)
+		self.__mainLayout.addWidget(QLabel(self.tr("Model: ")), 1, 0, Qt.AlignTop)
+		self.__mainLayout.addWidget(self.__modelLabel, 1, 1, Qt.AlignTop)
+		self.__mainLayout.addWidget(QLabel(self.tr("Number of CPUs:")), 2, 0, Qt.AlignTop)
+		self.__mainLayout.addWidget(self.__ncpusLabel, 2, 1, Qt.AlignTop)
+		self.__mainLayout.addWidget(QLabel(self.tr("Features: ")), 3, 0, Qt.AlignTop)
+		self.__mainLayout.addWidget(self.__featuresLabel, 3, 1, Qt.AlignTop)
+		self.__mainLayout.setColumnStretch(1, 1)
+		self.__mainLayout.setRowStretch(4, 1)
+
+		self.setTitle(titleFrame(self.tr("CPU Info")))
+		self.setMainLayout(self.__mainLayout)
+		self.connect(self, SIGNAL('newClientState(PyQt_PyObject)'), self.__updateClientState)
+		self.__client.bInterface().get_state(self.__changeState)
+
+	def __updateClientState(self, state):
+		self.__vendorLabel.setText(state['host_info']['p_vendor'])
+		self.__modelLabel.setText(state['host_info']['p_model'])
+		self.__ncpusLabel.setText(state['host_info']['p_ncpus'])
+		self.__featuresLabel.setText(state['host_info']['p_features'])
 
 	def __changeState(self, state):
 		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)

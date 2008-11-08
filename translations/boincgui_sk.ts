@@ -55,7 +55,7 @@
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="140"/>
+        <location filename="BoincGui/infowidgets.py" line="154"/>
         <source>Host:</source>
         <translation>Host:</translation>
     </message>
@@ -75,57 +75,57 @@
         <translation>Stav klienta:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="97"/>
+        <location filename="BoincGui/infowidgets.py" line="111"/>
         <source>Connection details</source>
         <translation>Podrobnosti o spojení</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="100"/>
+        <location filename="BoincGui/infowidgets.py" line="114"/>
         <source>Client Details</source>
         <translation>Podrobnosti o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="104"/>
+        <location filename="BoincGui/infowidgets.py" line="118"/>
         <source>Informamtions about Client</source>
         <translation>Informácie o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="119"/>
+        <location filename="BoincGui/infowidgets.py" line="133"/>
         <source>connected</source>
         <translation>pripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="121"/>
+        <location filename="BoincGui/infowidgets.py" line="135"/>
         <source>connecting</source>
         <translation>pripája sa</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="123"/>
+        <location filename="BoincGui/infowidgets.py" line="137"/>
         <source>disconnected</source>
         <translation>nepripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="126"/>
+        <location filename="BoincGui/infowidgets.py" line="140"/>
         <source>unauthorized</source>
         <translation>neautorizovaný</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="143"/>
+        <location filename="BoincGui/infowidgets.py" line="160"/>
         <source>OS Name:</source>
         <translation>Operačný systém:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="146"/>
+        <location filename="BoincGui/infowidgets.py" line="166"/>
         <source>OS Version:</source>
         <translation>Verzia operačného systému:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="149"/>
+        <location filename="BoincGui/infowidgets.py" line="172"/>
         <source>Platform:</source>
         <translation>Platforma:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="152"/>
+        <location filename="BoincGui/infowidgets.py" line="178"/>
         <source>Client Version:</source>
         <translation>Verzia klienta:</translation>
     </message>
@@ -133,22 +133,22 @@
 <context>
     <name>clientTreeWidget</name>
     <message>
-        <location filename="BoincGui/clienttree.py" line="76"/>
+        <location filename="BoincGui/clienttree.py" line="77"/>
         <source>(connected)</source>
         <translation>(pripojený)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="82"/>
+        <location filename="BoincGui/clienttree.py" line="83"/>
         <source>(disconnected)</source>
         <translation>(nepripojený)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="79"/>
+        <location filename="BoincGui/clienttree.py" line="80"/>
         <source>(connecting)</source>
         <translation>(pripájanie)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="85"/>
+        <location filename="BoincGui/clienttree.py" line="86"/>
         <source>(unauthorized)</source>
         <translation>(neautorizovaný)</translation>
     </message>
@@ -209,6 +209,34 @@
         <location filename="BoincGui/addclientwizard.py" line="114"/>
         <source>Authorisation file is %1</source>
         <translation>Autorizačný súbor je %1</translation>
+    </message>
+</context>
+<context>
+    <name>cpuInfoWidget</name>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="218"/>
+        <source>Vendor: </source>
+        <translation>Značka:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="220"/>
+        <source>Model: </source>
+        <translation>Model:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="222"/>
+        <source>Number of CPUs:</source>
+        <translation>Počet CPU:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="224"/>
+        <source>Features: </source>
+        <translation>Vlastnosti:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="229"/>
+        <source>CPU Info</source>
+        <translation>Informácie o CPU</translation>
     </message>
 </context>
 <context>
