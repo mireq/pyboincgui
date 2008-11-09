@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += . BoincGui translations
 INCLUDEPATH += .
-SOURCES = main.py BoincGui/addclientwizard.py BoincGui/clienttree.py BoincGui/__init__.py BoincGui/mainwidget.py BoincGui/mainwindow.py  BoincGui/infowidgets.py
+SOURCES = main.py BoincGui/addclientwizard.py BoincGui/clienttree.py BoincGui/__init__.py BoincGui/mainwidget.py BoincGui/mainwindow.py  BoincGui/infowidgets.py BoincGui/piechart.py
 
 # Input
 RESOURCES += BoincGui/resources.qrc

@@ -7,6 +7,7 @@ import Queue
 class BoincConnectionStruct(QObject):
 
 	__updateTimer = None
+	__projectStatus = None
 
 	def __init__(self, local, path, host, port, password, queue):
 		QObject.__init__(self)
@@ -31,10 +32,14 @@ class BoincConnectionStruct(QObject):
 				self.__updateTimer.stop()
 				self.__updateTimer = None
 
+	def projectStatus(self):
+		return self.__projectStatus
+
 	def __startUpdateProjectStatus(self):
 		self.__bInterface.get_project_status(self.__updateProjectStatus)
 
 	def __updateProjectStatus(self, projects):
+		self.__projectStatus = projects
 		self.emit(SIGNAL("projectStatus(PyQt_PyObject)"), projects)
 
 	def boincConnect(self):

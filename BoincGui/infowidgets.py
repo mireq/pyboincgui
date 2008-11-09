@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
+from piechart import PieChartFrame
 
 class infoWidget(QWidget):
 
@@ -141,7 +142,7 @@ class clientInfoWidget(infoWidget):
 		conn = self.__client.connected()
 		str = self.__getConnStateString(conn)
 		self.__stateLabelInf.setText(str)
-		if conn == Interface.connected:
+		if conn == Interface.connected or conn == Interface.unauthorized:
 			self.__client.bInterface().get_state(self.__changeState)
 
 	def __newClientState(self, state):
@@ -239,3 +240,33 @@ class cpuInfoWidget(infoWidget):
 
 	def __changeState(self, state):
 		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
+
+class projectsInfoWidget(infoWidget):
+	__mainLayout = None
+	__chart = None
+	__colors = [Qt.red, QColor(120, 160, 215), Qt.yellow, Qt.green, QColor(250, 125, 30), Qt.blue]
+
+	def __init__(self, client, parent = None):
+		infoWidget.__init__(self, parent)
+		self.__chart = PieChartFrame()
+		self.__mainLayout = QVBoxLayout()
+		self.__mainLayout.addWidget(self.__chart)
+		self.setMainLayout(self.__mainLayout, False)
+
+		projects = client.projectStatus()
+		if not projects is None:
+			self.updateProjects(projects)
+		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
+
+	def updateProjects(self, projects):
+		self.__chart.removeItems()
+		i = 0
+		full = 0.0
+		for projekt in projects:
+			full = full + float(projekt['resource_share'])
+	
+		for projekt in projects:
+			self.__chart.addItem(360.0 * 16.0 * (float(projekt['resource_share']) / full), projekt['project_name'], self.__colors[i])
+			i = i + 1
+			if i >= len(self.__colors):
+				i = 0
