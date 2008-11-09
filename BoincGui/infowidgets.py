@@ -245,6 +245,7 @@ class projectsInfoWidget(infoWidget):
 	__mainLayout = None
 	__chart = None
 	__colors = [Qt.red, QColor(120, 160, 215), Qt.yellow, Qt.green, QColor(250, 125, 30), Qt.blue]
+	__angles = []
 
 	def __init__(self, client, parent = None):
 		infoWidget.__init__(self, parent)
@@ -259,14 +260,31 @@ class projectsInfoWidget(infoWidget):
 		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
 
 	def updateProjects(self, projects):
-		self.__chart.removeItems()
+		#self.__chart.removeItems()
+		update = False
 		i = 0
 		full = 0.0
 		for projekt in projects:
 			full = full + float(projekt['resource_share'])
 	
-		for projekt in projects:
-			self.__chart.addItem(360.0 * 16.0 * (float(projekt['resource_share']) / full), projekt['project_name'], self.__colors[i])
-			i = i + 1
-			if i >= len(self.__colors):
-				i = 0
+		for i in range(len(projects)):
+			projekt = projects[i]
+			angle = int(360.0 * 16.0 * (float(projekt['resource_share']) / full))
+			try:
+				if angle != self.__angles[i]:
+					update = True
+					self.__angles[i] = angle
+			except IndexError:
+				update = True
+				self.__angles.append(angle)
+
+		self.__angles = self.__angles[0:len(projects)]
+		if update:
+			self.__chart.removeItems()
+			for i in range(len(projects)):
+				projekt = projects[i]
+				angle = int(360.0 * 16.0 * (float(projekt['resource_share']) / full))
+				self.__chart.addItem(angle, projekt['project_name'], self.__colors[i])
+				i = i + 1
+				if i >= len(self.__colors):
+					i = 0
