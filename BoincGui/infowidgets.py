@@ -122,7 +122,7 @@ class clientInfoWidget(infoWidget):
 		self.__mainLayout.addStretch(1)
 		self.setMainLayout(self.__mainLayout)
 
-		self.connect(client, SIGNAL("connectStateChanged()"), self.__connectStateChanged)
+		self.connect(client, SIGNAL("connectStateChanged(int)"), self.__connectStateChanged)
 		self.connect(self, SIGNAL('newClientState(PyQt_PyObject)'), self.__newClientState)
 		self.__connectStateChanged()
 

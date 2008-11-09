@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
 					sys.stdout.write(self.tr(u"Communication error: %1").arg(item[0]))
 				elif isinstance(item, Exception):
 					sys.stdout.write(self.tr(u"Unknown error: %1").arg(item[0]))
+					raise item
 				sys.stdout.flush()
 			queue.task_done()
 

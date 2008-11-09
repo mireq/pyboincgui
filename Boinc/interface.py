@@ -59,6 +59,24 @@ class Interface:
 		else:
 			self.__connStateFunc(info)
 
+	def __xmlToDict(self, node):
+		slovnik = {}
+		childNodes = node.childNodes;
+		if childNodes.length == 1 and childNodes[0].nodeType == Node.TEXT_NODE:
+			return childNodes[0].nodeValue
+
+		for n in childNodes:
+			if n.nodeType == Node.ELEMENT_NODE:
+				try:
+					if type(slovnik[n.nodeName]) == type([]):
+						slovnik[n.nodeName].append(self.__xmlToDict(n))
+					else:
+						val = slovnik[n.nodeName]
+						slovnik[n.nodeName] = [val, self.__xmlToDict(n)]
+				except KeyError:
+					slovnik[n.nodeName] = self.__xmlToDict(n)
+		return slovnik
+
 	def createRpcRequest(self):
 		doc = minidom.Document();
 		boincGuiRpcRequestElement = doc.createElement("boinc_gui_rpc_request")
@@ -100,29 +118,44 @@ class Interface:
 			if not self.__connStateFunc is None:
 				self.__connStateFunc(self.connected)
 
-	def get_state(self, callback):
+
+	def __recvXml(self, data, tag, call = None):
+		reply = self.getReply(data)
+		nodes = reply.getElementsByTagName(tag)
+		if nodes.length != 1:
+			raise BoincCommException(tag)
+		node = nodes[0]
+		data = self.__xmlToDict(node)
+		if call is None:
+			return data
+		else:
+			call(data)
+
+	def get_state(self, callback = None):
 		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_state /></boinc_gui_rpc_request>", self.__recvState, callback)
-
-	def __getNodeText(self, parent, nodeName):
-		pass
-
-	def __xmlToDict(self, node):
-		slovnik = {}
-		childNodes = node.childNodes;
-		if childNodes.length == 1 and childNodes[0].nodeType == Node.TEXT_NODE:
-			return childNodes[0].nodeValue
-
-		for n in childNodes:
-			if n.nodeType == Node.ELEMENT_NODE:
-				slovnik[n.nodeName] = self.__xmlToDict(n)
-		return slovnik
 
 	def __recvState(self, data, call = None):
 		reply = self.getReply(data)
 		clientStateNodes = reply.getElementsByTagName("client_state")
 		if clientStateNodes.length != 1:
-			raise BoncCommException("client_state")
+			raise BoincCommException("client_state")
 		clientState = clientStateNodes[0]
 		self.__stateData = self.__xmlToDict(clientState)
 		if not call is None:
 			call(self.__stateData)
+
+	def get_project_status(self, callback = None):
+		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_project_status /></boinc_gui_rpc_request>", self.__recvProjects, callback)
+
+	def __recvProjects(self, data, call = None):
+		reply = self.getReply(data)
+		projectsNodes = reply.getElementsByTagName("projects")
+		if projectsNodes.length != 1:
+			raise BoincCommException("projects")
+		projectNode = projectsNodes[0]
+		data = []
+		for node in projectNode.childNodes:
+			if node.nodeType == Node.ELEMENT_NODE:
+				data.append(self.__xmlToDict(node))
+		if not call is None:
+			call(data)

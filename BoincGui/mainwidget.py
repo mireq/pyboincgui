@@ -51,3 +51,9 @@ class mainWidget(QWidget):
 				connection = self.__connManager.getConnection(index)
 				if typ == "cpu":
 					self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
+				if typ == "projects":
+					self.infoWidget.setWidget(QLabel("ok"))
+			elif self.tree.indexFromItem(next).parent().parent().isValid() and not self.tree.indexFromItem(next).parent().parent().parent().isValid():
+				parent = self.tree.itemFromIndex(self.tree.indexFromItem(next).parent())
+				if parent.data(0, Qt.UserRole).toString() == 'projects':
+					self.infoWidget.setWidget(QLabel("projekt?"))

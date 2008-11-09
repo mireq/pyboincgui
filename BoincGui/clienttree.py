@@ -1,5 +1,5 @@
 from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy
-from PyQt4.QtCore import QAbstractItemModel, QModelIndex, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize
+from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize
 import resources
 from Boinc.interface import Interface
 
@@ -7,6 +7,9 @@ class clientTreeWidgetItem(QTreeWidgetItem):
 	pass
 
 class clientSubTreeWidgetItem(QTreeWidgetItem):
+	pass
+
+class projectTreeWidgetItem(QTreeWidgetItem):
 	pass
 
 class clientTreeWidget(QTreeWidget):
@@ -28,11 +31,12 @@ class clientTreeWidget(QTreeWidget):
 		item.setData(0, Qt.UserRole, QVariant(self.Client))
 		conn = self.connManager.getConnection(clId)
 		conn.treeItem = item
-		self.connect(conn, SIGNAL("connectStateChanged()"), self.__changeConnectionState)
-		self.__changeConnectionState(conn)
+		self.connect(conn, SIGNAL("connectStateChanged(int)"), self.__changeConnectionState)
+		self.connect(conn, SIGNAL("projectStatus(PyQt_PyObject)"), self.__updateProjectStatus)
+		self.__changeConnectionState(conn.connected(), conn)
 		self.addTopLevelItem(item)
 
-	def __changeConnectionState(self, cn = None):
+	def __changeConnectionState(self, s, cn = None):
 		conn = None
 		if cn is None:
 			conn = self.sender()
@@ -47,7 +51,7 @@ class clientTreeWidget(QTreeWidget):
 		if connectedState == 2 or connectedState == -1:
 			self.__removeSubNodes(item)
 			subNodes = self.__createClientSubNodes(item, conn)
-			self.__addSubNodes(item, subNodes)
+			self.__addSubNodeList(item, subNodes)
 		else:
 			self.__removeSubNodes(item)
 
@@ -58,6 +62,12 @@ class clientTreeWidget(QTreeWidget):
 		cpuItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":cpu.png"))))
 		cpuItem.setData(0, Qt.UserRole, QVariant("cpu"))
 		subitems.append(cpuItem)
+
+		projectsItem = clientSubTreeWidgetItem()
+		projectsItem.setData(0, Qt.DisplayRole, QVariant(self.tr("Projects")))
+		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":projects.png"))))
+		projectsItem.setData(0, Qt.UserRole, QVariant("projects"))
+		subitems.append(projectsItem)
 		return subitems
 
 	def __removeSubNodes(self, item):
@@ -66,10 +76,17 @@ class clientTreeWidget(QTreeWidget):
 			item.removeChild(child)
 			child = item.takeChild(0)
 
-	def __addSubNodes(self, item, subNodes):
+	def __addSubNodeList(self, item, subNodes):
+		if len(subNodes) > 0:
+			self.setUpdatesEnabled(False)
+			item.addChildren(subNodes)
+			item.setExpanded(True)
+			self.setUpdatesEnabled(True)
+
+	def __removeSubNodeList(self, rodic, odstranit):
 		self.setUpdatesEnabled(False)
-		item.addChildren(subNodes)
-		item.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
+		for potomok in odstranit:
+			rodic.removeChild(potomok)
 		self.setUpdatesEnabled(True)
 
 	def __clientItemData(self, conn, item):
@@ -98,6 +115,53 @@ class clientTreeWidget(QTreeWidget):
 		item = self.topLevelItem(clId)
 		if not item == None:
 			self.removeItemWidget(item, 0)
+
+	def __updateProjectStatus(self, projects):
+		conn = self.sender()
+		treeItem = conn.treeItem
+		for poradie in range(treeItem.childCount()):
+			potomok = treeItem.child(poradie)
+			if not potomok is None:
+				if potomok.data(0, Qt.UserRole).toString() == 'projects':
+					self.__updateProjectsList(projects, potomok)
+
+	def __updateProjectsList(self, projects, projektyUzol):
+		pridat  = []
+		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
+		odobrat = []
+		"""Zoznam poloziek ktore sa maju oodbrat - QTreeWidgetItem"""
+		polozky = []
+		"""Zoznam projektov ktore su v zozname - string, master_url"""
+		zozProj = []
+		"""Zoznam aktualnych projektov - string"""
+
+		for poradie in range(projektyUzol.childCount()):
+			projekt = projektyUzol.child(poradie)
+			polozky.append(projekt.data(0, Qt.UserRole).toString())
+
+		for projekt in projects:
+			zozProj.append(projekt['master_url'])
+			try:
+				i = polozky.index(projekt['master_url'])
+			except ValueError:
+				pridat.append(projekt)
+
+		for poradie in range(projektyUzol.childCount()):
+			projekt = projektyUzol.child(poradie)
+			try:
+				i = zozProj.index(projekt.data(0, Qt.UserRole).toString())
+			except ValueError:
+				odobrat.append(projekt)
+
+		for i in range(len(pridat)):
+			projectItem = projectTreeWidgetItem()
+			projectItem.setData(0, Qt.DisplayRole, QVariant(pridat[i]['project_name']))
+			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":workunit.png"))))
+			projectItem.setData(0, Qt.UserRole, QVariant(pridat[i]['master_url']))
+			pridat[i] = projectItem;
+
+		self.__removeSubNodeList(projektyUzol, odobrat)
+		self.__addSubNodeList(projektyUzol, pridat)
 
 	def sizeHint(self):
 		return QSize(250, 100)
