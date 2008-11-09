@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor, QTabWidget
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
@@ -243,16 +243,22 @@ class cpuInfoWidget(infoWidget):
 
 class projectsInfoWidget(infoWidget):
 	__mainLayout = None
+	__tabWidget = None
 	__chart = None
 	__colors = [Qt.red, QColor(120, 160, 215), Qt.yellow, Qt.green, QColor(250, 125, 30), Qt.blue]
 	__angles = []
 
 	def __init__(self, client, parent = None):
 		infoWidget.__init__(self, parent)
-		self.__chart = PieChartFrame()
+		self.__angles = []
+
+		self.__tabWidget = QTabWidget()
 		self.__mainLayout = QVBoxLayout()
-		self.__mainLayout.addWidget(self.__chart)
+		self.__mainLayout.addWidget(self.__tabWidget)
 		self.setMainLayout(self.__mainLayout, False)
+
+		self.__chart = PieChartFrame()
+		self.__tabWidget.addTab(self.__chart, self.tr("&Resources Share"))
 
 		projects = client.projectStatus()
 		if not projects is None:
