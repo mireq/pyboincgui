@@ -16,6 +16,7 @@ class clientTreeWidget(QTreeWidget):
 	def __init__(self, connManager, parent = None):
 		QTreeWidget.__init__(self, parent)
 		self.header().hide()
+		self.setColumnCount(1)
 		self.connManager = connManager
 		self.setIconSize(QSize(32, 32))
 		self.connect(self.connManager, SIGNAL("clientAdded(int)"), self.addClient)
@@ -52,7 +53,7 @@ class clientTreeWidget(QTreeWidget):
 
 	def __createClientSubNodes(self, rodic, conn):
 		subitems = []
-		cpuItem = clientSubTreeWidgetItem(rodic)
+		cpuItem = clientSubTreeWidgetItem()
 		cpuItem.setData(0, Qt.DisplayRole, QVariant(self.tr("CPU")))
 		cpuItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":cpu.png"))))
 		cpuItem.setData(0, Qt.UserRole, QVariant("cpu"))
@@ -66,7 +67,10 @@ class clientTreeWidget(QTreeWidget):
 			child = item.takeChild(0)
 
 	def __addSubNodes(self, item, subNodes):
+		self.setUpdatesEnabled(False)
 		item.addChildren(subNodes)
+		item.setChildIndicatorPolicy(QTreeWidgetItem.ShowIndicator)
+		self.setUpdatesEnabled(True)
 
 	def __clientItemData(self, conn, item):
 		icon = None
