@@ -24,7 +24,11 @@ def main():
 	app.installTranslator(appTranslator)
 	win = MainWindow(cm)
 	win.show()
-	sys.exit(app.exec_())
+	ret = app.exec_()
+
+	ref = gc.get_referents(cm)
+	for r in ref:
+		print(r)
 
 
 if __name__ == "__main__":
