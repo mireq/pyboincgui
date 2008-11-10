@@ -4,6 +4,7 @@ from Boinc.connection import BoincConnectionException
 from Boinc.interface import BoincCommException
 import Queue
 import sys
+import gc
 
 class BoincConnectionStruct(QObject):
 
@@ -19,9 +20,6 @@ class BoincConnectionStruct(QObject):
 		self.__updateTimer = None
 		self.__projectStatus = None
 		self.connect(self, SIGNAL('connectStateChanged(int)'), self.__updateConnectState)
-
-	def __del__(self):
-		print("upratujem")
 
 	def local(self):
 		return self.__local
@@ -69,7 +67,7 @@ class BoincConnectionStruct(QObject):
 			self.__updateTimer.stop()
 			self.__updateTimer = None
 		self.__bInterface.disconnect()
-		del self.__bInterface
+		self.__bInterface = None
 
 	def local(self):
 		return self.__local
@@ -129,10 +127,10 @@ class ConnectionManager(QObject):
 
 	def removeConnection(self, connId):
 		if connId < len(self.connections):
+			self.emit(SIGNAL('clientRemoved(int)'), connId)
 			conn = self.connections.pop(connId)
 			conn.boincDisconnect()
 			conn = None
-			self.emit(SIGNAL('clientRemoved(int)'), connId)
 			#self.saveConnections()
 
 	def addConnection(self, local, path, host, port, password, autoConnect = True):
@@ -146,4 +144,14 @@ class ConnectionManager(QObject):
 
 	def queue(self):
 		return self.__queue
+
+	def __del__(self):
+		for conn in self.connections:
+			self.emit(SIGNAL('clientRemoved(int)'), 0)
+			conn.boincDisconnect()
+		while True:
+			try:
+				self.connections.pop(0)
+			except IndexError:
+				return
 	

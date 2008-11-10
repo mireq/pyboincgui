@@ -26,9 +26,8 @@ def main():
 	win.show()
 	ret = app.exec_()
 
-	ref = gc.get_referents(cm)
-	for r in ref:
-		print(r)
+	del win
+	del cm
 
 
 if __name__ == "__main__":

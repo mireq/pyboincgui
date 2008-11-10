@@ -18,12 +18,12 @@ class infoStackWidget(QStackedWidget):
 	def unsetWidget(self):
 		if not self.currentWidget is None:
 			self.removeWidget(self.currentWidget)
+			self.currentWidget.setParent(None)
 		self.currentWidget = None
 
 class mainWidget(QWidget):
 	def __init__(self, connManager, parent = None):
 		QWidget.__init__(self, parent)
-		self.__connManager = connManager
 		self.layout = QHBoxLayout()
 		self.setLayout(self.layout)
 
@@ -52,7 +52,7 @@ class mainWidget(QWidget):
 		connection = None
 		if len(cesta) >= 1:
 			index = self.tree.indexOfTopLevelItem(cesta[0])
-			connection = self.__connManager.getConnection(index)
+			connection = self.parent().connManager().getConnection(index)
 			self.emit(SIGNAL('clientChanged(int)'), index)
 			if connection is None:
 				self.infoWidget.unsetWidget()

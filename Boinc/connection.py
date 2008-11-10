@@ -24,6 +24,8 @@ class Connection:
 	__mutex = None
 	__thread = None
 
+	__quit = False
+
 	def __init__(self,  host,  port, queue, callback = None):
 		self.__host = host
 		self.__port = port
@@ -36,16 +38,14 @@ class Connection:
 		thread.start_new_thread(self.connectThread, (callback, ))
 
 	def disconnect(self):
+		self.__quit = True
 		self.__mutex.acquire()
-		#self.__thread.join()
-		self.__thread = None
+		if not self.__thread is None:
+			self.sendData("")
+			self.__thread.join()
+			self.__thread = None
 		self.__mutex.release()
-		if not self.__sock is None:
-			self.__sock.close()
-			self.__sock = None
 
-	def __del__(self):
-		print("odpojene")
 
 	def connectThread(self, callback):
 		try:
@@ -71,6 +71,7 @@ class Connection:
 		self.__mutex.acquire()
 		#thread.start_new_thread(self.sendDataThread, ())
 		self.__thread = Thread(target = self.sendDataThread)
+		self.__quit = False
 		self.__thread.start()
 		self.__mutex.release()
 
@@ -84,14 +85,22 @@ class Connection:
 				if self.__sock is None:
 					raise BoincConnectionException("Socket nebol nastaveny")
 
+				#koniec
+				if self.__quit:
+					return
+
 				data = data + "\003"
-				sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
+				#sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
 				sys.stdout.flush()
 
 				while len(data) > 0:
 					time.sleep(0.03)
 					ns = self.__sock.send(data)
 					data = data[ns:]
+
+					#koniec
+					if self.__quit:
+						return
 
 				rec = self.__sock.recv(1024)
 				if len(rec) == 0:
@@ -101,11 +110,19 @@ class Connection:
 						self.__callback(0)
 					return
 
+				#koniec
+				if self.__quit:
+					return
+
 				string = rec
 				while rec[-1] != "\003":
 					time.sleep(0.03)
 					rec = self.__sock.recv(1024)
 					string = string + rec
+
+					#koniec
+					if self.__quit:
+						return
 
 				#sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
 				sys.stdout.flush()

@@ -186,6 +186,7 @@ class clientInfoWidget(infoWidget):
 	def __changeState(self, state):
 		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
 
+
 class cpuInfoWidget(infoWidget):
 	__client = None
 	__mainLayout = None
