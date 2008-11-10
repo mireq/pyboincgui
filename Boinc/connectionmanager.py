@@ -109,15 +109,19 @@ class ConnectionManager(QObject):
 		settings.endArray()
 
 	def getConnection(self, index):
-		return self.connections[index]
+		try:
+			return self.connections[index]
+		except IndexError:
+			return None
 
 	def getConnections(self):
 		return self.connections
 
 	def removeConnection(self, connId):
-		self.connections.pop(connId)
-		self.emit(SIGNAL('clientRemoved(int)'), connId)
-		self.saveConnections()
+		if connId < len(self.connections):
+			self.connections.pop(connId)
+			self.emit(SIGNAL('clientRemoved(int)'), connId)
+			self.saveConnections()
 
 	def addConnection(self, local, path, host, port, password, autoConnect = True):
 		conn = BoincConnectionStruct(local, path, host, port, password, self.__queue)

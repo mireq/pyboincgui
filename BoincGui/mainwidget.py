@@ -36,24 +36,41 @@ class mainWidget(QWidget):
 		self.connect(self.tree, SIGNAL("currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)"), self.changeActive)
 
 	def changeActive(self, next, prev):
-		index = self.tree.indexOfTopLevelItem(next)
-		if not index == -1:
-			if next.data(0, Qt.UserRole).toInt()[0] == clientTreeWidget.Client:
-				connection = self.__connManager.getConnection(index)
-				self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
-			else:
+		if next is None:
+			self.infoWidget.unsetWidget()
+			self.emit(SIGNAL('clientChanged(int)'), -1)
+			return
+
+		polozka = next
+		cesta = []
+		while self.tree.indexFromItem(polozka).isValid():
+			cesta.append(polozka)
+			polozka = self.tree.itemFromIndex(self.tree.indexFromItem(polozka).parent())
+		cesta.reverse()
+
+		index = 0
+		connection = None
+		if len(cesta) >= 1:
+			index = self.tree.indexOfTopLevelItem(cesta[0])
+			connection = self.__connManager.getConnection(index)
+			self.emit(SIGNAL('clientChanged(int)'), index)
+			if connection is None:
 				self.infoWidget.unsetWidget()
-		else:
-			# druha uroven
-			if not self.tree.indexFromItem(next).parent().parent().isValid():
-				typ = next.data(0, Qt.UserRole).toString()
-				index = self.tree.indexFromItem(next).parent().row()
-				connection = self.__connManager.getConnection(index)
-				if typ == "cpu":
-					self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
-				if typ == "projects":
-					self.infoWidget.setWidget(infowidgets.projectsInfoWidget(connection))
-			elif self.tree.indexFromItem(next).parent().parent().isValid() and not self.tree.indexFromItem(next).parent().parent().parent().isValid():
-				parent = self.tree.itemFromIndex(self.tree.indexFromItem(next).parent())
-				if parent.data(0, Qt.UserRole).toString() == 'projects':
-					self.infoWidget.setWidget(QLabel("projekt?"))
+				self.tree.setCurrentItem(self.tree.topLevelItem(0))
+				self.emit(SIGNAL('clientChanged(int)'), -1)
+				return
+
+		if len(cesta) == 1:
+			self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
+		elif len(cesta) == 2:
+			pol = cesta[1]
+			typ = pol.data(0, Qt.UserRole).toString()
+			if typ == 'cpu':
+				self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
+			elif typ == 'projects':
+				self.infoWidget.setWidget(infowidgets.projectsInfoWidget(connection))
+		elif len(cesta) == 3:
+			pol = cesta[1]
+			typ = pol.data(0, Qt.UserRole).toString()
+			if typ == 'projects':
+				self.infoWidget.setWidget(QLabel(cesta[2].data(0, Qt.UserRole).toString()))

@@ -13,8 +13,6 @@ class projectTreeWidgetItem(QTreeWidgetItem):
 	pass
 
 class clientTreeWidget(QTreeWidget):
-	#konstanty
-	Client = 0
 
 	def __init__(self, connManager, parent = None):
 		QTreeWidget.__init__(self, parent)
@@ -28,7 +26,7 @@ class clientTreeWidget(QTreeWidget):
 
 	def addClient(self, clId):
 		item = clientTreeWidgetItem(self)
-		item.setData(0, Qt.UserRole, QVariant(self.Client))
+		item.setData(0, Qt.UserRole, QVariant("client"))
 		conn = self.connManager.getConnection(clId)
 		conn.treeItem = item
 		self.connect(conn, SIGNAL("connectStateChanged(int)"), self.__changeConnectionState)
@@ -112,9 +110,7 @@ class clientTreeWidget(QTreeWidget):
 			item.setData(0, Qt.DecorationRole, QVariant(icon))
 
 	def removeClient(self, clId):
-		item = self.topLevelItem(clId)
-		if not item == None:
-			self.removeItemWidget(item, 0)
+		self.takeTopLevelItem(clId)
 
 	def __updateProjectStatus(self, projects):
 		conn = self.sender()

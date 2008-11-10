@@ -9,8 +9,10 @@ import sys
 
 class MainWindow(QMainWindow):
 	connManager = None
+	__activeClient = -1
 	def __init__(self, manager, parent = None):
 		QMainWindow.__init__(self,  parent)
+		self.__activeClient = -1
 		self.connManager = manager
 		self.setWindowTitle(self.tr("Boinc gui"))
 		self.createActions()
@@ -39,22 +41,38 @@ class MainWindow(QMainWindow):
 
 	def createMainWin(self):
 		self.centralWidget = mainWidget(self.connManager)
+		self.connect(self.centralWidget, SIGNAL('clientChanged(int)'), self.changeClient)
 		self.setCentralWidget(self.centralWidget)
+
+	def changeClient(self, client):
+		self.__activeClient = client
+		if client == -1:
+			self.remClientAction.setEnabled(False);
+		else:
+			self.remClientAction.setEnabled(True);
 
 	def createActions(self):
 		self.addClientAction = QAction(self.tr("&Add Client"),  self)
+		self.remClientAction = QAction(self.tr("&Remove Client"),  self)
 		self.quitAction = QAction(self.tr("&Quit"), self)
 
 		#pridavame klavesove skratky
 		self.quitAction.setShortcut(QKeySequence(self.tr("Ctrl+Q")))
+		self.remClientAction.setEnabled(False);
 
 		#prepojime akcie so slotmi
 		self.connect(self.addClientAction, SIGNAL("triggered()"), self.showWizard)
+		self.connect(self.remClientAction, SIGNAL("triggered()"), self.removeClient)
 		self.connect(self.quitAction, SIGNAL("triggered()"), qApp, SLOT("quit()"))
+
+	def removeClient(self):
+		if self.__activeClient != -1:
+			self.connManager.removeConnection(self.__activeClient)
 
 	def createMenu(self):
 		fileMenu = self.menuBar().addMenu(self.tr("&File"))
 		fileMenu.addAction(self.addClientAction)
+		fileMenu.addAction(self.remClientAction)
 		fileMenu.addAction(self.quitAction)
 
 	def showWizard(self):
