@@ -17,7 +17,7 @@ class Connection:
 	__port = None
 	__sock = None
 
-	__sendQueue = Queue()
+	__sendQueue = None
 	__callback = None
 	
 	def __init__(self,  host,  port, queue, callback = None):
@@ -26,6 +26,7 @@ class Connection:
 		self.__commLock = thread.allocate_lock()
 		self.__queue = queue
 		self.__callback = callback
+		self.__sendQueue = Queue()
 		thread.start_new_thread(self.connectThread, (callback, ))
 
 
