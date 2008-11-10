@@ -35,9 +35,16 @@ class Interface:
 		self.__queue = queue
 
 	def __del__(self):
+		print("ok")
 		if not self.__conn is None:
 			del self.__conn
 			self.__conn = None
+
+	def disconnect(self):
+		self.__connStateFunc = None;
+		self.__queue = None;
+		self.__conn.disconnect()
+		del self.__conn
 
 	def boincConnect(self, connStateFunc = None):
 		self.__connStateFunc = connStateFunc

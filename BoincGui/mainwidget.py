@@ -56,8 +56,8 @@ class mainWidget(QWidget):
 			self.emit(SIGNAL('clientChanged(int)'), index)
 			if connection is None:
 				self.infoWidget.unsetWidget()
-				self.tree.setCurrentItem(self.tree.topLevelItem(0))
 				self.emit(SIGNAL('clientChanged(int)'), -1)
+				self.tree.setCurrentItem(self.tree.topLevelItem(0))
 				return
 
 		if len(cesta) == 1:

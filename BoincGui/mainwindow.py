@@ -1,11 +1,28 @@
-from PyQt4.QtCore import SIGNAL, SLOT
-from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget
+from PyQt4.QtCore import SIGNAL, SLOT, QThread
+from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox
 from addclientwizard import addClientWizard
 from mainwidget import mainWidget
 from Boinc.connection import BoincConnectionException
 from Boinc.interface import BoincCommException
-from threading import Thread
 import sys
+
+class ProcessQueeueThread(QThread):
+	def __init__(self, queue, parent = None):
+		QThread.__init__(self, parent)
+		self.queue = queue
+	def run(self):
+		while True:
+			item = self.queue.get()
+			if isinstance(item, Exception):
+				if isinstance(item, BoincConnectionException):
+					sys.stdout.write(self.tr(u"Connection error: %1").arg(item[0]))
+				elif isinstance(item, BoincCommException):
+					sys.stdout.write(self.tr(u"Communication error: %1").arg(item[0]))
+				elif isinstance(item, Exception):
+					sys.stdout.write(self.tr(u"Unknown error: %1").arg(item[0]))
+					raise item
+				sys.stdout.flush()
+			self.queue.task_done()
 
 class MainWindow(QMainWindow):
 	connManager = None
@@ -19,11 +36,13 @@ class MainWindow(QMainWindow):
 		self.createMenu()
 		self.createMainWin()
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
-		self.queueThread = Thread(target = self.processQueue, args = (self.connManager.queue(), ))
+		self.queueThread = ProcessQueeueThread(self.connManager.queue(), self)
 		self.queueThread.start()
 		self.connManager.loadConnections()
-		#self.connManager.addConnection(True, "/home/mirec/Documents/Moje/Programy/python/test", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56", True)
 		self.resize(800, 500)
+
+	def __del__(self):
+		print("ok")
 
 	def processQueue(self, queue):
 		while True:
@@ -67,7 +86,9 @@ class MainWindow(QMainWindow):
 
 	def removeClient(self):
 		if self.__activeClient != -1:
-			self.connManager.removeConnection(self.__activeClient)
+			btn = QMessageBox.question(self, self.tr("Remove Client"), self.tr("Are you sure that you want to remove client?"), QMessageBox.Yes|QMessageBox.No)
+			if btn == QMessageBox.Yes:
+				self.connManager.removeConnection(self.__activeClient)
 
 	def createMenu(self):
 		fileMenu = self.menuBar().addMenu(self.tr("&File"))

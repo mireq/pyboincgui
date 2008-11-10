@@ -5,9 +5,11 @@ from BoincGui.mainwindow import MainWindow
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator
 import sys
+import gc
 
 
 def main():
+	gc.set_debug(gc.DEBUG_UNCOLLECTABLE | gc.DEBUG_SAVEALL| gc.DEBUG_INSTANCES | gc.DEBUG_OBJECTS)
 	qtTranslator = QTranslator()
 	qtTranslator.load("qt_" + QLocale.system().name())
 	appTranslator = QTranslator()
@@ -23,6 +25,7 @@ def main():
 	win = MainWindow(cm)
 	win.show()
 	sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
 	main ()

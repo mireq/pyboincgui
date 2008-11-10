@@ -3,6 +3,7 @@ import sys
 import thread
 from Queue import Queue
 import time
+from threading import Thread, Lock
 
 class BoincConnectionException(Exception):
 	pass
@@ -19,7 +20,10 @@ class Connection:
 
 	__sendQueue = None
 	__callback = None
-	
+
+	__mutex = None
+	__thread = None
+
 	def __init__(self,  host,  port, queue, callback = None):
 		self.__host = host
 		self.__port = port
@@ -27,13 +31,21 @@ class Connection:
 		self.__queue = queue
 		self.__callback = callback
 		self.__sendQueue = Queue()
+		self.__mutex = Lock()
+		self.__thread = None
 		thread.start_new_thread(self.connectThread, (callback, ))
 
-
-	def __del__(self):
+	def disconnect(self):
+		self.__mutex.acquire()
+		#self.__thread.join()
+		self.__thread = None
+		self.__mutex.release()
 		if not self.__sock is None:
 			self.__sock.close()
 			self.__sock = None
+
+	def __del__(self):
+		print("odpojene")
 
 	def connectThread(self, callback):
 		try:
@@ -56,7 +68,11 @@ class Connection:
 				callback(BoincConnectionException(msg[1]))
 			return
 
-		thread.start_new_thread(self.sendDataThread, ())
+		self.__mutex.acquire()
+		#thread.start_new_thread(self.sendDataThread, ())
+		self.__thread = Thread(target = self.sendDataThread)
+		self.__thread.start()
+		self.__mutex.release()
 
 	def sendData(self, data, recvHandler = None, *params):
 		self.__sendQueue.put((data, recvHandler, params))
@@ -69,7 +85,7 @@ class Connection:
 					raise BoincConnectionException("Socket nebol nastaveny")
 
 				data = data + "\003"
-				#sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
+				sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
 				sys.stdout.flush()
 
 				while len(data) > 0:

@@ -69,10 +69,14 @@ class clientTreeWidget(QTreeWidget):
 		return subitems
 
 	def __removeSubNodes(self, item):
-		child = item.takeChild(0)
+		self.__removeSubNodesRecurs(item)
+
+	def __removeSubNodesRecurs(self, item):
+		child = item.child(0)
 		while not child is None:
+			self.__removeSubNodesRecurs(child)
 			item.removeChild(child)
-			child = item.takeChild(0)
+			child = item.child(0)
 
 	def __addSubNodeList(self, item, subNodes):
 		if len(subNodes) > 0:
@@ -110,6 +114,8 @@ class clientTreeWidget(QTreeWidget):
 			item.setData(0, Qt.DecorationRole, QVariant(icon))
 
 	def removeClient(self, clId):
+		item = self.topLevelItem(clId)
+		self.__removeSubNodes(item)
 		self.takeTopLevelItem(clId)
 
 	def __updateProjectStatus(self, projects):
