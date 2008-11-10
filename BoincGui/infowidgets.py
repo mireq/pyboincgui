@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor, QTabWidget
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor, QTabWidget, QTableWidget, QHeaderView, QTableWidgetItem
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
@@ -245,6 +245,7 @@ class projectsInfoWidget(infoWidget):
 	__mainLayout = None
 	__tabWidget = None
 	__chart = None
+	__table = None
 	__colors = [Qt.red, QColor(120, 160, 215), Qt.yellow, Qt.green, QColor(250, 125, 30), Qt.blue]
 	__angles = []
 
@@ -258,6 +259,17 @@ class projectsInfoWidget(infoWidget):
 		self.setMainLayout(self.__mainLayout, False)
 
 		self.__chart = PieChartFrame()
+		self.__table = QTableWidget()
+		self.__table.verticalHeader().hide()
+		self.__table.setColumnCount(3)
+		hh = self.__table.horizontalHeader()
+		hh.setResizeMode(QHeaderView.Stretch)
+		#self.__table.setHeaderData(0, Qt.Horizonatal, QVariant(self.tr("Project Name")), Qt.DiaplayRole)
+		self.__table.setHorizontalHeaderItem(0, QTableWidgetItem(self.tr("Project Name")))
+		self.__table.setHorizontalHeaderItem(1, QTableWidgetItem(self.tr("Project URL")))
+		self.__table.setHorizontalHeaderItem(2, QTableWidgetItem(self.tr("Resource Share")))
+
+		self.__tabWidget.addTab(self.__table, self.tr("&Projects"))
 		self.__tabWidget.addTab(self.__chart, self.tr("&Resources Share"))
 
 		projects = client.projectStatus()
@@ -287,7 +299,21 @@ class projectsInfoWidget(infoWidget):
 		self.__angles = self.__angles[0:len(projects)]
 		if update:
 			self.__chart.removeItems()
+			self.__table.setRowCount(len(projects))
 			for i in range(len(projects)):
+				#aktualizujeme tabulku
+				projectItem = QTableWidgetItem(projekt['project_name'])
+				projectItem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+				urlItem = QTableWidgetItem(projekt['master_url'])
+				urlItem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+				shareItem = QTableWidgetItem(str(round(float(projekt['resource_share']))))
+				shareItem.setFlags(Qt.ItemIsEnabled|Qt.ItemIsSelectable)
+
+				self.__table.setItem(i, 0, projectItem)
+				self.__table.setItem(i, 1, urlItem)
+				self.__table.setItem(i, 2, shareItem)
+
+				#aktualizujeme graf
 				projekt = projects[i]
 				angle = int(360.0 * 16.0 * (float(projekt['resource_share']) / full))
 				self.__chart.addItem(angle, projekt['project_name'], self.__colors[i])
