@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
 		self.queueThread = Thread(target = self.processQueue, args = (self.connManager.queue(), ))
 		self.queueThread.start()
 		self.connManager.loadConnections()
-		self.connManager.addConnection(True, "/home/mirec/Documents/Moje/Programy/python/test", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56", True)
+		#self.connManager.addConnection(True, "/home/mirec/Documents/Moje/Programy/python/test", "localhost", 31416, "a721410eeb1aefb913a3766a9297ce56", True)
 		self.resize(800, 500)
 
 	def processQueue(self, queue):

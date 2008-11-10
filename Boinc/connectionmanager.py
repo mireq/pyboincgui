@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QObject, QSettings, SIGNAL, QTimer
+from PyQt4.QtCore import QObject, QSettings, SIGNAL, QTimer, QVariant
 from interface import Interface
 from Boinc.connection import BoincConnectionException
 from Boinc.interface import BoincCommException
@@ -19,6 +19,17 @@ class BoincConnectionStruct(QObject):
 		self.__connected = 0
 		self.__bInterface = Interface(host, port, password, queue)
 		self.connect(self, SIGNAL('connectStateChanged(int)'), self.__updateConnectState)
+
+	def local(self):
+		return self.__local
+	def path(self):
+		return self.__path
+	def host(self):
+		return self.__host
+	def port(self):
+		return self.__port
+	def password(self):
+		return self.__password
 
 	def __updateConnectState(self, state):
 		if state == self.__bInterface.unauthorized or state == self.__bInterface.connected:
@@ -60,6 +71,7 @@ class BoincConnectionStruct(QObject):
 		return self.__port
 	def password(self):
 		return self.__password
+
 	def connected(self):
 		return self.__connected
 	def bInterface(self):
@@ -71,10 +83,30 @@ class ConnectionManager(QObject):
 	__queue = Queue.Queue(0)
 
 	def saveConnections(self):
-		pass
+		settings = QSettings(self)
+		settings.beginWriteArray("connections")
+		for i in range(len(self.connections)):
+			spojenie = self.connections[i]
+			settings.setArrayIndex(i)
+			settings.setValue("local", QVariant(bool(spojenie.local())))
+			settings.setValue("path",  QVariant(str(spojenie.path())))
+			settings.setValue("host",  QVariant(str(spojenie.host())))
+			settings.setValue("port",  QVariant(int(spojenie.port())))
+			settings.setValue("password", QVariant(str(spojenie.password())))
+		settings.endArray()
 
 	def loadConnections(self):
-		pass
+		settings = QSettings(self)
+		velkost = settings.beginReadArray("connections")
+		for i in range(velkost):
+			settings.setArrayIndex(i)
+			local = settings.value("local").toBool();
+			path  = settings.value("path").toString();
+			host  = settings.value("host").toString();
+			port  = settings.value("port").toInt()[0];
+			password = settings.value("password").toString()
+			self.addConnection(local, path, host, port, password)
+		settings.endArray()
 
 	def getConnection(self, index):
 		return self.connections[index]
