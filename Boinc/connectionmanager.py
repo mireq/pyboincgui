@@ -54,6 +54,12 @@ class BoincConnectionStruct(QObject):
 		self.__projectStatus = projects
 		self.emit(SIGNAL("projectStatus(PyQt_PyObject)"), projects)
 
+	def getState(self):
+		self.__bInterface.get_state(self.__recvState)
+
+	def __recvState(self, data):
+		self.emit(SIGNAL("getStateRecv(PyQt_PyObject)"), data)
+
 	def boincConnect(self):
 		self.__bInterface.boincConnect(self.__connectStateChanged)
 
@@ -131,7 +137,7 @@ class ConnectionManager(QObject):
 			conn = self.connections.pop(connId)
 			conn.boincDisconnect()
 			conn = None
-			#self.saveConnections()
+			self.saveConnections()
 
 	def addConnection(self, local, path, host, port, password, autoConnect = True):
 		conn = BoincConnectionStruct(local, path, host, port, password, self.__queue)
