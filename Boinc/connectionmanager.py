@@ -69,15 +69,20 @@ class BoincConnectionStruct(QObject):
 		else:
 			print odsadenie+node
 
-	def __updateProjectState(self, st):
-		self.__projectState = st
+	def __createArr(self, slovnik, kluc):
 		try:
 			#prevedieme na pole
-			if type(st['project']) == type({}):
-				val = st['project']
-				st['project'] = [val]
+			if type(slovnik[kluc]) == type({}):
+				val = slovnik[kluc]
+				slovnik[kluc] = [val]
 		except KeyError:
-			st['project'] = []
+			slovnik[kluc] = []
+
+	def __updateProjectState(self, st):
+		self.__projectState = st
+		self.__createArr(st, 'project')
+		self.__createArr(st, 'workunit')
+		self.__createArr(st, 'result')
 		self.emit(SIGNAL("projectState(PyQt_PyObject)"), st)
 
 	def getState(self):

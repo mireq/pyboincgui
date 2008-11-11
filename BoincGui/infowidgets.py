@@ -167,15 +167,20 @@ class clientInfoWidget(infoWidget):
 		str = self.__getConnStateString(conn)
 		self.__stateLabelInf.setText(str)
 		if conn == Interface.connected or conn == Interface.unauthorized:
-			self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
-			self.__client.getState()
+			projects = self.__client.projectState()
+			if not projects is None:
+				self.__newClientState(projects)
+			else:
+				self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
+				self.__client.getState()
 
 	def __newClientState(self, state):
 		# odstranime vsetkych potomkov
 		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
 		potomok = self.__advClientInfoLayout.takeAt(0)
 		while not potomok is None:
-			self.__advClientInfoLayout.removeWidget(potomok)
+			#self.__advClientInfoLayout.removeWidget(potomok)
+			del(potomok)
 			potomok = self.__advClientInfoLayout.takeAt(0)
 
 		self.__advClientInfoLayout.addWidget(QLabel(self.tr("Host:")), 0, 0)
@@ -255,8 +260,14 @@ class cpuInfoWidget(infoWidget):
 		self.setMainLayout(self.__mainLayout)
 		self.connect(self, SIGNAL('newClientState(PyQt_PyObject)'), self.__updateClientState)
 		#self.__client.bInterface().get_state(self.__changeState)
-		self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
-		self.__client.getState()
+
+		projects = self.__client.projectState()
+		if not projects is None:
+			self.__updateClientState(projects)
+		else:
+			self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
+			self.__client.getState()
+
 
 	def __updateClientState(self, state):
 		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
