@@ -18,12 +18,11 @@ class ProcessQueeueThread(QThread):
 				return
 			if isinstance(item, Exception):
 				if isinstance(item, BoincConnectionException):
-					sys.stdout.write(self.tr(u"Connection error: %1").arg(item[0]))
+					sys.stdout.write(self.tr(u"Connection error: %1\n").arg(item[0]))
 				elif isinstance(item, BoincCommException):
-					sys.stdout.write(self.tr(u"Communication error: %1").arg(item[0]))
+					sys.stdout.write(self.tr(u"Communication error: %1\n").arg(item[0]))
 				elif isinstance(item, Exception):
-					sys.stdout.write(self.tr(u"Unknown error: %1").arg(item[0]))
-					raise item
+					sys.stdout.write(self.tr(u"Unknown error: %1\n").arg(item[0]))
 				sys.stdout.flush()
 			self.queue.task_done()
 

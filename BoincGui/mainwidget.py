@@ -18,7 +18,8 @@ class infoStackWidget(QStackedWidget):
 	def unsetWidget(self):
 		if not self.currentWidget is None:
 			self.removeWidget(self.currentWidget)
-			self.currentWidget.setParent(None)
+			#self.currentWidget.setParent(None)
+			self.currentWidget.deleteLater()
 		self.currentWidget = None
 
 class mainWidget(QWidget):
@@ -73,4 +74,4 @@ class mainWidget(QWidget):
 			pol = cesta[1]
 			typ = pol.data(0, Qt.UserRole).toString()
 			if typ == 'projects':
-				self.infoWidget.setWidget(QLabel(cesta[2].data(0, Qt.UserRole).toString()))
+				self.infoWidget.setWidget(infowidgets.projectInfoWidget(connection, cesta[2]))

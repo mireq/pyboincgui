@@ -143,10 +143,13 @@ class clientInfoWidget(infoWidget):
 		str = self.__getConnStateString(conn)
 		self.__stateLabelInf.setText(str)
 		if conn == Interface.connected or conn == Interface.unauthorized:
-			self.__client.bInterface().get_state(self.__changeState)
+			#self.__client.bInterface().get_state(self.__changeState)
+			self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
+			self.__client.getState()
 
 	def __newClientState(self, state):
 		# odstranime vsetkych potomkov
+		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
 		potomok = self.__advClientInfoLayout.takeAt(0)
 		while not potomok is None:
 			self.__advClientInfoLayout.removeWidget(potomok)
@@ -182,9 +185,6 @@ class clientInfoWidget(infoWidget):
 		clientVersion.setTextFormat(Qt.PlainText)
 		clientVersion.setWordWrap(True)
 		self.__advClientInfoLayout.addWidget(clientVersion, 4, 1)
-
-	def __changeState(self, state):
-		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
 
 
 class cpuInfoWidget(infoWidget):
@@ -231,16 +231,17 @@ class cpuInfoWidget(infoWidget):
 		self.setTitle(titleFrame(self.tr("CPU Info")))
 		self.setMainLayout(self.__mainLayout)
 		self.connect(self, SIGNAL('newClientState(PyQt_PyObject)'), self.__updateClientState)
-		self.__client.bInterface().get_state(self.__changeState)
+		#self.__client.bInterface().get_state(self.__changeState)
+		self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
+		self.__client.getState()
 
 	def __updateClientState(self, state):
+		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
 		self.__vendorLabel.setText(state['host_info']['p_vendor'])
 		self.__modelLabel.setText(state['host_info']['p_model'])
 		self.__ncpusLabel.setText(state['host_info']['p_ncpus'])
 		self.__featuresLabel.setText(state['host_info']['p_features'])
 
-	def __changeState(self, state):
-		self.emit(SIGNAL("newClientState(PyQt_PyObject)"), state)
 
 class projectsInfoWidget(infoWidget):
 	__mainLayout = None
@@ -321,3 +322,35 @@ class projectsInfoWidget(infoWidget):
 				i = i + 1
 				if i >= len(self.__colors):
 					i = 0
+
+class projectInfoWidget(infoWidget):
+	__master_url = ""
+	__projectCached = None
+
+	def __init__(self, client, project, parent = None):
+		infoWidget.__init__(self, parent)
+
+		self.__master_url = project.data(0, Qt.UserRole).toString()
+		self.__projectCached = None
+
+		projects = client.projectStatus()
+		if not projects is None:
+			self.updateProjects(projects)
+		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
+
+	def updateProjects(self, projects):
+		project = None
+
+		for proj in projects:
+			if proj['master_url'] == self.__master_url:
+				project = proj
+				break
+
+		# ak sme nenasli projekt
+		if project is None:
+			return
+
+		if project != self.__projectCached:
+			self.__projectCached = project
+			pass
+
