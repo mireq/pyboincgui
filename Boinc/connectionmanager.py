@@ -20,6 +20,7 @@ class BoincConnectionStruct(QObject):
 		self.__updateTimer = None
 		self.__projectState = None
 		self.connect(self, SIGNAL('connectStateChanged(int)'), self.__updateConnectState)
+		self.connect(self, SIGNAL('projectState(PyQt_PyObject)'), self.__startTimer)
 
 	def local(self):
 		return self.__local
@@ -38,16 +39,19 @@ class BoincConnectionStruct(QObject):
 				self.__updateTimer = QTimer(self)
 				self.connect(self.__updateTimer, SIGNAL('timeout()'), self.__startUpdateProjectState)
 				self.__startUpdateProjectState()
-				self.__updateTimer.start(1000)
 		else:
 			if not self.__updateTimer is None:
 				self.__updateTimer.stop()
 				self.__updateTimer = None
 
+	def __startTimer(self):
+		self.__updateTimer.start(1000)
+
 	def projectState(self):
 		return self.__projectState
 
 	def __startUpdateProjectState(self):
+		self.__updateTimer.stop()
 		self.__bInterface.get_state(self.__updateProjectState)
 
 	def __printTree(self, node, odsadenie = "  "):
