@@ -6,6 +6,7 @@ from Boinc.interface import Interface
 from piechart import PieChartFrame
 from os import execlp, fork
 from platform import system
+import os
 
 class urlAction(QAction):
 	__url = ""
@@ -20,6 +21,8 @@ class urlAction(QAction):
 		pid = fork()
 		if pid == 0:
 			s = system()
+			if os.name == 'mac':
+				execlp('open', 'open', self.__url)
 			if s == "Windows":
 				execlp('start', 'start', self.__url)
 			else:
