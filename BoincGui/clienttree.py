@@ -12,6 +12,9 @@ class clientSubTreeWidgetItem(QTreeWidgetItem):
 class projectTreeWidgetItem(QTreeWidgetItem):
 	pass
 
+class workunitTreeWidgetItem(QTreeWidgetItem):
+	pass
+
 class clientTreeWidget(QTreeWidget):
 
 	def __init__(self, connManager, parent = None):
@@ -128,21 +131,21 @@ class clientTreeWidget(QTreeWidget):
 					self.__updateProjectsList(projects, potomok)
 
 	def __updateProjectsList(self, projects, projektyUzol):
-		pridat  = []
 		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
-		odobrat = []
+		pridat  = []
 		"""Zoznam poloziek ktore sa maju oodbrat - QTreeWidgetItem"""
-		polozky = []
+		odobrat = []
 		"""Zoznam projektov ktore su v zozname - string, master_url"""
-		zozProj = []
+		polozky = []
 		"""Zoznam aktualnych projektov - string"""
+		projAct = []
 
 		for poradie in range(projektyUzol.childCount()):
 			projekt = projektyUzol.child(poradie)
 			polozky.append(projekt.data(0, Qt.UserRole).toString())
 
 		for projekt in projects['project']:
-			zozProj.append(projekt['master_url'])
+			projAct.append(projekt['master_url'])
 			try:
 				i = polozky.index(projekt['master_url'])
 			except ValueError:
@@ -151,7 +154,7 @@ class clientTreeWidget(QTreeWidget):
 		for poradie in range(projektyUzol.childCount()):
 			projekt = projektyUzol.child(poradie)
 			try:
-				i = zozProj.index(projekt.data(0, Qt.UserRole).toString())
+				i = projAct.index(projekt.data(0, Qt.UserRole).toString())
 			except ValueError:
 				odobrat.append(projekt)
 
@@ -164,6 +167,49 @@ class clientTreeWidget(QTreeWidget):
 
 		self.__removeSubNodeList(projektyUzol, odobrat)
 		self.__addSubNodeList(projektyUzol, pridat)
+
+		for poradie in range(projektyUzol.childCount()):
+			self.__updateWorkUnitsList(projects, projektyUzol.child(poradie))
+
+
+	def __updateWorkUnitsList(self, info, uzol):
+		pridat  = []
+		odobrat = []
+		polozky = []
+		resAct  = {}
+
+		for poradie in range(uzol.childCount()):
+			polozka = uzol.child(poradie)
+			polozky.append(polozka.data(0, Qt.UserRole).toString())
+
+		master_url = uzol.data(0, Qt.UserRole).toString()
+		for res in info['result']:
+			if res['project_url'] == master_url:
+				resAct[res['name']] = res
+
+
+		k = resAct.keys()
+		for poradie in range(uzol.childCount()):
+			try:
+				polozka = uzol.child(poradie)
+				i = k.index(polozka.data(0, Qt.UserRole).toString())
+			except ValueError:
+				odobrat.append(polozka)
+
+		for k in resAct.keys():
+			try:
+				i = polozky.index(k)
+			except ValueError:
+				pridat.append(k)
+
+		for i in range(len(pridat)):
+			projectItem = workunitTreeWidgetItem()
+			projectItem.setData(0, Qt.DisplayRole, QVariant(pridat[i]))
+			projectItem.setData(0, Qt.UserRole, QVariant(pridat[i]))
+			pridat[i] = projectItem
+
+		self.__removeSubNodeList(uzol, odobrat)
+		self.__addSubNodeList(uzol, pridat)
 
 	def sizeHint(self):
 		return QSize(250, 100)
