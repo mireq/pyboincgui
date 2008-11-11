@@ -21,6 +21,9 @@ class PieChart(QWidget):
 		self.__startAngle = 0
 		for polozka in self.__polozky:
 			self.kresliPolozku(painter, size, polozka[0], polozka[1], polozka[2])
+		self.__startAngle = 0
+		for polozka in self.__polozky:
+			self.kresliText(painter, size, polozka[0], polozka[1], polozka[2])
 
 	def kresliPolozku(self, painter, size, angle, nazov, color):
 		col1 = QColor(color)
@@ -36,8 +39,10 @@ class PieChart(QWidget):
 		painter.setPen(Qt.NoPen)
 		painter.setBrush(gradient)
 		painter.drawPie(QRect(20, 20, size.width() - 40, size.height() - 40), self.__startAngle, angle)
+		self.__startAngle = self.__startAngle + angle
 
 
+	def kresliText(self, painter, size, angle, nazov, color):
 		x = 0;
 		y = 0;
 
