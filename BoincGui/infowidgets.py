@@ -5,6 +5,7 @@ from titleframe import titleFrame
 from Boinc.interface import Interface
 from piechart import PieChartFrame
 from os import execlp, fork
+from platform import system
 
 class urlAction(QAction):
 	__url = ""
@@ -18,7 +19,11 @@ class urlAction(QAction):
 	def openUrl(self):
 		pid = fork()
 		if pid == 0:
-			execlp('xdg-open', 'xdg-open', self.__url)
+			s = system()
+			if s == "Windows":
+				execlp('start', 'start', self.__url)
+			else:
+				execlp('xdg-open', 'xdg-open', self.__url)
 
 class infoWidget(QWidget):
 
