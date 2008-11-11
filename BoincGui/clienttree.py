@@ -30,7 +30,7 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.connManager.getConnection(clId)
 		conn.treeItem = item
 		self.connect(conn, SIGNAL("connectStateChanged(int)"), self.__changeConnectionState)
-		self.connect(conn, SIGNAL("projectStatus(PyQt_PyObject)"), self.__updateProjectStatus)
+		self.connect(conn, SIGNAL("projectState(PyQt_PyObject)"), self.__updateProjectStatus)
 		self.__changeConnectionState(conn.connected(), conn)
 		self.addTopLevelItem(item)
 
@@ -141,7 +141,7 @@ class clientTreeWidget(QTreeWidget):
 			projekt = projektyUzol.child(poradie)
 			polozky.append(projekt.data(0, Qt.UserRole).toString())
 
-		for projekt in projects:
+		for projekt in projects['project']:
 			zozProj.append(projekt['master_url'])
 			try:
 				i = polozky.index(projekt['master_url'])

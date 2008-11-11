@@ -167,7 +167,6 @@ class clientInfoWidget(infoWidget):
 		str = self.__getConnStateString(conn)
 		self.__stateLabelInf.setText(str)
 		if conn == Interface.connected or conn == Interface.unauthorized:
-			#self.__client.bInterface().get_state(self.__changeState)
 			self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
 			self.__client.getState()
 
@@ -298,12 +297,13 @@ class projectsInfoWidget(infoWidget):
 		self.__tabWidget.addTab(self.__table, self.tr("&Projects"))
 		self.__tabWidget.addTab(self.__chart, self.tr("&Resources Share"))
 
-		projects = client.projectStatus()
+		projects = client.projectState()
 		if not projects is None:
 			self.updateProjects(projects)
-		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
+		self.connect(client, SIGNAL("projectState(PyQt_PyObject)"), self.updateProjects)
 
 	def updateProjects(self, projects):
+		projects = projects['project']
 		#self.__chart.removeItems()
 		update = False
 		i = 0
@@ -451,10 +451,10 @@ class projectInfoWidget(infoWidget):
 		self.__projectLinksButton.setPopupMode(QToolButton.InstantPopup)
 		self.__projectLinksButton.setMenu(self.__projectLinksMenu)
 
-		projects = client.projectStatus()
+		projects = client.projectState()
 		if not projects is None:
 			self.updateProjects(projects)
-		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
+		self.connect(client, SIGNAL("projectState(PyQt_PyObject)"), self.updateProjects)
 
 
 
@@ -470,6 +470,7 @@ class projectInfoWidget(infoWidget):
 			label.hide()
 
 	def updateProjects(self, projects):
+		projects = projects['project']
 		project = None
 
 		for proj in projects:

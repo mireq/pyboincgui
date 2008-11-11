@@ -94,7 +94,7 @@ class Connection:
 				sys.stdout.flush()
 
 				while len(data) > 0:
-					time.sleep(0.03)
+					time.sleep(0.01)
 					ns = self.__sock.send(data)
 					data = data[ns:]
 
@@ -116,7 +116,7 @@ class Connection:
 
 				string = rec
 				while rec[-1] != "\003":
-					time.sleep(0.03)
+					time.sleep(0.01)
 					rec = self.__sock.recv(1024)
 					string = string + rec
 

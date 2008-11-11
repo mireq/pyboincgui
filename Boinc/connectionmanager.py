@@ -18,7 +18,7 @@ class BoincConnectionStruct(QObject):
 		self.__connected = 0
 		self.__bInterface = Interface(host, port, password, queue)
 		self.__updateTimer = None
-		self.__projectStatus = None
+		self.__projectState = None
 		self.connect(self, SIGNAL('connectStateChanged(int)'), self.__updateConnectState)
 
 	def local(self):
@@ -36,23 +36,45 @@ class BoincConnectionStruct(QObject):
 		if state == self.__bInterface.unauthorized or state == self.__bInterface.connected:
 			if self.__updateTimer is None:
 				self.__updateTimer = QTimer(self)
-				self.connect(self.__updateTimer, SIGNAL('timeout()'), self.__startUpdateProjectStatus)
-				self.__startUpdateProjectStatus()
+				self.connect(self.__updateTimer, SIGNAL('timeout()'), self.__startUpdateProjectState)
+				self.__startUpdateProjectState()
 				self.__updateTimer.start(1000)
 		else:
 			if not self.__updateTimer is None:
 				self.__updateTimer.stop()
 				self.__updateTimer = None
 
-	def projectStatus(self):
-		return self.__projectStatus
+	def projectState(self):
+		return self.__projectState
 
-	def __startUpdateProjectStatus(self):
-		self.__bInterface.get_project_status(self.__updateProjectStatus)
+	def __startUpdateProjectState(self):
+		self.__bInterface.get_state(self.__updateProjectState)
 
-	def __updateProjectStatus(self, projects):
-		self.__projectStatus = projects
-		self.emit(SIGNAL("projectStatus(PyQt_PyObject)"), projects)
+	def __printTree(self, node, odsadenie = "  "):
+		if type(node) == type({}):
+			keys = node.keys()
+			for key in keys:
+				print(odsadenie + key + ":")
+				self.__printTree(node[key], odsadenie + "  ")
+			print(odsadenie + "------------")
+		elif type(node) == type([]):
+			print(odsadenie + '[')
+			for child in node:
+				self.__printTree(child, odsadenie + "  ")
+			print(odsadenie + ']')
+		else:
+			print odsadenie+node
+
+	def __updateProjectState(self, st):
+		self.__projectState = st
+		try:
+			#prevedieme na pole
+			if type(st['project']) == type({}):
+				val = st['project']
+				st['project'] = [val]
+		except KeyError:
+			st['project'] = []
+		self.emit(SIGNAL("projectState(PyQt_PyObject)"), st)
 
 	def getState(self):
 		self.__bInterface.get_state(self.__recvState)
