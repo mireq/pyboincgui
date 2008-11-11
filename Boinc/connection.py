@@ -90,7 +90,7 @@ class Connection:
 					return
 
 				data = data + "\003"
-				#sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
+				sys.stdout.write("\033[1;32m"+data+"\033[0m\n")
 				sys.stdout.flush()
 
 				while len(data) > 0:
@@ -124,7 +124,7 @@ class Connection:
 					if self.__quit:
 						return
 
-				#sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
+				sys.stdout.write("\033[1;33m"+string+"\033[0m\n")
 				sys.stdout.flush()
 				if not recvHandler is None:
 					params = (string[:-1], ) + params

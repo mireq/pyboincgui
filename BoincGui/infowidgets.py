@@ -1,9 +1,24 @@
 # -*- coding: UTF-8 -*-
-from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QScrollArea, QFrame, QGroupBox, QColor, QTabWidget, QTableWidget, QHeaderView, QTableWidgetItem
+from PyQt4.QtGui import QWidget, QLabel, QGridLayout, QVBoxLayout, QHBoxLayout, QScrollArea, QFrame, QGroupBox, QColor, QTabWidget, QTableWidget, QHeaderView, QTableWidgetItem, QToolButton, QMenu, QAction
 from PyQt4.QtCore import QString, Qt, SIGNAL
 from titleframe import titleFrame
 from Boinc.interface import Interface
 from piechart import PieChartFrame
+from os import execlp, fork
+
+class urlAction(QAction):
+	__url = ""
+	def __init__(self, url, name, description, parent):
+		QAction.__init__(self, name, parent)
+		self.setToolTip(description)
+		self.setStatusTip(description)
+		self.__url = url
+		self.connect(self, SIGNAL("triggered()"), self.openUrl)
+
+	def openUrl(self):
+		pid = fork()
+		if pid == 0:
+			execlp('xdg-open', 'xdg-open', self.__url)
 
 class infoWidget(QWidget):
 
@@ -56,6 +71,7 @@ class infoWidget(QWidget):
 	def setTitle(self, title):
 		if not self.__title is None:
 			self.__mainLayout.removeWidget(self.__title)
+			self.__title.deleteLater()
 
 		if not title is None:
 			self.__mainLayout.insertWidget(0, title)
@@ -327,16 +343,123 @@ class projectInfoWidget(infoWidget):
 	__master_url = ""
 	__projectCached = None
 
+	__mainLayout = None
+
+	__projectInfo = None
+	__projectInfoLayout = None
+	__projectLinks = None
+
+	#informacie o projekte
+	__masterUrlLabel       = None
+	__masterUrlText        = None
+	__projectNameLabel     = None
+	__projectNameText      = None
+	__userNameLabel        = None
+	__userNameText         = None
+	__teamNameLabel        = None
+	__teamNameText         = None
+	__userTotalCreditLabel = None
+	__userTotalCreditText  = None
+	__hostTotalCreditLabel = None
+	__hostTotalCreditText  = None
+
+	__projectLinksButton = None
+	__projectLinksMenu   = None
+
 	def __init__(self, client, project, parent = None):
 		infoWidget.__init__(self, parent)
 
+		self.__mainLayout = QGridLayout()
+		self.__mainLayout.setRowStretch(1, 1)
+		self.setMainLayout(self.__mainLayout)
+
+		self.__projectInfo = QGroupBox(self.tr("Project Info"));
+		self.__projectInfoLayout = QGridLayout()
+		self.__projectInfo.setLayout(self.__projectInfoLayout)
+
+		self.__projectLinks = QHBoxLayout()
+		self.__projectLinksButton = QToolButton()
+		self.__projectLinksButton.setText(self.tr("Project Links"))
+		self.__projectLinksButton.hide()
+		self.__projectLinks.addWidget(self.__projectLinksButton)
+		self.__projectLinks.addStretch(1)
+
+		self.__mainLayout.addWidget(self.__projectInfo, 0, 0)
+		self.__mainLayout.addLayout(self.__projectLinks, 2, 0)
+
+		self.__masterUrlLabel       = QLabel(self.tr("Master URL"))
+		self.__projectNameLabel     = QLabel(self.tr("Project Name"))
+		self.__userNameLabel        = QLabel(self.tr("User Name"))
+		self.__teamNameLabel        = QLabel(self.tr("Team Name"))
+		self.__userTotalCreditLabel = QLabel(self.tr("Total User Credits"))
+		self.__hostTotalCreditLabel = QLabel(self.tr("Total Host Credits"))
+
+		self.__masterUrlText       = QLabel()
+		self.__projectNameText     = QLabel()
+		self.__userNameText        = QLabel()
+		self.__teamNameText        = QLabel()
+		self.__userTotalCreditText = QLabel()
+		self.__hostTotalCreditText = QLabel()
+
+		self.__masterUrlText.setTextFormat(Qt.PlainText)
+		self.__projectNameText.setTextFormat(Qt.PlainText)
+		self.__userNameText.setTextFormat(Qt.PlainText)
+		self.__teamNameText.setTextFormat(Qt.PlainText)
+		self.__userTotalCreditText.setTextFormat(Qt.PlainText)
+		self.__hostTotalCreditText.setTextFormat(Qt.PlainText)
+
+		self.__masterUrlLabel.hide()
+		self.__projectNameLabel.hide()
+		self.__userNameLabel.hide()
+		self.__teamNameLabel.hide()
+		self.__userTotalCreditLabel.hide()
+		self.__hostTotalCreditLabel.hide()
+
+		self.__masterUrlText.hide()
+		self.__projectNameText.hide()
+		self.__userNameText.hide()
+		self.__teamNameText.hide()
+		self.__userTotalCreditText.hide()
+		self.__hostTotalCreditText.hide()
+
+		self.__projectInfoLayout.addWidget(self.__masterUrlLabel,        0, 0)
+		self.__projectInfoLayout.addWidget(self.__projectNameLabel,      1, 0)
+		self.__projectInfoLayout.addWidget(self.__userNameLabel,         2, 0)
+		self.__projectInfoLayout.addWidget(self.__teamNameLabel,         3, 0)
+		self.__projectInfoLayout.addWidget(self.__userTotalCreditLabel, 4, 0)
+		self.__projectInfoLayout.addWidget(self.__hostTotalCreditLabel, 5, 0)
+
+		self.__projectInfoLayout.addWidget(self.__masterUrlText,        0, 1)
+		self.__projectInfoLayout.addWidget(self.__projectNameText,      1, 1)
+		self.__projectInfoLayout.addWidget(self.__userNameText,         2, 1)
+		self.__projectInfoLayout.addWidget(self.__teamNameText,         3, 1)
+		self.__projectInfoLayout.addWidget(self.__userTotalCreditText, 4, 1)
+		self.__projectInfoLayout.addWidget(self.__hostTotalCreditText, 5, 1)
+
 		self.__master_url = project.data(0, Qt.UserRole).toString()
 		self.__projectCached = None
+
+		self.__projectLinksMenu = QMenu()
+		self.__projectLinksButton.setPopupMode(QToolButton.InstantPopup)
+		self.__projectLinksButton.setMenu(self.__projectLinksMenu)
 
 		projects = client.projectStatus()
 		if not projects is None:
 			self.updateProjects(projects)
 		self.connect(client, SIGNAL("projectStatus(PyQt_PyObject)"), self.updateProjects)
+
+
+
+	def __changeLabels(self, project, key, label, text):
+		try:
+			inf = project[key]
+			if type(inf) == type(u""):
+				text.setText(inf)
+				text.show()
+				label.show()
+		except KeyError:
+			text.hide()
+			label.hide()
 
 	def updateProjects(self, projects):
 		project = None
@@ -352,5 +475,40 @@ class projectInfoWidget(infoWidget):
 
 		if project != self.__projectCached:
 			self.__projectCached = project
-			pass
+			try:
+				self.setTitle(titleFrame(project['project_name']))
+			except KeyError:
+				pass
+
+			self.__changeLabels(project, 'master_url', self.__masterUrlLabel, self.__masterUrlText)
+			self.__changeLabels(project, 'project_name', self.__projectNameLabel, self.__projectNameText)
+			self.__changeLabels(project, 'user_name', self.__userNameLabel, self.__userNameText)
+			self.__changeLabels(project, 'team_name', self.__teamNameLabel, self.__teamNameText)
+			self.__changeLabels(project, 'user_total_credit', self.__userTotalCreditLabel, self.__userTotalCreditText)
+			self.__changeLabels(project, 'host_total_credit', self.__hostTotalCreditLabel, self.__hostTotalCreditText)
+
+			try:
+				self.__projectLinksMenu.clear()
+				guiUrls = project['gui_urls']['gui_url']
+
+				if type(guiUrls) == type({}):
+					self.__projectLinksMenu.addAction(urlAction(guiUrls['url'], guiUrls['name'], guiUrls['description'], self.__projectLinksMenu))
+				else:
+					for url in guiUrls:
+						self.__projectLinksMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectLinksMenu))
+
+				try:
+					ifTeamUrls = project['gui_urls']['ifteam']['gui_url']
+					self.__projectLinksMenu.addSeparator()
+					if type(ifTeamUrls) == type({}):
+						self.__projectLinksMenu.addAction(urlAction(ifTeamUrls['url'], ifTeamUrls['name'], ifTeamUrls['description'], self.__projectLinksMenu))
+					else:
+						for url in ifTeamUrls:
+							self.__projectLinksMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectLinksMenu))
+				except KeyError, msg:
+					pass
+				self.__projectLinksButton.show()
+			except KeyError:
+				self.__projectLinksButton.hide()
+
 

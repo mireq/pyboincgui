@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="sk">
-<defaultcodec></defaultcodec>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="17"/>
+        <location filename="BoincGui/mainwindow.py" line="39"/>
         <source>Boinc gui</source>
         <translation>Boinc gui</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="21"/>
+        <location filename="BoincGui/mainwindow.py" line="43"/>
         <source>Ready</source>
         <translation>Pripravený</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="55"/>
+        <location filename="BoincGui/mainwindow.py" line="70"/>
         <source>&amp;Add Client</source>
         <translation>&amp;Pridať klienta</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="57"/>
+        <location filename="BoincGui/mainwindow.py" line="72"/>
         <source>&amp;Quit</source>
         <translation>&amp;Koniec</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="60"/>
+        <location filename="BoincGui/mainwindow.py" line="75"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="75"/>
+        <location filename="BoincGui/mainwindow.py" line="90"/>
         <source>&amp;File</source>
         <translation>&amp;Súbor</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="56"/>
+        <location filename="BoincGui/mainwindow.py" line="71"/>
         <source>&amp;Remove Client</source>
         <translation>&amp;Odstrániť klienta</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="70"/>
+        <location filename="BoincGui/mainwindow.py" line="85"/>
         <source>Remove Client</source>
         <translation>Odstrániť klienta</translation>
     </message>
     <message>
-        <location filename="BoincGui/mainwindow.py" line="70"/>
+        <location filename="BoincGui/mainwindow.py" line="85"/>
         <source>Are you sure that you want to remove client?</source>
         <translation>Ste si istí, že chcete odstrániť klienta?</translation>
     </message>
@@ -60,87 +59,87 @@
 <context>
     <name>clientInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="75"/>
+        <location filename="BoincGui/infowidgets.py" line="91"/>
         <source>Yes</source>
         <translation>Áno</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="78"/>
+        <location filename="BoincGui/infowidgets.py" line="94"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="155"/>
+        <location filename="BoincGui/infowidgets.py" line="174"/>
         <source>Host:</source>
         <translation>Host:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="79"/>
+        <location filename="BoincGui/infowidgets.py" line="95"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="80"/>
+        <location filename="BoincGui/infowidgets.py" line="96"/>
         <source>Local client:</source>
         <translation>Lokálny klient:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="81"/>
+        <location filename="BoincGui/infowidgets.py" line="97"/>
         <source>Client state:</source>
         <translation>Stav klienta:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="112"/>
+        <location filename="BoincGui/infowidgets.py" line="128"/>
         <source>Connection details</source>
         <translation>Podrobnosti o spojení</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="115"/>
+        <location filename="BoincGui/infowidgets.py" line="131"/>
         <source>Client Details</source>
         <translation>Podrobnosti o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="119"/>
+        <location filename="BoincGui/infowidgets.py" line="135"/>
         <source>Informamtions about Client</source>
         <translation>Informácie o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="134"/>
+        <location filename="BoincGui/infowidgets.py" line="150"/>
         <source>connected</source>
         <translation>pripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="136"/>
+        <location filename="BoincGui/infowidgets.py" line="152"/>
         <source>connecting</source>
         <translation>pripája sa</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="138"/>
+        <location filename="BoincGui/infowidgets.py" line="154"/>
         <source>disconnected</source>
         <translation>nepripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="141"/>
+        <location filename="BoincGui/infowidgets.py" line="157"/>
         <source>unauthorized</source>
         <translation>neautorizovaný</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="161"/>
+        <location filename="BoincGui/infowidgets.py" line="180"/>
         <source>OS Name:</source>
         <translation>Operačný systém:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="167"/>
+        <location filename="BoincGui/infowidgets.py" line="186"/>
         <source>OS Version:</source>
         <translation>Verzia operačného systému:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="173"/>
+        <location filename="BoincGui/infowidgets.py" line="192"/>
         <source>Platform:</source>
         <translation>Platforma:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="179"/>
+        <location filename="BoincGui/infowidgets.py" line="198"/>
         <source>Client Version:</source>
         <translation>Verzia klienta:</translation>
     </message>
@@ -234,27 +233,27 @@
 <context>
     <name>cpuInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="219"/>
+        <location filename="BoincGui/infowidgets.py" line="236"/>
         <source>Vendor: </source>
         <translation>Značka:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="221"/>
+        <location filename="BoincGui/infowidgets.py" line="238"/>
         <source>Model: </source>
         <translation>Model:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="223"/>
+        <location filename="BoincGui/infowidgets.py" line="240"/>
         <source>Number of CPUs:</source>
         <translation>Počet CPU:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="225"/>
+        <location filename="BoincGui/infowidgets.py" line="242"/>
         <source>Features: </source>
         <translation>Vlastnosti:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="230"/>
+        <location filename="BoincGui/infowidgets.py" line="247"/>
         <source>CPU Info</source>
         <translation>Informácie o CPU</translation>
     </message>
@@ -283,29 +282,72 @@
     </message>
 </context>
 <context>
+    <name>projectInfoWidget</name>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="376"/>
+        <source>Project Info</source>
+        <translation>Informácie o projekte</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="382"/>
+        <source>Project Links</source>
+        <translation>Odkazy</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="390"/>
+        <source>Master URL</source>
+        <translation>URL projektu</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="391"/>
+        <source>Project Name</source>
+        <translation>Projekt</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="392"/>
+        <source>User Name</source>
+        <translation>Meno užívateľa</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="393"/>
+        <source>Team Name</source>
+        <translation>Názov teamu</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="394"/>
+        <source>Total User Credits</source>
+        <translation>Celkový počet kreditov užívateľa</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/infowidgets.py" line="395"/>
+        <source>Total Host Credits</source>
+        <translation>Počet kreditov na tomto stroji</translation>
+    </message>
+</context>
+<context>
     <name>projectsInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="268"/>
+        <location filename="BoincGui/infowidgets.py" line="286"/>
         <source>Project Name</source>
         <translation>Názov projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="269"/>
+        <location filename="BoincGui/infowidgets.py" line="287"/>
         <source>Project URL</source>
         <translation>URL projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="270"/>
+        <location filename="BoincGui/infowidgets.py" line="288"/>
         <source>Resource Share</source>
         <translation>Zdieľanie zdrojov</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="272"/>
+        <location filename="BoincGui/infowidgets.py" line="290"/>
         <source>&amp;Projects</source>
         <translation>&amp;Projekty</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="273"/>
+        <location filename="BoincGui/infowidgets.py" line="291"/>
         <source>&amp;Resources Share</source>
         <translation>&amp;Zdieľanie zdrojov</translation>
     </message>
