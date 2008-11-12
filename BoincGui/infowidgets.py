@@ -305,8 +305,8 @@ class projectsInfoWidget(infoWidget):
 		self.__table.setHorizontalHeaderItem(1, QTableWidgetItem(self.tr("Project URL")))
 		self.__table.setHorizontalHeaderItem(2, QTableWidgetItem(self.tr("Resource Share")))
 
-		self.__tabWidget.addTab(self.__table, self.tr("&Projects"))
 		self.__tabWidget.addTab(self.__chart, self.tr("&Resources Share"))
+		self.__tabWidget.addTab(self.__table, self.tr("&Projects"))
 
 		projects = client.projectState()
 		if not projects is None:
@@ -455,7 +455,7 @@ class projectInfoWidget(infoWidget):
 		self.__projectInfoLayout.addWidget(self.__userTotalCreditText, 4, 1)
 		self.__projectInfoLayout.addWidget(self.__hostTotalCreditText, 5, 1)
 
-		self.__master_url = project.data(0, Qt.UserRole).toString()
+		self.__master_url = project.data(0, Qt.UserRole + 1).toString()
 		self.__projectCached = None
 
 		self.__projectLinksMenu = QMenu()
@@ -531,4 +531,7 @@ class projectInfoWidget(infoWidget):
 			except KeyError:
 				self.__projectLinksButton.hide()
 
+class workunitInfoWidget(infoWidget):
 
+	def __init__(self, client, project, workunit, parent = None):
+		infoWidget.__init__(self, parent)

@@ -70,8 +70,12 @@ class mainWidget(QWidget):
 				self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
 			elif typ == 'projects':
 				self.infoWidget.setWidget(infowidgets.projectsInfoWidget(connection))
+			elif typ == 'project':
+				self.infoWidget.setWidget(infowidgets.projectInfoWidget(connection, pol))
 		elif len(cesta) == 3:
-			pol = cesta[1]
-			typ = pol.data(0, Qt.UserRole).toString()
-			if typ == 'projects':
-				self.infoWidget.setWidget(infowidgets.projectInfoWidget(connection, cesta[2]))
+			typ = cesta[1].data(0, Qt.UserRole).toString()
+			if typ == "project":
+				pol = cesta[2]
+				if pol.data(0, Qt.UserRole).toString() == 'workunit':
+					self.infoWidget.setWidget(infowidgets.workunitInfoWidget(connection, cesta[1], cesta[2]))
+

@@ -66,7 +66,7 @@ class clientTreeWidget(QTreeWidget):
 
 		projectsItem = clientSubTreeWidgetItem()
 		projectsItem.setData(0, Qt.DisplayRole, QVariant(self.tr("Projects")))
-		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":projects.png"))))
+		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":stats.png"))))
 		projectsItem.setData(0, Qt.UserRole, QVariant("projects"))
 		subitems.append(projectsItem)
 		return subitems
@@ -124,11 +124,12 @@ class clientTreeWidget(QTreeWidget):
 	def __updateProjectStatus(self, projects):
 		conn = self.sender()
 		treeItem = conn.treeItem
-		for poradie in range(treeItem.childCount()):
-			potomok = treeItem.child(poradie)
-			if not potomok is None:
-				if potomok.data(0, Qt.UserRole).toString() == 'projects':
-					self.__updateProjectsList(projects, potomok)
+		self.__updateProjectsList(projects, treeItem)
+		#for poradie in range(treeItem.childCount()):
+			#potomok = treeItem.child(poradie)
+			#if not potomok is None:
+				#if potomok.data(0, Qt.UserRole).toString() == 'projects':
+					#self.__updateProjectsList(projects, potomok)
 
 	def __updateProjectsList(self, projects, projektyUzol):
 		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
@@ -142,7 +143,7 @@ class clientTreeWidget(QTreeWidget):
 
 		for poradie in range(projektyUzol.childCount()):
 			projekt = projektyUzol.child(poradie)
-			polozky.append(projekt.data(0, Qt.UserRole).toString())
+			polozky.append(projekt.data(0, Qt.UserRole + 1).toString())
 
 		for projekt in projects['project']:
 			projAct.append(projekt['master_url'])
@@ -153,16 +154,19 @@ class clientTreeWidget(QTreeWidget):
 
 		for poradie in range(projektyUzol.childCount()):
 			projekt = projektyUzol.child(poradie)
+			if not projekt.data(0, Qt.UserRole) == 'project':
+				continue
 			try:
-				i = projAct.index(projekt.data(0, Qt.UserRole).toString())
+				i = projAct.index(projekt.data(0, Qt.UserRole + 1).toString())
 			except ValueError:
 				odobrat.append(projekt)
 
 		for i in range(len(pridat)):
 			projectItem = projectTreeWidgetItem()
 			projectItem.setData(0, Qt.DisplayRole, QVariant(pridat[i]['project_name']))
-			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":workunit.png"))))
-			projectItem.setData(0, Qt.UserRole, QVariant(pridat[i]['master_url']))
+			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":project.png"))))
+			projectItem.setData(0, Qt.UserRole, QVariant("project"))
+			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]['master_url']))
 			pridat[i] = projectItem;
 
 		self.__removeSubNodeList(projektyUzol, odobrat)
@@ -180,9 +184,9 @@ class clientTreeWidget(QTreeWidget):
 
 		for poradie in range(uzol.childCount()):
 			polozka = uzol.child(poradie)
-			polozky.append(polozka.data(0, Qt.UserRole).toString())
+			polozky.append(polozka.data(0, Qt.UserRole + 1).toString())
 
-		master_url = uzol.data(0, Qt.UserRole).toString()
+		master_url = uzol.data(0, Qt.UserRole + 1).toString()
 		for res in info['result']:
 			if res['project_url'] == master_url:
 				resAct[res['name']] = res
@@ -192,7 +196,7 @@ class clientTreeWidget(QTreeWidget):
 		for poradie in range(uzol.childCount()):
 			try:
 				polozka = uzol.child(poradie)
-				i = k.index(polozka.data(0, Qt.UserRole).toString())
+				i = k.index(polozka.data(0, Qt.UserRole + 1).toString())
 			except ValueError:
 				odobrat.append(polozka)
 
@@ -205,7 +209,9 @@ class clientTreeWidget(QTreeWidget):
 		for i in range(len(pridat)):
 			projectItem = workunitTreeWidgetItem()
 			projectItem.setData(0, Qt.DisplayRole, QVariant(pridat[i]))
-			projectItem.setData(0, Qt.UserRole, QVariant(pridat[i]))
+			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":workunit.png"))))
+			projectItem.setData(0, Qt.UserRole, QVariant("workunit"))
+			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]))
 			pridat[i] = projectItem
 
 		self.__removeSubNodeList(uzol, odobrat)
