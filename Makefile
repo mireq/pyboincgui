@@ -15,7 +15,7 @@ translations/boincgui_sk.qm:translations/boincgui_sk.ts
 	lrelease $< $@
 
 translations/boincgui_sk.ts:
-	pylupdate4 pyboincgui.pro
+	pylupdate4 -noobsolete pyboincgui.pro
 
 BoincGui/resources.py:BoincGui/resources.qrc
 	pyrcc4 $< > $@
