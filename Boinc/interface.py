@@ -52,6 +52,7 @@ class Interface:
 		auth1Element = doc.createElement("auth1")
 		boincGuiRpcRequestElement.appendChild(auth1Element)
 		self.__conn.sendData(doc.toxml(),  self.auth1)
+		doc.unlink()
 
 	def __connStateChanged(self, info):
 		if isinstance(info, Exception):
@@ -109,7 +110,7 @@ class Interface:
 		nHashElement.appendChild(nHText)
 		self.__conn.sendData(doc.toxml(),  self.auth2)
 		dom.unlink()
-		pass
+		doc.unlink()
 
 	def auth2(self, data):
 		dom, reply = self.getReply(data)
