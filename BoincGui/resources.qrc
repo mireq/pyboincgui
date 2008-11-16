@@ -5,11 +5,15 @@
   <file alias="connect_no.png">icons/connect_no.png</file>
   <file alias="cpu.png">icons/cpu.png</file>
   <file alias="disc_stats.png">icons/disc_stats.png</file>
-  <file alias="ok.png">icons/ok.png</file>
   <file alias="project.png">icons/project.png</file>
   <file alias="stats.png">icons/stats.png</file>
-  <file alias="status_unknown.png">icons/status_unknown.png</file>
-  <file alias="stop.png">icons/stop.png</file>
+  <file alias="status_aborted.png">icons/status_aborted.png</file>
+  <file alias="status_downloading.png">icons/status_downloading.png</file>
+  <file alias="status_error.png">icons/status_error.png</file>
+  <file alias="status_running.png">icons/status_running.png</file>
+  <file alias="status_suspended.png">icons/status_suspended.png</file>
+  <file alias="status_uploaded.png">icons/status_uploaded.png</file>
+  <file alias="status_uploading.png">icons/status_uploading.png</file>
   <file alias="workunit.png">icons/workunit.png</file>
 </qresource>
 </RCC>

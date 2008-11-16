@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy
-from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize, QCoreApplication
+from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy, QPainter
+from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize, QCoreApplication, QRect
 import resources
 from Boinc.interface import Interface
 
@@ -35,6 +35,7 @@ class clientTreeWidgetItem(QTreeWidgetItem):
 		else:
 			self.setData(0, Qt.DecorationRole, QVariant(icon))
 
+
 class clientSubTreeWidgetItem(QTreeWidgetItem):
 	pass
 
@@ -42,7 +43,13 @@ class projectTreeWidgetItem(QTreeWidgetItem):
 	pass
 
 class workunitTreeWidgetItem(QTreeWidgetItem):
-	pass
+	def __lt__(self, iny):
+		a = self.data(0, Qt.UserRole + 2).toInt()
+		b = iny.data(0, Qt.UserRole + 2).toInt()
+		if not a == b:
+			return a < b
+		else:
+			return self.data(0, Qt.UserRole).toInt() < iny.data(0, Qt.UserRole).toInt()
 
 class clientTreeWidget(QTreeWidget):
 
@@ -127,24 +134,6 @@ class clientTreeWidget(QTreeWidget):
 		icon = None
 		name = conn.host()
 		name = name + ':' + str(conn.port()) + " "
-
-		#if conn.connected() == Interface.connected:
-			#name = name + self.tr("(connected)")
-			#icon = QIcon(QPixmap(":connect_established.png"))
-		#elif conn.connected() == Interface.connecting:
-			#name = name + self.tr("(connecting)")
-			#icon = QIcon(QPixmap(":connect_creating.png"))
-		#elif conn.connected() == Interface.disconnected:
-			#name = name + self.tr("(disconnected)")
-			#icon = QIcon(QPixmap(":connect_no.png"))
-		#else:
-			#name = name + self.tr("(unauthorized)")
-			#icon = QIcon(QPixmap(":connect_established.png"))
-		#item.setData(0, Qt.DisplayRole, QVariant(name))
-		#if icon is None:
-			#item.setData(0, Qt.DecorationRole, QVariant())
-		#else:
-			#item.setData(0, Qt.DecorationRole, QVariant(icon))
 		item.setName(name)
 		item.setState(conn.connected())
 
@@ -157,11 +146,7 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.sender()
 		treeItem = conn.treeItem
 		self.__updateProjectsList(projects, treeItem)
-		#for poradie in range(treeItem.childCount()):
-			#potomok = treeItem.child(poradie)
-			#if not potomok is None:
-				#if potomok.data(0, Qt.UserRole).toString() == 'projects':
-					#self.__updateProjectsList(projects, potomok)
+		self.sortItems(0, Qt.AscendingOrder)
 
 	def __updateProjectsList(self, projects, projektyUzol):
 		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
@@ -213,6 +198,7 @@ class clientTreeWidget(QTreeWidget):
 		odobrat = []
 		polozky = []
 		resAct  = {}
+		aktualizovat = {}
 
 		for poradie in range(uzol.childCount()):
 			polozka = uzol.child(poradie)
@@ -222,6 +208,7 @@ class clientTreeWidget(QTreeWidget):
 		for res in info['result']:
 			if res['project_url'] == master_url:
 				resAct[res['name']] = res
+				aktualizovat[res['name']] = [res]
 
 
 		k = resAct.keys()
@@ -229,6 +216,10 @@ class clientTreeWidget(QTreeWidget):
 			try:
 				polozka = uzol.child(poradie)
 				i = k.index(polozka.data(0, Qt.UserRole + 1).toString())
+				try:
+					aktualizovat[str(polozka.data(0, Qt.UserRole + 1).toString())].append(polozka)
+				except KeyError:
+					pass
 			except ValueError:
 				odobrat.append(polozka)
 
@@ -241,13 +232,72 @@ class clientTreeWidget(QTreeWidget):
 		for i in range(len(pridat)):
 			projectItem = workunitTreeWidgetItem()
 			projectItem.setData(0, Qt.DisplayRole, QVariant(pridat[i]))
-			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":workunit.png"))))
+			self.__updateWorkunit(projectItem, aktualizovat[pridat[i]][0])
 			projectItem.setData(0, Qt.UserRole, QVariant("workunit"))
 			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]))
 			pridat[i] = projectItem
 
+		self.__updateWorkunits(aktualizovat)
 		self.__removeSubNodeList(uzol, odobrat)
 		self.__addSubNodeList(uzol, pridat)
+
+	def __updateWorkunit(self, item, workunit):
+		pixmap = QPixmap(":workunit.png")
+
+		status = int(workunit['state'])
+		try:
+			processStatus = int(workunit['active_task']['active_task_state'])
+		except KeyError:
+			processStatus = 0
+
+		emblem = None
+		if status == 1:
+			emblem = QPixmap(":status_downloading.png")
+		elif status == 2:
+			if processStatus == 1:
+				emblem = QPixmap(":status_running.png")
+				item.setData(0, Qt.UserRole + 2, QVariant(0))
+			elif processStatus == 9:
+				emblem = QPixmap(":status_suspended.png")
+				item.setData(0, Qt.UserRole + 2, QVariant(2))
+			else:
+				item.setData(0, Qt.UserRole + 2, QVariant(3))
+		elif status == 3:
+			emblem = QPixmap(":status_error.png")
+			item.setData(0, Qt.UserRole + 2, QVariant(5))
+		elif status == 4:
+			emblem = QPixmap(":status_uploading.png")
+			item.setData(0, Qt.UserRole + 2, QVariant(1))
+		elif status == 5:
+			emblem = QPixmap(":status_uploaded.png")
+			item.setData(0, Qt.UserRole + 2, QVariant(1))
+		elif status == 6:
+			emblem = QPixmap(":status_aborted.png")
+			item.setData(0, Qt.UserRole + 2, QVariant(4))
+		else:
+			item.setData(0, Qt.UserRole + 2, QVariant(6))
+
+		if not emblem is None:
+			painter = QPainter()
+			painter.begin(pixmap)
+
+			dest = emblem.rect()
+			dest.translate(pixmap.rect().width()- emblem.rect().width(), pixmap.rect().height()- emblem.rect().height())
+
+			painter.drawPixmap(dest, emblem, emblem.rect())
+			painter.end()
+
+		item.setData(0, Qt.DecorationRole, QVariant(QIcon(pixmap)))
+
+	def __updateWorkunits(self, aktualizovat):
+		keys = aktualizovat.keys()
+		for key in keys:
+			aktualizacia = aktualizovat[key]
+			try:
+				treeItem = aktualizacia[1]
+				self.__updateWorkunit(treeItem, aktualizacia[0])
+			except IndexError:
+				pass
 
 	def sizeHint(self):
 		return QSize(250, 100)
