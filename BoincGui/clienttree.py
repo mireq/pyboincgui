@@ -1,10 +1,39 @@
 from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy
-from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize
+from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize, QCoreApplication
 import resources
 from Boinc.interface import Interface
 
 class clientTreeWidgetItem(QTreeWidgetItem):
-	pass
+	__name = ""
+	__state = Interface.disconnected
+	def setName(self, name):
+		self.__name = name
+		self.__updateItem()
+
+	def setState(self, state):
+		self.__state = state
+		self.__updateItem()
+
+	def __updateItem(self):
+		name = ""
+		icon = None
+		if self.__state == Interface.connected:
+			name = self.__name + QCoreApplication.translate("clientTreeWidget", "(connected)")
+			icon = QIcon(QPixmap(":connect_established.png"))
+		elif self.__state == Interface.connecting:
+			name = self.__name + QCoreApplication.translate("clientTreeWidget", "(connecting)")
+			icon = QIcon(QPixmap(":connect_creating.png"))
+		elif self.__state == Interface.disconnected:
+			name = self.__name + QCoreApplication.translate("clientTreeWidget", "(disconnected)")
+			icon = QIcon(QPixmap(":connect_no.png"))
+		else:
+			name = self.__name + QCoreApplication.translate("clientTreeWidget", "(unauthorized)")
+			icon = QIcon(QPixmap(":connect_established.png"))
+		self.setData(0, Qt.DisplayRole, QVariant(name))
+		if icon is None:
+			self.setData(0, Qt.DecorationRole, QVariant())
+		else:
+			self.setData(0, Qt.DecorationRole, QVariant(icon))
 
 class clientSubTreeWidgetItem(QTreeWidgetItem):
 	pass
@@ -98,23 +127,26 @@ class clientTreeWidget(QTreeWidget):
 		icon = None
 		name = conn.host()
 		name = name + ':' + str(conn.port()) + " "
-		if conn.connected() == Interface.connected:
-			name = name + self.tr("(connected)")
-			icon = QIcon(QPixmap(":connect_established.png"))
-		elif conn.connected() == Interface.connecting:
-			name = name + self.tr("(connecting)")
-			icon = QIcon(QPixmap(":connect_creating.png"))
-		elif conn.connected() == Interface.disconnected:
-			name = name + self.tr("(disconnected)")
-			icon = QIcon(QPixmap(":connect_no.png"))
-		else:
-			name = name + self.tr("(unauthorized)")
-			icon = QIcon(QPixmap(":connect_established.png"))
-		item.setData(0, Qt.DisplayRole, QVariant(name))
-		if icon is None:
-			item.setData(0, Qt.DecorationRole, QVariant())
-		else:
-			item.setData(0, Qt.DecorationRole, QVariant(icon))
+
+		#if conn.connected() == Interface.connected:
+			#name = name + self.tr("(connected)")
+			#icon = QIcon(QPixmap(":connect_established.png"))
+		#elif conn.connected() == Interface.connecting:
+			#name = name + self.tr("(connecting)")
+			#icon = QIcon(QPixmap(":connect_creating.png"))
+		#elif conn.connected() == Interface.disconnected:
+			#name = name + self.tr("(disconnected)")
+			#icon = QIcon(QPixmap(":connect_no.png"))
+		#else:
+			#name = name + self.tr("(unauthorized)")
+			#icon = QIcon(QPixmap(":connect_established.png"))
+		#item.setData(0, Qt.DisplayRole, QVariant(name))
+		#if icon is None:
+			#item.setData(0, Qt.DecorationRole, QVariant())
+		#else:
+			#item.setData(0, Qt.DecorationRole, QVariant(icon))
+		item.setName(name)
+		item.setState(conn.connected())
 
 	def removeClient(self, clId):
 		item = self.topLevelItem(clId)

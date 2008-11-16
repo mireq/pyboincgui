@@ -147,32 +147,32 @@
 <context>
     <name>clientTreeWidget</name>
     <message>
-        <location filename="BoincGui/clienttree.py" line="103"/>
+        <location filename="BoincGui/clienttree.py" line="22"/>
         <source>(connected)</source>
         <translation>(pripojený)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="109"/>
+        <location filename="BoincGui/clienttree.py" line="28"/>
         <source>(disconnected)</source>
         <translation>(nepripojený)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="106"/>
+        <location filename="BoincGui/clienttree.py" line="25"/>
         <source>(connecting)</source>
         <translation>(pripájanie)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="112"/>
+        <location filename="BoincGui/clienttree.py" line="31"/>
         <source>(unauthorized)</source>
         <translation>(neautorizovaný)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="62"/>
+        <location filename="BoincGui/clienttree.py" line="91"/>
         <source>CPU</source>
         <translation>Procesor</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="68"/>
+        <location filename="BoincGui/clienttree.py" line="97"/>
         <source>Projects</source>
         <translation>Projekty</translation>
     </message>
