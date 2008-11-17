@@ -37,24 +37,32 @@ class clientTreeWidgetItem(QTreeWidgetItem):
 
 
 class clientSubTreeWidgetItem(QTreeWidgetItem):
-	pass
+	def __lt__(self, iny):
+		a = self.data(0, Qt.UserRole + 2).toInt()[0]
+		b = iny.data(0, Qt.UserRole + 2).toInt()[0]
+		if not a == b:
+			return a < b
+		else:
+			return self.data(0, Qt.DisplayRole).toString() < iny.data(0, Qt.DisplayRole).toString()
 
-class projectTreeWidgetItem(QTreeWidgetItem):
+class projectTreeWidgetItem(clientSubTreeWidgetItem):
 	pass
 
 class workunitTreeWidgetItem(QTreeWidgetItem):
 	def __lt__(self, iny):
-		a = self.data(0, Qt.UserRole + 2).toInt()
-		b = iny.data(0, Qt.UserRole + 2).toInt()
+		a = self.data(0, Qt.UserRole + 2).toInt()[0]
+		b = iny.data(0, Qt.UserRole + 2).toInt()[0]
 		if not a == b:
 			return a < b
 		else:
-			return self.data(0, Qt.UserRole).toInt() < iny.data(0, Qt.UserRole).toInt()
+			return self.data(0, Qt.DisplayRole).toString() < iny.data(0, Qt.DisplayRole).toString()
 
 class clientTreeWidget(QTreeWidget):
 
 	def __init__(self, connManager, parent = None):
 		QTreeWidget.__init__(self, parent)
+		self.sortItems(0, Qt.AscendingOrder)
+		self.setSortingEnabled(True)
 		self.header().hide()
 		self.setColumnCount(1)
 		self.connManager = connManager
@@ -98,13 +106,22 @@ class clientTreeWidget(QTreeWidget):
 		cpuItem.setData(0, Qt.DisplayRole, QVariant(self.tr("CPU")))
 		cpuItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":cpu.png"))))
 		cpuItem.setData(0, Qt.UserRole, QVariant("cpu"))
+		cpuItem.setData(0, Qt.UserRole + 2, QVariant(0))
 		subitems.append(cpuItem)
 
 		projectsItem = clientSubTreeWidgetItem()
 		projectsItem.setData(0, Qt.DisplayRole, QVariant(self.tr("Projects")))
 		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":projects.png"))))
 		projectsItem.setData(0, Qt.UserRole, QVariant("projects"))
+		projectsItem.setData(0, Qt.UserRole + 2, QVariant(1))
 		subitems.append(projectsItem)
+
+		statisticsItem = clientSubTreeWidgetItem()
+		statisticsItem.setData(0, Qt.DisplayRole, QVariant(self.tr("Statistics")))
+		statisticsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":statistics.png"))))
+		statisticsItem.setData(0, Qt.UserRole, QVariant("statistics"))
+		statisticsItem.setData(0, Qt.UserRole + 2, QVariant(2))
+		subitems.append(statisticsItem)
 		return subitems
 
 	def __removeSubNodes(self, item):
@@ -146,7 +163,6 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.sender()
 		treeItem = conn.treeItem
 		self.__updateProjectsList(projects, treeItem)
-		self.sortItems(0, Qt.AscendingOrder)
 
 	def __updateProjectsList(self, projects, projektyUzol):
 		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
@@ -184,6 +200,7 @@ class clientTreeWidget(QTreeWidget):
 			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":project.png"))))
 			projectItem.setData(0, Qt.UserRole, QVariant("project"))
 			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]['master_url']))
+			projectItem.setData(0, Qt.UserRole + 2, QVariant(3))
 			pridat[i] = projectItem;
 
 		self.__removeSubNodeList(projektyUzol, odobrat)
@@ -253,6 +270,7 @@ class clientTreeWidget(QTreeWidget):
 		emblem = None
 		if status == 1:
 			emblem = QPixmap(":status_downloading.png")
+			item.setData(0, Qt.UserRole + 2, QVariant(1))
 		elif status == 2:
 			if processStatus == 1:
 				emblem = QPixmap(":status_running.png")

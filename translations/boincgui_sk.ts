@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="sk">
+<defaultcodec></defaultcodec>
 <context>
     <name>MainWindow</name>
     <message>
@@ -167,14 +168,19 @@
         <translation>(neautorizovaný)</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="91"/>
+        <location filename="BoincGui/clienttree.py" line="106"/>
         <source>CPU</source>
         <translation>Procesor</translation>
     </message>
     <message>
-        <location filename="BoincGui/clienttree.py" line="97"/>
+        <location filename="BoincGui/clienttree.py" line="113"/>
         <source>Projects</source>
         <translation>Projekty</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/clienttree.py" line="120"/>
+        <source>Statistics</source>
+        <translation>Štatistiky</translation>
     </message>
 </context>
 <context>

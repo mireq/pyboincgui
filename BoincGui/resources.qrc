@@ -7,6 +7,7 @@
   <file alias="disc_stats.png">icons/disc_stats.png</file>
   <file alias="project.png">icons/project.png</file>
   <file alias="projects.png">icons/projects.png</file>
+  <file alias="statistics.png">icons/statistics.png</file>
   <file alias="status_aborted.png">icons/status_aborted.png</file>
   <file alias="status_downloading.png">icons/status_downloading.png</file>
   <file alias="status_error.png">icons/status_error.png</file>

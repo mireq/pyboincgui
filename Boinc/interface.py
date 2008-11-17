@@ -172,3 +172,9 @@ class Interface:
 		if not call is None:
 			call(data)
 		dom.unlink()
+
+	def get_statistics(self, callback = None):
+		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_statistics /></boinc_gui_rpc_request>", self.__recvStatistics, callback)
+
+	def __recvStatistics(self, data, call = None):
+		pass
