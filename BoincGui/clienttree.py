@@ -102,7 +102,7 @@ class clientTreeWidget(QTreeWidget):
 
 		projectsItem = clientSubTreeWidgetItem()
 		projectsItem.setData(0, Qt.DisplayRole, QVariant(self.tr("Projects")))
-		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":stats.png"))))
+		projectsItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":projects.png"))))
 		projectsItem.setData(0, Qt.UserRole, QVariant("projects"))
 		subitems.append(projectsItem)
 		return subitems
