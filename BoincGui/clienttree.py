@@ -285,8 +285,17 @@ class clientTreeWidget(QTreeWidget):
 		painter.setRenderHint(QPainter.Antialiasing)
 		painter.setPen(Qt.white)
 		painter.setBrush(QBrush(QColor(0, 0, 0, 196)))
-		rect = QRect(pixmap.rect().x()-1, pixmap.rect().y()-1, pixmap.rect().width() + 2, pixmap.rect().height()+2)
+		rect = QRect(int(float(pixmap.rect().width()) * (-0.5)), int(float(pixmap.rect().height()) * (-0.5)), pixmap.rect().width() * 2, pixmap.rect().height() * 2)
 		painter.drawPie(rect, 1440, ((100 - done) * 360 * 16) / 100)
+		painter.end()
+		pixmap.setAlphaChannel(alpha)
+
+	def __setProgressPixmapInactive(self, pixmap):
+		alpha = pixmap.alphaChannel()
+		painter = QPainter()
+		painter.begin(alpha)
+		painter.setBrush(QBrush(QColor(0, 0, 0, 196)))
+		painter.drawRect(pixmap.rect())
 		painter.end()
 		pixmap.setAlphaChannel(alpha)
 
@@ -310,6 +319,7 @@ class clientTreeWidget(QTreeWidget):
 		if status == 1:
 			emblem = QPixmap(":status_downloading.png")
 			item.setData(0, Qt.UserRole + 2, QVariant(1))
+			self.__setProgressPixmapInactive(pixmap)
 		elif status == 2:
 			if processStatus == 1:
 				emblem = QPixmap(":status_running.png")
@@ -319,8 +329,11 @@ class clientTreeWidget(QTreeWidget):
 				item.setData(0, Qt.UserRole + 2, QVariant(2))
 			else:
 				item.setData(0, Qt.UserRole + 2, QVariant(3))
-			if processStatus != 0:
+			if processStatus == 0:
+				self.__setProgressPixmapInactive(pixmap)
+			else:
 				self.__modifyProgressPixmap(pixmap, done)
+
 		elif status == 3:
 			emblem = QPixmap(":status_error.png")
 			item.setData(0, Qt.UserRole + 2, QVariant(5))
@@ -335,6 +348,7 @@ class clientTreeWidget(QTreeWidget):
 			item.setData(0, Qt.UserRole + 2, QVariant(4))
 		else:
 			item.setData(0, Qt.UserRole + 2, QVariant(6))
+			self.__setProgressPixmapInactive(pixmap)
 
 		self.__addEmblem(pixmap, emblem)
 

@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QWidget, QHBoxLayout, QTableView, QTreeView, QStackedWidget, QLabel
 from PyQt4.QtCore import QSize, SIGNAL, Qt
 from clienttree import clientTreeWidget
-import infowidgets
+import InfoWidgets
 
 class infoStackWidget(QStackedWidget):
 	currentWidget = None
@@ -62,22 +62,22 @@ class mainWidget(QWidget):
 				return
 
 		if len(cesta) == 1:
-			self.infoWidget.setWidget(infowidgets.clientInfoWidget(connection))
+			self.infoWidget.setWidget(InfoWidgets.clientInfoWidget(connection))
 		elif len(cesta) == 2:
 			pol = cesta[1]
 			typ = pol.data(0, Qt.UserRole).toString()
 			if typ == 'cpu':
-				self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
+				self.infoWidget.setWidget(InfoWidgets.cpuInfoWidget(connection))
 			elif typ == 'projects':
-				self.infoWidget.setWidget(infowidgets.projectsInfoWidget(connection))
+				self.infoWidget.setWidget(InfoWidgets.projectsInfoWidget(connection))
 			elif typ == 'statistics':
-				self.infoWidget.setWidget(infowidgets.statisticsInfoWidget(connection))
+				self.infoWidget.setWidget(InfoWidgets.statisticsInfoWidget(connection))
 			elif typ == 'project':
-				self.infoWidget.setWidget(infowidgets.projectInfoWidget(connection, pol))
+				self.infoWidget.setWidget(InfoWidgets.projectInfoWidget(connection, pol))
 		elif len(cesta) == 3:
 			typ = cesta[1].data(0, Qt.UserRole).toString()
 			if typ == "project":
 				pol = cesta[2]
 				if pol.data(0, Qt.UserRole).toString() == 'workunit':
-					self.infoWidget.setWidget(infowidgets.workunitInfoWidget(connection, cesta[1], cesta[2]))
+					self.infoWidget.setWidget(InfoWidgets.workunitInfoWidget(connection, cesta[1], cesta[2]))
 
