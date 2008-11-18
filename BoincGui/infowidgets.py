@@ -350,7 +350,7 @@ class projectsInfoWidget(infoWidget):
 				self.__table.setItem(i, 0, projectItem)
 				self.__table.setItem(i, 1, urlItem)
 				self.__table.setItem(i, 2, shareItem)
-
+		
 				#aktualizujeme graf
 				projekt = projects[i]
 				angle = int(360.0 * 16.0 * (float(projekt['resource_share']) / full))
@@ -363,6 +363,8 @@ class statisticsInfoWidget(infoWidget):
 	__chart = None
 	__mainLayout = None
 	__statistics = None
+	__colors = [Qt.red, Qt.yellow, Qt.green, QColor(250, 125, 30), Qt.blue, Qt.cyan, Qt.black, Qt.darkRed, Qt.darkGreen, Qt.darkBlue]
+
 	def __init__(self, client, parent = None):
 		infoWidget.__init__(self, parent)
 		self.__mainLayout = QVBoxLayout()
@@ -377,11 +379,15 @@ class statisticsInfoWidget(infoWidget):
 		self.__updateStatisticsGraph()
 
 	def __updateStatisticsGraph(self):
+		i = 0
 		for key in self.__statistics.keys():
 			name = self.sender().getProjectName(key)
 			if name is None:
 				name = key
-			self.__chart.addGraph(self.__statistics[key], name, Qt.red)
+			self.__chart.addGraph(self.__statistics[key], name, self.__colors[i])
+			i = i + 1
+			if i >= len(self.__colors):
+				i = 0
 
 class projectInfoWidget(infoWidget):
 	__master_url = ""

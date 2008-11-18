@@ -1,9 +1,10 @@
-from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette
+from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath
 from PyQt4.QtCore import QSize, QRect, QPoint, Qt
 
 class LineChart(QWidget):
 	__graphs = []
 	__padding = 5
+	__index = 0
 
 	def __init__(self, parent = None):
 		QWidget.__init__(self, parent)
@@ -19,8 +20,6 @@ class LineChart(QWidget):
 		if len(data) == 0:
 			return
 
-		index = 0
-
 		if self.__minDay == 0:
 			self.__minDay = data[0].day
 		if data[0].day < self.__minDay:
@@ -29,12 +28,12 @@ class LineChart(QWidget):
 			self.__maxDay = data[len(data) - 1].day
 
 		if self.__minPoints == 0:
-			self.__minPoints = data[0].data(index)
-		if data[0].data(index) < self.__minPoints:
-			self.__minPoints = data[0].data(index)
-		if data[len(data) - 1].data(index) < self.__maxPoints:
-			self.__maxPoints = data[len(data) - 1].data(index)
-			
+			self.__minPoints = data[0].data(self.__index)
+		if data[0].data(self.__index) < self.__minPoints:
+			self.__minPoints = data[0].data(self.__index)
+		if data[len(data) - 1].data(self.__index) > self.__maxPoints:
+			self.__maxPoints = data[len(data) - 1].data(self.__index)
+
 		self.__graphs.append((data, name, color))
 		self.update()
 
@@ -58,13 +57,46 @@ class LineChart(QWidget):
 
 			painter.setPen(ciara)
 			painter.setBrush(pozadie)
-			
-			rect = QRect(self.__padding, self.__padding, self.width() - (2 * self.__padding), self.height() - (2 * self.__padding))
-			painter.drawRect(rect)
-			self.__drawLines(painter)
 
-	def __drawLines(self, painter):
-		pass
+			painter.translate(5, 5)
+			rect = QRect(0, 0, self.width() - (2 * self.__padding), self.height() - (2 * self.__padding))
+			painter.drawRect(rect)
+			self.__drawLines(painter, self.width() - (2 * self.__padding), self.height() - (2 * self.__padding))
+
+	def __drawLines(self, painter, width, height):
+		painter.setRenderHint(QPainter.Antialiasing)
+		for graph in self.__graphs:
+			self.__drawLine(painter, graph, width, height)
+
+	def __getCoordinates(self, width, height, xdata, ydata):
+		x = int(float(xdata - self.__minDay) / float(self.__maxDay - self.__minDay) * float(width))
+		y = height - int(float(ydata - self.__minPoints) / float(self.__maxPoints - self.__minPoints) * float(height))
+		return (x, y)
+
+	def __drawLine(self, painter, graph, width, height):
+		path = QPainterPath()
+		try:
+			day   = graph[0][0].day
+			value = graph[0][0].data(self.__index)
+			(x, y) = self.__getCoordinates(width, height, day, value)
+			path.moveTo(x, y)
+		except IndexError:
+			pass
+
+		for pos in range(1, len(graph[0])):
+			point = graph[0][pos]
+			day   = point.day
+			value = point.data(self.__index)
+			(x, y) = self.__getCoordinates(width, height, day, value)
+			path.lineTo(x, y)
+
+		pen = QPen()
+		pen.setColor(QColor(graph[2]))
+		pen.setWidth(3)
+		pen.setCapStyle(Qt.RoundCap);
+ 		pen.setJoinStyle(Qt.RoundJoin);
+		painter.setPen(pen)
+		painter.drawPath(path)
 
 class LineChartFrame(QFrame):
 	__chart = None;
