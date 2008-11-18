@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath
+from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath, QSizePolicy
 from PyQt4.QtCore import QSize, QRect, QPoint, Qt
 
 class LineChart(QWidget):
@@ -8,10 +8,8 @@ class LineChart(QWidget):
 
 	def __init__(self, parent = None):
 		QWidget.__init__(self, parent)
-		self.__minDay = 0
-		self.__maxDay = 0
-		self.__minPoints = 0
-		self.__maxPoints = 0
+		self.removeGraphs()
+		self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 	def minimumSizeHint(self):
 		return QSize(50, 50)
@@ -34,11 +32,15 @@ class LineChart(QWidget):
 		if data[len(data) - 1].data(self.__index) > self.__maxPoints:
 			self.__maxPoints = data[len(data) - 1].data(self.__index)
 
-		self.__graphs.append((data, name, color))
+		self.__graphs.append((data, name, color))		
 		self.update()
 
 	def removeGraphs(self):
 		self.__graphs = []
+		self.__minDay = 0
+		self.__maxDay = 0
+		self.__minPoints = 0
+		self.__maxPoints = 0
 
 	def paintEvent(self, event):
 		palette = QPalette()
