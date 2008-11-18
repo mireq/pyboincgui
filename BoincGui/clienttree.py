@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy, QPainter
+from PyQt4.QtGui import QTreeWidget, QTreeWidgetItem, QPixmap, QIcon, QSizePolicy, QPainter, QImage, QBrush, QColor
 from PyQt4.QtCore import QAbstractItemModel, QVariant, Qt, QString, QSize, SIGNAL, SLOT, QObject, QSize, QCoreApplication, QRect
 import resources
 from Boinc.interface import Interface
@@ -258,14 +258,33 @@ class clientTreeWidget(QTreeWidget):
 		self.__removeSubNodeList(uzol, odobrat)
 		self.__addSubNodeList(uzol, pridat)
 
+	def __modifyProgressPixmap(self, pixmap, done):
+		alpha = pixmap.alphaChannel()
+		painter = QPainter()
+		painter.begin(alpha)
+		painter.setRenderHint(QPainter.Antialiasing)
+		painter.setPen(Qt.white)
+		painter.setBrush(QBrush(QColor(0, 0, 0, 196)))
+		rect = QRect(pixmap.rect().x()-1, pixmap.rect().y()-1, pixmap.rect().width() + 2, pixmap.rect().height()+2)
+		painter.drawPie(rect, 1440, ((100 - done) * 360 * 16) / 100)
+		painter.end()
+		pixmap.setAlphaChannel(alpha)
+
 	def __updateWorkunit(self, item, workunit):
 		pixmap = QPixmap(":workunit.png")
 
 		status = int(workunit['state'])
 		try:
 			processStatus = int(workunit['active_task']['active_task_state'])
+			done = int(float(workunit['active_task']['fraction_done']) * 100.0)
 		except KeyError:
 			processStatus = 0
+			done = 0
+
+		data = QVariant.fromList([QVariant(status), QVariant(processStatus), QVariant(done)])
+		if data.toList() == item.data(0, Qt.UserRole + 3).toList():
+			return
+		item.setData(0, Qt.UserRole + 3, data)
 
 		emblem = None
 		if status == 1:
@@ -280,6 +299,8 @@ class clientTreeWidget(QTreeWidget):
 				item.setData(0, Qt.UserRole + 2, QVariant(2))
 			else:
 				item.setData(0, Qt.UserRole + 2, QVariant(3))
+			if processStatus != 0:
+				self.__modifyProgressPixmap(pixmap, done)
 		elif status == 3:
 			emblem = QPixmap(":status_error.png")
 			item.setData(0, Qt.UserRole + 2, QVariant(5))

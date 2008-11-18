@@ -8,6 +8,8 @@ import gc
 
 class BoincConnectionStruct(QObject):
 
+	__projects = {}
+
 	def __init__(self, local, path, host, port, password, queue):
 		QObject.__init__(self)
 		self.__local = local
@@ -32,6 +34,12 @@ class BoincConnectionStruct(QObject):
 		return self.__port
 	def password(self):
 		return self.__password
+
+	def getProjectName(self, url):
+		try:
+			return self.__projects[url]
+		except KeyError:
+			return None
 
 	def __updateConnectState(self, state):
 		if state == self.__bInterface.unauthorized or state == self.__bInterface.connected:
@@ -83,6 +91,9 @@ class BoincConnectionStruct(QObject):
 		self.__createArr(st, 'project')
 		self.__createArr(st, 'workunit')
 		self.__createArr(st, 'result')
+		self.__projects = {}
+		for proj in st['project']:
+			self.__projects[proj['master_url']] = proj['project_name']
 		self.emit(SIGNAL("projectState(PyQt_PyObject)"), st)
 
 	def getState(self):
@@ -90,6 +101,12 @@ class BoincConnectionStruct(QObject):
 
 	def __recvState(self, data):
 		self.emit(SIGNAL("getStateRecv(PyQt_PyObject)"), data)
+
+	def getStatistics(self):
+		self.__bInterface.get_statistics(self.__recvStatistics)
+
+	def __recvStatistics(self, data):
+		self.emit(SIGNAL("getStatisticsRecv(PyQt_PyObject)"), data)
 
 	def boincConnect(self):
 		self.__bInterface.boincConnect(self.__connectStateChanged)

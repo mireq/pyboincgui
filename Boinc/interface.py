@@ -10,6 +10,28 @@ class BoincCommException(Exception):
 class BoincMissingElementException(Exception):
 	pass
 
+class dailyStatistics:
+	day                = 0
+	user_total_credit  = 0.0
+	user_expavg_credit = 0.0
+	host_total_credit  = 0.0
+	host_expavg_credit = 0.0
+	def __init__(self, day, user_total_credit, user_expavg_credit, host_total_credit, host_expavg_credit):
+		self.day                = day
+		self.user_total_credit  = user_total_credit
+		self.user_expavg_credit = user_expavg_credit
+		self.host_total_credit  = host_total_credit
+		self.host_expavg_credit = host_expavg_credit
+	def data(self, index):
+		if index == 0:
+			return self.user_total_credit
+		elif index == 1:
+			return self.user_expavg_credit
+		elif index == 2:
+			return self.host_total_credit
+		elif index == 3:
+			return self.host_expavg_credit
+
 class Interface:
 	"Pripojenie na boinc."
 
@@ -177,4 +199,17 @@ class Interface:
 		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_statistics /></boinc_gui_rpc_request>", self.__recvStatistics, callback)
 
 	def __recvStatistics(self, data, call = None):
-		pass
+		out = {}
+		dom, reply = self.getReply(data)
+		statisticNode = reply.getElementsByTagName('statistics')[0]
+		statisticsNodes = statisticNode.getElementsByTagName("project_statistics")
+		for statistic in statisticsNodes:
+			master_url = statistic.getElementsByTagName("master_url")[0].firstChild.data
+			out[master_url] = []
+			dailyStatisticsNodes = statistic.getElementsByTagName("daily_statistics")
+			for dailyStatisticsNode in dailyStatisticsNodes:
+				data = self.__xmlToDict(dailyStatisticsNode)
+				out[master_url].append(dailyStatistics(int(float(data['day'])), float(data['user_total_credit']), float(data['user_expavg_credit']), float(data['host_total_credit']), float(data['host_expavg_credit'])))
+		dom.unlink()
+		if not call is None:
+			call(out)

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1" language="sk">
-<defaultcodec></defaultcodec>
 <context>
     <name>MainWindow</name>
     <message>
@@ -60,87 +59,87 @@
 <context>
     <name>clientInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="99"/>
+        <location filename="BoincGui/infowidgets.py" line="100"/>
         <source>Yes</source>
         <translation>Áno</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="102"/>
+        <location filename="BoincGui/infowidgets.py" line="103"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="186"/>
+        <location filename="BoincGui/infowidgets.py" line="187"/>
         <source>Host:</source>
         <translation>Host:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="103"/>
+        <location filename="BoincGui/infowidgets.py" line="104"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="104"/>
+        <location filename="BoincGui/infowidgets.py" line="105"/>
         <source>Local client:</source>
         <translation>Lokálny klient:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="105"/>
+        <location filename="BoincGui/infowidgets.py" line="106"/>
         <source>Client state:</source>
         <translation>Stav klienta:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="136"/>
+        <location filename="BoincGui/infowidgets.py" line="137"/>
         <source>Connection details</source>
         <translation>Podrobnosti o spojení</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="139"/>
+        <location filename="BoincGui/infowidgets.py" line="140"/>
         <source>Client Details</source>
         <translation>Podrobnosti o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="143"/>
+        <location filename="BoincGui/infowidgets.py" line="144"/>
         <source>Informamtions about Client</source>
         <translation>Informácie o klientovi</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="158"/>
+        <location filename="BoincGui/infowidgets.py" line="159"/>
         <source>connected</source>
         <translation>pripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="160"/>
+        <location filename="BoincGui/infowidgets.py" line="161"/>
         <source>connecting</source>
         <translation>pripája sa</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="162"/>
+        <location filename="BoincGui/infowidgets.py" line="163"/>
         <source>disconnected</source>
         <translation>nepripojený</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="165"/>
+        <location filename="BoincGui/infowidgets.py" line="166"/>
         <source>unauthorized</source>
         <translation>neautorizovaný</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="192"/>
+        <location filename="BoincGui/infowidgets.py" line="193"/>
         <source>OS Name:</source>
         <translation>Operačný systém:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="198"/>
+        <location filename="BoincGui/infowidgets.py" line="199"/>
         <source>OS Version:</source>
         <translation>Verzia operačného systému:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="204"/>
+        <location filename="BoincGui/infowidgets.py" line="205"/>
         <source>Platform:</source>
         <translation>Platforma:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="210"/>
+        <location filename="BoincGui/infowidgets.py" line="211"/>
         <source>Client Version:</source>
         <translation>Verzia klienta:</translation>
     </message>
@@ -239,27 +238,27 @@
 <context>
     <name>cpuInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="248"/>
+        <location filename="BoincGui/infowidgets.py" line="249"/>
         <source>Vendor: </source>
         <translation>Značka:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="250"/>
+        <location filename="BoincGui/infowidgets.py" line="251"/>
         <source>Model: </source>
         <translation>Model:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="252"/>
+        <location filename="BoincGui/infowidgets.py" line="253"/>
         <source>Number of CPUs:</source>
         <translation>Počet CPU:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="254"/>
+        <location filename="BoincGui/infowidgets.py" line="255"/>
         <source>Features: </source>
         <translation>Vlastnosti:</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="259"/>
+        <location filename="BoincGui/infowidgets.py" line="260"/>
         <source>CPU Info</source>
         <translation>Informácie o CPU</translation>
     </message>
@@ -290,42 +289,42 @@
 <context>
     <name>projectInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="395"/>
+        <location filename="BoincGui/infowidgets.py" line="420"/>
         <source>Project Info</source>
         <translation>Informácie o projekte</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="401"/>
+        <location filename="BoincGui/infowidgets.py" line="426"/>
         <source>Project Links</source>
         <translation>Odkazy</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="409"/>
+        <location filename="BoincGui/infowidgets.py" line="434"/>
         <source>Master URL</source>
         <translation>URL projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="410"/>
+        <location filename="BoincGui/infowidgets.py" line="435"/>
         <source>Project Name</source>
         <translation>Projekt</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="411"/>
+        <location filename="BoincGui/infowidgets.py" line="436"/>
         <source>User Name</source>
         <translation>Meno užívateľa</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="412"/>
+        <location filename="BoincGui/infowidgets.py" line="437"/>
         <source>Team Name</source>
         <translation>Názov teamu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="413"/>
+        <location filename="BoincGui/infowidgets.py" line="438"/>
         <source>Total User Credits</source>
         <translation>Celkový počet kreditov užívateľa</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="414"/>
+        <location filename="BoincGui/infowidgets.py" line="439"/>
         <source>Total Host Credits</source>
         <translation>Počet kreditov na tomto stroji</translation>
     </message>
@@ -333,27 +332,27 @@
 <context>
     <name>projectsInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="304"/>
+        <location filename="BoincGui/infowidgets.py" line="305"/>
         <source>Project Name</source>
         <translation>Názov projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="305"/>
+        <location filename="BoincGui/infowidgets.py" line="306"/>
         <source>Project URL</source>
         <translation>URL projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="306"/>
+        <location filename="BoincGui/infowidgets.py" line="307"/>
         <source>Resource Share</source>
         <translation>Zdieľanie zdrojov</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="309"/>
+        <location filename="BoincGui/infowidgets.py" line="310"/>
         <source>&amp;Projects</source>
         <translation>&amp;Projekty</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="308"/>
+        <location filename="BoincGui/infowidgets.py" line="309"/>
         <source>&amp;Resources Share</source>
         <translation>&amp;Zdieľanie zdrojov</translation>
     </message>
@@ -361,32 +360,32 @@
 <context>
     <name>workunitInfoWidget</name>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="644"/>
+        <location filename="BoincGui/infowidgets.py" line="669"/>
         <source>Estimated CPU time remaining: </source>
         <translation>Zostávajúci odhadovaný čas procesora: </translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="646"/>
+        <location filename="BoincGui/infowidgets.py" line="671"/>
         <source>Workunit name: %1</source>
         <translation>Názov: %1</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="647"/>
+        <location filename="BoincGui/infowidgets.py" line="672"/>
         <source>Report deadline: %1</source>
         <translation>Odovzdať do : %1</translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="656"/>
+        <location filename="BoincGui/infowidgets.py" line="681"/>
         <source>Current CPU time: </source>
         <translation>Čas behu: </translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="655"/>
+        <location filename="BoincGui/infowidgets.py" line="680"/>
         <source>Fraction done: %1</source>
         <translation>Dokončené: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="BoincGui/infowidgets.py" line="614"/>
+        <location filename="BoincGui/infowidgets.py" line="639"/>
         <source>%n day(s), %1:%2:%3</source>
         <translation>
             <numerusform>%n deň, %1:%2:%3</numerusform>
@@ -395,7 +394,7 @@
         </translation>
     </message>
     <message>
-        <location filename="BoincGui/infowidgets.py" line="616"/>
+        <location filename="BoincGui/infowidgets.py" line="641"/>
         <source>%1:%2:%3</source>
         <translation>%1:%2:%3</translation>
     </message>

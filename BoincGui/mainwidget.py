@@ -70,6 +70,8 @@ class mainWidget(QWidget):
 				self.infoWidget.setWidget(infowidgets.cpuInfoWidget(connection))
 			elif typ == 'projects':
 				self.infoWidget.setWidget(infowidgets.projectsInfoWidget(connection))
+			elif typ == 'statistics':
+				self.infoWidget.setWidget(infowidgets.statisticsInfoWidget(connection))
 			elif typ == 'project':
 				self.infoWidget.setWidget(infowidgets.projectInfoWidget(connection, pol))
 		elif len(cesta) == 3:
