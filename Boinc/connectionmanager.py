@@ -37,7 +37,13 @@ class BoincConnectionStruct(QObject):
 
 	def getProjectName(self, url):
 		try:
-			return self.__projects[url]
+			return self.__projects[url]['project_name']
+		except KeyError:
+			return None
+
+	def getProject(self, url):
+		try:
+			return self.__projects[str(url)]
 		except KeyError:
 			return None
 
@@ -93,14 +99,24 @@ class BoincConnectionStruct(QObject):
 		self.__createArr(st, 'result')
 		self.__projects = {}
 		for proj in st['project']:
-			self.__projects[proj['master_url']] = proj['project_name']
+			try:
+				i = proj['suspended_via_gui']
+				proj['suspended_via_gui'] = 1
+			except KeyError:
+				proj['suspended_via_gui'] = 0
+
+			try:
+				i = proj['dont_request_more_work']
+				proj['dont_request_more_work'] = 1
+			except KeyError:
+				proj['dont_request_more_work'] = 0
+
+			self.__projects[proj['master_url']] = proj
 		self.emit(SIGNAL("projectState(PyQt_PyObject)"), st)
 
 	def getState(self):
-		self.__bInterface.get_state(self.__recvState)
+		self.__bInterface.get_state(self.__updateProjectState)
 
-	def __recvState(self, data):
-		self.emit(SIGNAL("getStateRecv(PyQt_PyObject)"), data)
 
 	def getStatistics(self):
 		self.__bInterface.get_statistics(self.__recvStatistics)

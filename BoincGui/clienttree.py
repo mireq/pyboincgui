@@ -122,6 +122,13 @@ class clientTreeWidget(QTreeWidget):
 		statisticsItem.setData(0, Qt.UserRole, QVariant("statistics"))
 		statisticsItem.setData(0, Qt.UserRole + 2, QVariant(2))
 		subitems.append(statisticsItem)
+
+		filetransfersItem = clientSubTreeWidgetItem()
+		filetransfersItem.setData(0, Qt.DisplayRole, QVariant(self.tr("File transfers")))
+		filetransfersItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":filetransfers.png"))))
+		filetransfersItem.setData(0, Qt.UserRole, QVariant("filetransfers"))
+		filetransfersItem.setData(0, Qt.UserRole + 2, QVariant(3))
+		subitems.append(filetransfersItem)
 		return subitems
 
 	def __removeSubNodes(self, item):
@@ -163,6 +170,19 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.sender()
 		treeItem = conn.treeItem
 		self.__updateProjectsList(projects, treeItem)
+		for poradie in range(treeItem.childCount()):
+			if treeItem.child(poradie).data(0, Qt.UserRole).toString() == "project":
+				self.__updateProject(self.sender().getProject(treeItem.child(poradie).data(0, Qt.UserRole + 1).toString()), treeItem.child(poradie))
+
+	def __updateProject(self, project, uzol):
+		pixmap = QPixmap(':project')
+		emblem = None
+		if project['dont_request_more_work']:
+			emblem = QPixmap(':no_new_tasks.png')
+		if project['suspended_via_gui']:
+			emblem = QPixmap(':workunit_suspended.png')
+		self.__addEmblem(pixmap, emblem)
+		uzol.setData(0, Qt.DecorationRole, QVariant(QIcon(pixmap)))
 
 	def __updateProjectsList(self, projects, projektyUzol):
 		"""Zoznam poloziek ktore sa maju pridat - slovnik"""
@@ -200,7 +220,7 @@ class clientTreeWidget(QTreeWidget):
 			projectItem.setData(0, Qt.DecorationRole, QVariant(QIcon(QPixmap(":project.png"))))
 			projectItem.setData(0, Qt.UserRole, QVariant("project"))
 			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]['master_url']))
-			projectItem.setData(0, Qt.UserRole + 2, QVariant(3))
+			projectItem.setData(0, Qt.UserRole + 2, QVariant(4))
 			pridat[i] = projectItem;
 
 		self.__removeSubNodeList(projektyUzol, odobrat)
@@ -316,6 +336,11 @@ class clientTreeWidget(QTreeWidget):
 		else:
 			item.setData(0, Qt.UserRole + 2, QVariant(6))
 
+		self.__addEmblem(pixmap, emblem)
+
+		item.setData(0, Qt.DecorationRole, QVariant(QIcon(pixmap)))
+
+	def __addEmblem(self, pixmap, emblem):
 		if not emblem is None:
 			painter = QPainter()
 			painter.begin(pixmap)
@@ -325,8 +350,6 @@ class clientTreeWidget(QTreeWidget):
 
 			painter.drawPixmap(dest, emblem, emblem.rect())
 			painter.end()
-
-		item.setData(0, Qt.DecorationRole, QVariant(QIcon(pixmap)))
 
 	def __updateWorkunits(self, aktualizovat):
 		keys = aktualizovat.keys()

@@ -172,12 +172,12 @@ class clientInfoWidget(infoWidget):
 			if not projects is None:
 				self.__newClientState(projects)
 			else:
-				self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
+				self.connect(self.__client, SIGNAL('projectState(PyQt_PyObject)'), self.__newClientState)
 				self.__client.getState()
 
 	def __newClientState(self, state):
 		# odstranime vsetkych potomkov
-		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__newClientState)
+		self.disconnect(self.__client, SIGNAL('projectState(PyQt_PyObject)'), self.__newClientState)
 		potomok = self.__advClientInfoLayout.takeAt(0)
 		while not potomok is None:
 			#self.__advClientInfoLayout.removeWidget(potomok)
@@ -266,12 +266,12 @@ class cpuInfoWidget(infoWidget):
 		if not projects is None:
 			self.__updateClientState(projects)
 		else:
-			self.connect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
+			self.connect(self.__client, SIGNAL('projectState(PyQt_PyObject)'), self.__updateClientState)
 			self.__client.getState()
 
 
 	def __updateClientState(self, state):
-		self.disconnect(self.__client, SIGNAL('getStateRecv(PyQt_PyObject)'), self.__updateClientState)
+		self.disconnect(self.__client, SIGNAL('projectState(PyQt_PyObject)'), self.__updateClientState)
 		self.__vendorLabel.setText(state['host_info']['p_vendor'])
 		self.__modelLabel.setText(state['host_info']['p_model'])
 		self.__ncpusLabel.setText(state['host_info']['p_ncpus'])
