@@ -1,5 +1,5 @@
 from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath, QSizePolicy, QMatrix, QFontMetrics
-from PyQt4.QtCore import QSize, QRect, QPoint, Qt, QString
+from PyQt4.QtCore import QSize, QRect, QPoint, Qt, QString, QLocale, QDateTime
 
 class LineChart(QWidget):
 	__graphs = []
@@ -73,10 +73,10 @@ class LineChart(QWidget):
 	def __calcCoordRanges(self):
 		self.__xRange = self.__maxDay - self.__minDay
 		self.__yRange = self.__maxPoints - self.__minPoints
-		self.__xMin = self.__minDay - int(float(self.__xRange) * 0.05)
-		self.__xMax = self.__maxDay + int(float(self.__xRange) * 0.05)
-		self.__yMin = self.__minPoints - int(float(self.__yRange) * 0.05)
-		self.__yMax = self.__maxPoints + int(float(self.__yRange) * 0.05)
+		self.__xMin = self.__minDay - int(float(self.__xRange) * 0.01)
+		self.__xMax = self.__maxDay + int(float(self.__xRange) * 0.01)
+		self.__yMin = self.__minPoints - int(float(self.__yRange) * 0.01)
+		self.__yMax = self.__maxPoints + int(float(self.__yRange) * 0.01)
 
 	def paintEvent(self, event):
 		painter = QPainter(self)
@@ -106,15 +106,43 @@ class LineChart(QWidget):
 
 		hodnoty = []
 		for i in range(int(dataMin) / zaokruhlenyKrok, int(dataMax) / zaokruhlenyKrok + 1):
-			hodnoty.append(i * zaokruhlenyKrok)
-
+			hodnota = i * zaokruhlenyKrok
+			if hodnota >= dataMin and hodnota <= dataMax:
+				hodnoty.append(hodnota)
 		return hodnoty
+
+	def __calcMaxTextSize(self, font, hodnoty):
+		fm = QFontMetrics(font);
+		x = 0
+		y = fm.height()
+		for hodnota in hodnoty:
+			w = fm.width(hodnota)
+			if w > x:
+				x = w
+		return (x, y)
+
+	def __convertXData(self, data):
+		loc = QLocale()
+		out = []
+		for polozka in data:
+			time = QDateTime()
+			time.setTime_t(polozka)
+			out.append(time.toString(loc.dateFormat(QLocale.ShortFormat)))
+		return out
+
+	def __convertYData(self, data):
+		loc = QLocale()
+		out = []
+		for polozka in data:
+			out.append(loc.toString(polozka))
+		return out
 
 	def __drawAxes(self, painter):
 		"""
 		Pozor, tato metoda vracia nove velkosti X a Y pretoze pri kresleni osi
 		sa rata aj s velkostou textu ktora je variabilna
 		"""
+
 		palette = QPalette()
 		penColor = QColor(palette.color(QPalette.WindowText))
 		ciara = QPen(penColor)
@@ -134,7 +162,16 @@ class LineChart(QWidget):
 		xOs = self.__calcAxesData(xVelkost, self.__xMedzery, self.__minDay, self.__maxDay)
 		yOs = self.__calcAxesData(yVelkost, self.__yMedzery, self.__minPoints, self.__maxPoints)
 
-		painter.translate(5, 5)
+		xText = self.__convertXData(xOs)
+		yText = self.__convertYData(yOs)
+
+		(xxText, xyText) = self.__calcMaxTextSize(self.font(), xText)
+		(yxText, yyText) = self.__calcMaxTextSize(self.font(), yText)
+
+		xVelkost = xVelkost - yxText
+		yVelkost = yVelkost - xyText
+
+		painter.translate(yxText + 5, 5)
 		rect = QRect(0, 0, xVelkost, yVelkost)
 		painter.drawRect(rect)
 
@@ -144,9 +181,26 @@ class LineChart(QWidget):
 		for hodnota in yOs:
 			y = self.__getYCoord(yVelkost, hodnota)
 			painter.drawLine(0, y, xVelkost, y)
+			textRect = QRect(-yxText-3, y - yyText / 2, yxText, yyText)
+			painter.drawText(textRect, Qt.AlignRight, "text")
 		for hodnota in xOs:
 			x = self.__getXCoord(xVelkost, hodnota)
 			painter.drawLine(x, 0, x, yVelkost)
+
+		painter.setPen(palette.color(QPalette.WindowText))
+
+		for i in range(len(yText)):
+			hodnota = yOs[i]
+			text = yText[i]
+			y = self.__getYCoord(yVelkost, hodnota)
+			textRect = QRect(-yxText-3, y - yyText / 2, yxText, yyText)
+			painter.drawText(textRect, Qt.AlignRight, text)
+		for i in range(len(xText)):
+			hodnota = xOs[i]
+			text = xText[i]
+			x = self.__getXCoord(xVelkost, hodnota)
+			textRect = QRect(x - xxText / 2, yVelkost + xyText / 2, xxText, xyText)
+			painter.drawText(textRect, Qt.AlignHCenter, text)
 		return (xVelkost, yVelkost)
 
 	def __drawLines(self, painter, width, height):
@@ -188,6 +242,7 @@ class LineChart(QWidget):
 		pen.setCapStyle(Qt.RoundCap);
  		pen.setJoinStyle(Qt.RoundJoin);
 		painter.setPen(pen)
+		painter.setBrush(Qt.NoBrush)
 		painter.drawPath(path)
 
 	def setIndex(self, index):
