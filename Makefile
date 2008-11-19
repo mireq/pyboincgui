@@ -10,6 +10,8 @@ clean:
 	rm -f Boinc/*.pyc
 	rm -f BoincGui/*~
 	rm -f BoincGui/*.pyc
+	rm -f BoincGui/InfoWidgets/*~
+	rm -f BoincGui/InfoWidgets/*.pyc
 
 translations/boincgui_sk.qm:translations/boincgui_sk.ts
 	lrelease $< $@
