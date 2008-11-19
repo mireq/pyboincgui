@@ -1,10 +1,13 @@
-from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath, QSizePolicy
-from PyQt4.QtCore import QSize, QRect, QPoint, Qt
+from PyQt4.QtGui import QFrame, QWidget, QPalette, QVBoxLayout, QPainter, QPen, QBrush, QColor, QPalette, QPainterPath, QSizePolicy, QMatrix, QFontMetrics
+from PyQt4.QtCore import QSize, QRect, QPoint, Qt, QString
 
 class LineChart(QWidget):
 	__graphs = []
 	__padding = 5
 	__index = 0
+
+	__xMedzery = 100
+	__yMedzery = 30
 
 	def __init__(self, parent = None):
 		QWidget.__init__(self, parent)
@@ -67,30 +70,7 @@ class LineChart(QWidget):
 		self.__graphs = []
 		self.__initRange()
 
-	def paintEvent(self, event):
-		palette = QPalette()
-		painter = QPainter(self)
-		#painter.setRenderHint(QPainter.Antialiasing)
-
-		if (not self.__minDay == self.__maxDay) and (not self.__minPoints == self.__maxPoints):
-			ciara = QPen(palette.color(QPalette.WindowText))
-			pozadieBaseColor = QColor(palette.color(QPalette.Base))
-			pozadieMixColor = QColor(90, 150, 250);
-			red   = (pozadieBaseColor.red() * 4 + pozadieMixColor.red()) / 5
-			green = (pozadieBaseColor.green() * 4 + pozadieMixColor.green()) / 5
-			blue  = (pozadieBaseColor.blue() * 4 + pozadieMixColor.blue()) / 5
-			pozadieColor = QColor(red, green, blue);
-			pozadie = QBrush(pozadieColor)
-
-			painter.setPen(ciara)
-			painter.setBrush(pozadie)
-
-			painter.translate(5, 5)
-			rect = QRect(0, 0, self.width() - (2 * self.__padding), self.height() - (2 * self.__padding))
-			painter.drawRect(rect)
-			self.__drawLines(painter, self.width() - (2 * self.__padding), self.height() - (2 * self.__padding))
-
-	def __drawLines(self, painter, width, height):
+	def __calcCoordRanges(self):
 		self.__xRange = self.__maxDay - self.__minDay
 		self.__yRange = self.__maxPoints - self.__minPoints
 		self.__xMin = self.__minDay - int(float(self.__xRange) * 0.05)
@@ -98,13 +78,91 @@ class LineChart(QWidget):
 		self.__yMin = self.__minPoints - int(float(self.__yRange) * 0.05)
 		self.__yMax = self.__maxPoints + int(float(self.__yRange) * 0.05)
 
+	def paintEvent(self, event):
+		painter = QPainter(self)
+
+		if (not self.__minDay == self.__maxDay) and (not self.__minPoints == self.__maxPoints):
+			self.__calcCoordRanges()
+			(xVelkost, yVelkost) = self.__drawAxes(painter)
+			self.__drawLines(painter, xVelkost, yVelkost)
+
+	def __calcAxesData(self, size, space, dataMin, dataMax):
+		kroky = float(size) / float(space)
+		rozsah = float(dataMax - dataMin)
+		krok = rozsah / kroky;
+
+		mocnina = 1
+		cislo = 10
+		zaokruhlenyKrok = cislo**mocnina
+		while zaokruhlenyKrok < krok:
+			if zaokruhlenyKrok * 2 >= krok:
+				zaokruhlenyKrok = zaokruhlenyKrok * 2
+				break
+			if zaokruhlenyKrok * 5 >= krok:
+				zaokruhlenyKrok = zaokruhlenyKrok * 5
+				break
+			mocnina = mocnina + 1
+			zaokruhlenyKrok = cislo**mocnina
+
+		hodnoty = []
+		for i in range(int(dataMin) / zaokruhlenyKrok, int(dataMax) / zaokruhlenyKrok + 1):
+			hodnoty.append(i * zaokruhlenyKrok)
+
+		return hodnoty
+
+	def __drawAxes(self, painter):
+		"""
+		Pozor, tato metoda vracia nove velkosti X a Y pretoze pri kresleni osi
+		sa rata aj s velkostou textu ktora je variabilna
+		"""
+		palette = QPalette()
+		penColor = QColor(palette.color(QPalette.WindowText))
+		ciara = QPen(penColor)
+		pozadieBaseColor = QColor(palette.color(QPalette.Base))
+		pozadieMixColor = QColor(90, 150, 250);
+		red   = (pozadieBaseColor.red() * 4 + pozadieMixColor.red()) / 5
+		green = (pozadieBaseColor.green() * 4 + pozadieMixColor.green()) / 5
+		blue  = (pozadieBaseColor.blue() * 4 + pozadieMixColor.blue()) / 5
+		pozadieColor = QColor(red, green, blue);
+		pozadie = QBrush(pozadieColor)
+
+		painter.setPen(ciara)
+		painter.setBrush(pozadie)
+
+		xVelkost = self.width() - (2 * self.__padding)
+		yVelkost = self.height() - (2 * self.__padding)
+		xOs = self.__calcAxesData(xVelkost, self.__xMedzery, self.__minDay, self.__maxDay)
+		yOs = self.__calcAxesData(yVelkost, self.__yMedzery, self.__minPoints, self.__maxPoints)
+
+		painter.translate(5, 5)
+		rect = QRect(0, 0, xVelkost, yVelkost)
+		painter.drawRect(rect)
+
+		penColor.setAlpha(60)
+		painter.setPen(QPen(penColor))
+
+		for hodnota in yOs:
+			y = self.__getYCoord(yVelkost, hodnota)
+			painter.drawLine(0, y, xVelkost, y)
+		for hodnota in xOs:
+			x = self.__getXCoord(xVelkost, hodnota)
+			painter.drawLine(x, 0, x, yVelkost)
+		return (xVelkost, yVelkost)
+
+	def __drawLines(self, painter, width, height):
 		painter.setRenderHint(QPainter.Antialiasing)
 		for graph in self.__graphs:
 			self.__drawLine(painter, graph, width, height)
 
+	def __getXCoord(self, width, xdata):
+		return int(float(xdata - self.__xMin) / float(self.__xMax - self.__xMin) * float(width))
+
+	def __getYCoord(self, height, ydata):
+		return height - int(float(ydata - self.__yMin) / float(self.__yMax - self.__yMin) * float(height))
+
 	def __getCoordinates(self, width, height, xdata, ydata):
-		x = int(float(xdata - self.__xMin) / float(self.__xMax - self.__xMin) * float(width))
-		y = height - int(float(ydata - self.__yMin) / float(self.__yMax - self.__yMin) * float(height))
+		x = self.__getXCoord(width, xdata)
+		y = self.__getYCoord(height, ydata)
 		return (x, y)
 
 	def __drawLine(self, painter, graph, width, height):
