@@ -318,7 +318,7 @@ class clientTreeWidget(QTreeWidget):
 		emblem = None
 		if status == 1:
 			emblem = QPixmap(":status_downloading.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(1))
+			item.setData(0, Qt.UserRole + 2, QVariant(3))
 			self.__setProgressPixmapInactive(pixmap)
 		elif status == 2:
 			if processStatus == 1:
@@ -326,9 +326,9 @@ class clientTreeWidget(QTreeWidget):
 				item.setData(0, Qt.UserRole + 2, QVariant(0))
 			elif processStatus == 9:
 				emblem = QPixmap(":status_suspended.png")
-				item.setData(0, Qt.UserRole + 2, QVariant(2))
+				item.setData(0, Qt.UserRole + 2, QVariant(4))
 			else:
-				item.setData(0, Qt.UserRole + 2, QVariant(3))
+				item.setData(0, Qt.UserRole + 2, QVariant(5))
 			if processStatus == 0:
 				self.__setProgressPixmapInactive(pixmap)
 			else:
@@ -336,18 +336,18 @@ class clientTreeWidget(QTreeWidget):
 
 		elif status == 3:
 			emblem = QPixmap(":status_error.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(5))
+			item.setData(0, Qt.UserRole + 2, QVariant(7))
 		elif status == 4:
 			emblem = QPixmap(":status_uploading.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(1))
+			item.setData(0, Qt.UserRole + 2, QVariant(2))
 		elif status == 5:
 			emblem = QPixmap(":status_uploaded.png")
 			item.setData(0, Qt.UserRole + 2, QVariant(1))
 		elif status == 6:
 			emblem = QPixmap(":status_aborted.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(4))
-		else:
 			item.setData(0, Qt.UserRole + 2, QVariant(6))
+		else:
+			item.setData(0, Qt.UserRole + 2, QVariant(8))
 			self.__setProgressPixmapInactive(pixmap)
 
 		self.__addEmblem(pixmap, emblem)
