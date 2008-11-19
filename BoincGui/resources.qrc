@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file alias="boinc.png">icons/boinc.png</file>
   <file alias="connect_creating.png">icons/connect_creating.png</file>
   <file alias="connect_established.png">icons/connect_established.png</file>
   <file alias="connect_no.png">icons/connect_no.png</file>

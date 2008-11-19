@@ -1,5 +1,5 @@
 from PyQt4.QtCore import SIGNAL, SLOT, QThread
-from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox
+from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox, QIcon, QPixmap
 from addclientwizard import addClientWizard
 from mainwidget import mainWidget
 from Boinc.connection import BoincConnectionException
@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
 		self.centralWidget = mainWidget(self.__connManager)
 		self.connect(self.centralWidget, SIGNAL('clientChanged(int)'), self.changeClient)
 		self.setCentralWidget(self.centralWidget)
+		self.setWindowIcon(QIcon(QPixmap(":boinc.png")))
 
 	def changeClient(self, client):
 		self.__activeClient = client
