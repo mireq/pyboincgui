@@ -6,6 +6,8 @@ from clientInfoWidget import clientInfoWidget
 __all__.append('clientInfoWidget')
 from cpuInfoWidget import cpuInfoWidget
 __all__.append('cpuInfoWidget')
+from filetransfersInfoWidget import filetransfersInfoWidget
+__all__.append('filetransfersInfoWidget')
 from projectsInfoWidget import projectsInfoWidget
 __all__.append('projectsInfoWidget')
 from statisticsInfoWidget import statisticsInfoWidget

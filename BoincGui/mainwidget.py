@@ -72,6 +72,8 @@ class mainWidget(QWidget):
 				self.infoWidget.setWidget(InfoWidgets.projectsInfoWidget(connection))
 			elif typ == 'statistics':
 				self.infoWidget.setWidget(InfoWidgets.statisticsInfoWidget(connection))
+			elif typ == 'filetransfers':
+				self.infoWidget.setWidget(InfoWidgets.filetransfersInfoWidget(connection))
 			elif typ == 'project':
 				self.infoWidget.setWidget(InfoWidgets.projectInfoWidget(connection, pol))
 		elif len(cesta) == 3:

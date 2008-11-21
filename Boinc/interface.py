@@ -213,3 +213,89 @@ class Interface:
 		dom.unlink()
 		if not call is None:
 			call(out)
+
+	def get_file_transfers(self, callback = None):
+		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_file_transfers /></boinc_gui_rpc_request>", self.__recvFileTransfers, callback)
+
+	def __getStr(self, node, name):
+		nodes = node.getElementsByTagName(name)
+		if len(nodes) != 1:
+			return None
+		childNodes = nodes[0].childNodes
+		if len(childNodes) != 1:
+			return None
+		vysledokNode = childNodes[0]
+		if vysledokNode.nodeType != Node.TEXT_NODE:
+			return None
+		return vysledokNode.nodeValue
+
+	def __getFloat(self, node, name):
+		string = self.__getStr(node, name)
+		if string is None:
+			return None
+		try:
+			return float(string)
+		except ValueError:
+			return None
+
+	def __getInt(self, node, name):
+		string = self.__getStr(node, name)
+		if string is None:
+			return None
+		try:
+			return int(string)
+		except ValueError:
+			try:
+				return int(float(string))
+			except ValueError:
+				return None
+			return None
+
+	def __nodeExist(self, node, name):
+		nodes = node.getElementsByTagName(name)
+		if len(nodes) > 0:
+			return True
+		else:
+			return False
+
+	def __recvFileTransfers(self, data, call = None):
+		out = []
+		dom, reply = self.getReply(data)
+		fileTransfersNode = reply.getElementsByTagName('file_transfers')[0]
+		fileTransfers = fileTransfersNode.getElementsByTagName('file_transfer')
+		for ftNode in  fileTransfers:
+			fileTransfer = {}
+			fileTransfer['name']                 = self.__getStr(ftNode, 'name')
+			fileTransfer['project_url']          = self.__getStr(ftNode, 'project_url')
+			fileTransfer['project_name']         = self.__getStr(ftNode, 'project_name')
+			fileTransfer['nbytes']               = self.__getFloat(ftNode, 'nbytes')
+			fileTransfer['generated_locally']    = self.__nodeExist(ftNode, 'generated_locally')
+			fileTransfer['uploaded']             = self.__nodeExist(ftNode, 'uploaded')
+			fileTransfer['upload_when_present']  = self.__nodeExist(ftNode, 'upload_when_present')
+			fileTransfer['sticky']               = self.__nodeExist(ftNode, 'sticky')
+			fileTransfer['persistent_file_xfer'] = self.__nodeExist(ftNode, 'persistent_file_xfer')
+			fileTransfer['file_xfer']            = self.__nodeExist(ftNode, 'file_xfer')
+			fileTransfer['num_retries']          = self.__getInt(ftNode, 'num_retries')
+			fileTransfer['first_request_time']   = self.__getInt(ftNode, 'first_request_time')
+			fileTransfer['next_request_time']    = self.__getInt(ftNode, 'next_request_time')
+			fileTransfer['status']               = self.__getInt(ftNode, 'status')
+			fileTransfer['time_so_far']          = self.__getFloat(ftNode, 'time_so_far')
+			fileTransfer['last_bytes_xferred']   = self.__getFloat(ftNode, 'last_bytes_xferred')
+			fileTransfer['file_offset']          = self.__getFloat(ftNode, 'file_offset')
+			fileTransfer['xfer_speed']           = self.__getFloat(ftNode, 'xfer_speed')
+			fileTransfer['host']                 = self.__getStr(ftNode, 'host')
+			xferNodes = ftNode.getElementsByTagName('file_xfer')
+			if len(xferNodes) == 1:
+				xferNode = xferNodes[0]
+				fileTransfer['bytes_xferred'] = self.__getFloat(xferNode, 'bytes_xferred')
+				fileTransfer['file_offset']   = self.__getFloat(xferNode, 'file_offset')
+				fileTransfer['xfer_speed']    = self.__getFloat(xferNode, 'xfer_speed')
+				fileTransfer['url']           = self.__getStr(xferNode, 'url')
+			else:
+				fileTransfer['bytes_xferred'] = 0.0
+				fileTransfer['file_offset']   = 0.0
+				fileTransfer['xfer_speed']    = 0.0
+				fileTransfer['url']           = ''
+			out.append(fileTransfer)
+		dom.unlink()
+		call(out)

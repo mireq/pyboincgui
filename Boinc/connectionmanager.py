@@ -124,6 +124,12 @@ class BoincConnectionStruct(QObject):
 	def __recvStatistics(self, data):
 		self.emit(SIGNAL("getStatisticsRecv(PyQt_PyObject)"), data)
 
+	def getFileTransfers(self):
+		self.__bInterface.get_file_transfers(self.__recvFileTransfers)
+
+	def __recvFileTransfers(self, data):
+		self.emit(SIGNAL("getFileTransfersRecv(PyQt_PyObject)"), data)
+
 	def boincConnect(self):
 		self.__bInterface.boincConnect(self.__connectStateChanged)
 
