@@ -181,8 +181,6 @@ class LineChart(QWidget):
 		for hodnota in yOs:
 			y = self.__getYCoord(yVelkost, hodnota)
 			painter.drawLine(0, y, xVelkost, y)
-			textRect = QRect(-yxText-3, y - yyText / 2, yxText, yyText)
-			painter.drawText(textRect, Qt.AlignRight, "text")
 		for hodnota in xOs:
 			x = self.__getXCoord(xVelkost, hodnota)
 			painter.drawLine(x, 0, x, yVelkost)
