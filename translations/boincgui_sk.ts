@@ -332,129 +332,139 @@
 <context>
     <name>projectInfoWidget</name>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="63"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="65"/>
         <source>Project Info</source>
         <translation>Informácie o projekte</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="69"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="71"/>
         <source>Project Links</source>
         <translation>Odkazy</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="106"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="108"/>
         <source>Master URL</source>
         <translation>Hlavné URL</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="107"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="109"/>
         <source>Project Name</source>
         <translation>Názov projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="108"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="110"/>
         <source>User Name</source>
         <translation>Meno používateľa</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="109"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="111"/>
         <source>Team Name</source>
         <translation>Názov teamu</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="110"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="112"/>
         <source>Total User Credits</source>
         <translation>Celkový počet kreditov užívateľa</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="111"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="113"/>
         <source>Total Host Credits</source>
         <translation>Celkový počet kreditov na tomto PC</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="72"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="74"/>
         <source>Update</source>
         <translation>Aktualizovať</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="75"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="77"/>
         <source>Reset project</source>
         <translation>Resetovať projekt</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="76"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="78"/>
         <source>Detach project</source>
         <translation>Odpojiť sa od projektu</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="173"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="181"/>
         <source>Updating project</source>
-        <translation>Aktualizovať projekt</translation>
+        <translation>Projekt sa aktualizuje</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="178"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="186"/>
         <source>Resuming project</source>
         <translation>Spúšťa sa projekt</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="181"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="189"/>
         <source>Suspending project</source>
         <translation>Zastavuje sa projekt</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="186"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="194"/>
         <source>Allowing new tasks</source>
         <translation>Povoľujú sa nové úlohy</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="189"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="197"/>
         <source>Disallowing new tasks</source>
         <translation>Zakazujú sa nové úlohy</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="196"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="204"/>
         <source>Project updated</source>
         <translation>Projekt aktualizovaný</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="203"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="211"/>
         <source>Project suspended</source>
         <translation>Projekt zastavený</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="278"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="290"/>
         <source>Resume</source>
         <translation>Pokračovať</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="213"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="222"/>
         <source>Project restored</source>
         <translation>Projekt obnovený</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="280"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="293"/>
         <source>Suspend</source>
         <translation>Zastaviť</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="223"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="233"/>
         <source>New tasks disallowed</source>
         <translation>Nové úlohy sú zakázané</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="283"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="297"/>
         <source>Allow new tasks</source>
         <translation>Povoliť nové úlohy</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="233"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="244"/>
         <source>New tasks allowed</source>
         <translation>Nové úlohy sú povolené</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="285"/>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="300"/>
         <source>No new tasks</source>
         <translation>Zakázať nové úlohy</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="114"/>
+        <source>Suspended by user</source>
+        <translation>Projekt zastavený užívateľom</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/projectInfoWidget.py" line="115"/>
+        <source>Won&apos;t get new tasks</source>
+        <translation>Nebudú sa sťahovať nové úlohy</translation>
     </message>
 </context>
 <context>

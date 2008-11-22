@@ -49,6 +49,8 @@ class projectInfoWidget(infoWidget):
 	__userTotalCreditText  = None
 	__hostTotalCreditLabel = None
 	__hostTotalCreditText  = None
+	__suspendedLabel       = None
+	__newTasksLabel        = None
 
 	__projectLinksButton = None
 	__projectSettingsMenu   = None
@@ -92,12 +94,12 @@ class projectInfoWidget(infoWidget):
 		self.__projectSettings.addWidget(self.__updateProjectButton)
 		self.__projectSettings.addWidget(self.__suspendProjectButton)
 		self.__projectSettings.addWidget(self.__allowNewTasksButton)
-		self.__projectSettings.addStretch(1)
+		#self.__projectSettings.addStretch(1)
 
 		self.__projectAdmin = QHBoxLayout()
 		self.__projectAdmin.addWidget(self.__resetProjectButton)
 		self.__projectAdmin.addWidget(self.__detachProjectButton)
-		self.__projectAdmin.addStretch(1)
+		#self.__projectAdmin.addStretch(1)
 
 		self.__mainLayout.addWidget(self.__projectInfo, 0, 0)
 		self.__mainLayout.addLayout(self.__projectSettings, 2, 0)
@@ -109,6 +111,8 @@ class projectInfoWidget(infoWidget):
 		self.__teamNameLabel        = QLabel(self.tr("Team Name"))
 		self.__userTotalCreditLabel = QLabel(self.tr("Total User Credits"))
 		self.__hostTotalCreditLabel = QLabel(self.tr("Total Host Credits"))
+		self.__suspendedLabel       = QLabel(self.tr("Suspended by user"))
+		self.__newTasksLabel        = QLabel(self.tr("Won't get new tasks"))
 
 		self.__masterUrlText       = QLabel()
 		self.__projectNameText     = QLabel()
@@ -137,6 +141,8 @@ class projectInfoWidget(infoWidget):
 		self.__teamNameText.hide()
 		self.__userTotalCreditText.hide()
 		self.__hostTotalCreditText.hide()
+		self.__suspendedLabel.hide()
+		self.__newTasksLabel.hide()
 
 		self.__projectInfoLayout.addWidget(self.__masterUrlLabel,        0, 0)
 		self.__projectInfoLayout.addWidget(self.__projectNameLabel,      1, 0)
@@ -151,6 +157,8 @@ class projectInfoWidget(infoWidget):
 		self.__projectInfoLayout.addWidget(self.__teamNameText,         3, 1)
 		self.__projectInfoLayout.addWidget(self.__userTotalCreditText, 4, 1)
 		self.__projectInfoLayout.addWidget(self.__hostTotalCreditText, 5, 1)
+		self.__projectInfoLayout.addWidget(self.__suspendedLabel, 6, 0, 1, 2)
+		self.__projectInfoLayout.addWidget(self.__newTasksLabel, 7, 0, 1, 2)
 
 		self.__master_url = project.data(0, Qt.UserRole + 1).toString()
 		self.__projectCached = None
@@ -202,6 +210,7 @@ class projectInfoWidget(infoWidget):
 		else:
 			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Project suspended"))
 			self.__projectCached['suspended_via_gui'] = 1
+			self.__suspendedLabel.show()
 			self.__suspendProjectButton.setText(self.tr("Resume"))
 
 		self.client().getState()
@@ -212,6 +221,7 @@ class projectInfoWidget(infoWidget):
 		else:
 			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Project restored"))
 			self.__projectCached['suspended_via_gui'] = 0
+			self.__suspendedLabel.hide()
 			self.__suspendProjectButton.setText(self.tr("Suspend"))
 
 		self.client().getState()
@@ -222,6 +232,7 @@ class projectInfoWidget(infoWidget):
 		else:
 			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("New tasks disallowed"))
 			self.__projectCached['dont_request_more_work'] = 1
+			self.__newTasksLabel.show()
 			self.__allowNewTasksButton.setText(self.tr("Allow new tasks"))
 
 		self.client().getState()
@@ -232,6 +243,7 @@ class projectInfoWidget(infoWidget):
 		else:
 			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("New tasks allowed"))
 			self.__projectCached['dont_request_more_work'] = 0
+			self.__newTasksLabel.hide()
 			self.__allowNewTasksButton.setText(self.tr("No new tasks"))
 
 		self.client().getState()
@@ -276,13 +288,17 @@ class projectInfoWidget(infoWidget):
 
 			if project['suspended_via_gui']:
 				self.__suspendProjectButton.setText(self.tr("Resume"))
+				self.__suspendedLabel.show()
 			else:
 				self.__suspendProjectButton.setText(self.tr("Suspend"))
+				self.__suspendedLabel.hide()
 
 			if project['dont_request_more_work']:
 				self.__allowNewTasksButton.setText(self.tr("Allow new tasks"))
+				self.__newTasksLabel.show()
 			else:
 				self.__allowNewTasksButton.setText(self.tr("No new tasks"))
+				self.__newTasksLabel.hide()
 
 			self.__updateProjectButton.show()
 			self.__suspendProjectButton.show()

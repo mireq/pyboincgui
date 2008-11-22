@@ -94,24 +94,24 @@ class BoincConnectionStruct(QObject):
 
 	def __updateProjectState(self, st):
 		self.__projectState = st
-		self.__createArr(st, 'project')
-		self.__createArr(st, 'workunit')
-		self.__createArr(st, 'result')
+		self.__createArr(st, u'project')
+		self.__createArr(st, u'workunit')
+		self.__createArr(st, u'result')
 		self.__projects = {}
-		for proj in st['project']:
+		for proj in st[u'project']:
 			try:
-				i = proj['suspended_via_gui']
-				proj['suspended_via_gui'] = 1
+				i = proj[u'suspended_via_gui']
+				proj[u'suspended_via_gui'] = 1
 			except KeyError:
-				proj['suspended_via_gui'] = 0
+				proj[u'suspended_via_gui'] = 0
 
 			try:
-				i = proj['dont_request_more_work']
-				proj['dont_request_more_work'] = 1
+				i = proj[u'dont_request_more_work']
+				proj[u'dont_request_more_work'] = 1
 			except KeyError:
-				proj['dont_request_more_work'] = 0
+				proj[u'dont_request_more_work'] = 0
 
-			self.__projects[proj['master_url']] = proj
+			self.__projects[proj[u'master_url']] = proj
 		self.emit(SIGNAL("projectState(PyQt_PyObject)"), st)
 
 	def getState(self):
