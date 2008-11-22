@@ -526,7 +526,7 @@
 <context>
     <name>workunitInfoWidget</name>
     <message numerus="yes">
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="124"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="200"/>
         <source>%n day(s), %1:%2:%3</source>
         <translation>
             <numerusform>%n deň, %1:%2:%3</numerusform>
@@ -535,44 +535,199 @@
         </translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="126"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="202"/>
         <source>%1:%2:%3</source>
         <translation>%1:%2:%3</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="40"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="45"/>
         <source>Estimated CPU time remaining:</source>
         <translation>Odhadovaný zostávajúci procesorový čas:</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="154"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="232"/>
         <source>Workunit name: %1</source>
         <translation>Názov: %1</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="39"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="44"/>
         <source>Report deadline:</source>
         <translation>Odovzdať do:</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="41"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="47"/>
         <source>Fraction done:</source>
         <translation>Hotovo:</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="42"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="48"/>
         <source>Current CPU time:</source>
         <translation>Aktuálny procesorový čas:</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="74"/>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="102"/>
         <source>Task info</source>
         <translation>Informácie o úlohe</translation>
     </message>
     <message>
-        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="75"/>
-        <source>Active task info</source>
-        <translation>Informácie o aktívnej úlohe</translation>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="46"/>
+        <source>State:</source>
+        <translation>Stav:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="49"/>
+        <source>Process state:</source>
+        <translation>Stav procesu:</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="62"/>
+        <source>Show graphics</source>
+        <translation>Zobraziť grafiku</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="64"/>
+        <source>Abort</source>
+        <translation>Zrušiť</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="103"/>
+        <source>Process info</source>
+        <translation>Informácie o procese</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="148"/>
+        <source>Graphics displayed</source>
+        <translation>Grafika zobrazená</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="154"/>
+        <source>Result suspended</source>
+        <translation>Úloha zastavená</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="306"/>
+        <source>Resume</source>
+        <translation>Pokračovať</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="163"/>
+        <source>Result restored</source>
+        <translation>Úloha obnovená</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="308"/>
+        <source>Suspend</source>
+        <translation>Zastaviť</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="172"/>
+        <source>Result aborted</source>
+        <translation>Úloha ukončená</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="179"/>
+        <source>Resuming result</source>
+        <translation>Úloha sa obnovuje</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="182"/>
+        <source>Suspending result</source>
+        <translation>Úloha sa zastavuje</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="186"/>
+        <source>Abort result</source>
+        <translation>Ukončiť úlohu</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="186"/>
+        <source>Are you sure that you want to abort result?</source>
+        <translation>Ste si istí, že chcete ukončiť úlohu?</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="188"/>
+        <source>Aborting result</source>
+        <translation>Úloha sa ukončuje</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="239"/>
+        <source>New</source>
+        <translation>Nový</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="241"/>
+        <source>Input files for result are being downloaded</source>
+        <translation>Vstupné súbory sa sťahujú</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="246"/>
+        <source>Files are downloaded, result is being computed</source>
+        <translation>Súbory boli stiahnuté, prebieha výpočet</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="250"/>
+        <source>Files are downloaded, result can be computed</source>
+        <translation>Súbory boli stiahnuté, môže sa začať výpočet</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="252"/>
+        <source>Computation failed</source>
+        <translation>Výpočet zlyhal</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="254"/>
+        <source>Output files for result are being uploaded</source>
+        <translation>Výstupné súbory sa odosielajú</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="256"/>
+        <source>Files are uploaded</source>
+        <translation>Súbory boli odoslané</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="258"/>
+        <source>Result was aborted</source>
+        <translation>Úloha bola ukončená</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="284"/>
+        <source>Unknown</source>
+        <translation>Neznámy</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="269"/>
+        <source>Unitialized</source>
+        <translation>Neinicializovaný</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="271"/>
+        <source>Running</source>
+        <translation>Bežiaci</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="273"/>
+        <source>Aborted</source>
+        <translation>Ukončený</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="275"/>
+        <source>Abort pending</source>
+        <translation>Čaká sa na ukončenie</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="277"/>
+        <source>Process couldnt start</source>
+        <translation>Proces sa nepodarilo spustiť</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="279"/>
+        <source>Quit pending</source>
+        <translation>Čaká sa na ukončenie procesu</translation>
+    </message>
+    <message>
+        <location filename="BoincGui/InfoWidgets/workunitInfoWidget.py" line="281"/>
+        <source>Suspended</source>
+        <translation>Zastavený</translation>
     </message>
 </context>
 </TS>

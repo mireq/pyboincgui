@@ -311,7 +311,7 @@ class Interface:
 		dom.unlink()
 		call(out)
 
-	def __add_project_url_node(self, dom, node, nodeName, text):
+	def __add_text_node(self, dom, node, nodeName, text):
 		newNode = dom.createElement(nodeName)
 		node.appendChild(newNode)
 
@@ -323,14 +323,14 @@ class Interface:
 		actionNode = dom.createElement(actionName)
 		request.appendChild(actionNode)
 
-		self.__add_project_url_node(dom, actionNode, 'project_url', projectUrl)
+		self.__add_text_node(dom, actionNode, 'project_url', projectUrl)
 
 		request = dom.toxml()
 		dom.unlink()
 		return request
 
 	# jednoduche akcie s projektom
-	def __recvProjectAction(self, data, callback = None):
+	def __recvActionState(self, data, callback = None):
 		dom, reply = self.getReply(data)
 		state = self.__getReplyState(reply)
 		dom.unlink()
@@ -339,20 +339,74 @@ class Interface:
 
 	def project_update(self, project, callback = None):
 		request = self.__createProjectActionRequest('project_update', project)
-		self.__conn.sendData(request, self.__recvProjectAction, callback)
+		self.__conn.sendData(request, self.__recvActionState, callback)
 
 	def project_suspend(self, project, callback = None):
 		request = self.__createProjectActionRequest('project_suspend', project)
-		self.__conn.sendData(request, self.__recvProjectAction, callback)
+		self.__conn.sendData(request, self.__recvActionState, callback)
 
 	def project_resume(self, project, callback = None):
 		request = self.__createProjectActionRequest('project_resume', project)
-		self.__conn.sendData(request, self.__recvProjectAction, callback)
+		self.__conn.sendData(request, self.__recvActionState, callback)
 
 	def project_nomorework(self, project, callback = None):
 		request = self.__createProjectActionRequest('project_nomorework', project)
-		self.__conn.sendData(request, self.__recvProjectAction, callback)
+		self.__conn.sendData(request, self.__recvActionState, callback)
 
 	def project_allowmorework(self, project, callback = None):
 		request = self.__createProjectActionRequest('project_allowmorework', project)
-		self.__conn.sendData(request, self.__recvProjectAction, callback)
+		self.__conn.sendData(request, self.__recvActionState, callback)
+
+	# praca s workunitom
+
+	def __addResultInfo(self, dom, node, url, name):
+		self.__add_text_node(dom, node, 'project_url', url)
+		self.__add_text_node(dom, node, 'name', name)
+
+	# grafika
+	def result_show_graphics(self, url, name, typ = 'window', callback = None):
+		(dom, request) = self.createRpcRequest()
+	
+		resultShowGraphicsNode = dom.createElement('result_show_graphics')
+		request.appendChild(resultShowGraphicsNode)
+
+		self.__add_text_node(dom, resultShowGraphicsNode, 'project_url', url)
+		self.__add_text_node(dom, resultShowGraphicsNode, 'result_name', name)
+
+		resultShowGraphicsNode.appendChild(dom.createElement(typ))
+		request = dom.toxml()
+		dom.unlink()
+		self.__conn.sendData(request, self.__recvActionState, callback)
+
+	def suspend_result(self, url, name, callback = None):
+		(dom, request) = self.createRpcRequest()
+	
+		suspendResultNode = dom.createElement('suspend_result')
+		request.appendChild(suspendResultNode)
+
+		self.__addResultInfo(dom, suspendResultNode, url, name)
+		request = dom.toxml()
+		dom.unlink()
+		self.__conn.sendData(request, self.__recvActionState, callback)
+
+	def resume_result(self, url, name, callback = None):
+		(dom, request) = self.createRpcRequest()
+	
+		resumeResultNode = dom.createElement('resume_result')
+		request.appendChild(resumeResultNode)
+
+		self.__addResultInfo(dom, resumeResultNode, url, name)
+		request = dom.toxml()
+		dom.unlink()
+		self.__conn.sendData(request, self.__recvActionState, callback)
+
+	def abort_result(self, url, name, callback = None):
+		(dom, request) = self.createRpcRequest()
+	
+		abortResultNode = dom.createElement('abort_result')
+		request.appendChild(abortResultNode)
+
+		self.__addResultInfo(dom, abortResultNode, url, name)
+		request = dom.toxml()
+		dom.unlink()
+		self.__conn.sendData(request, self.__recvActionState, callback)

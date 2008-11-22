@@ -80,7 +80,8 @@ class filetransfersInfoWidget(infoWidget):
 		for i in range(len(self.__informations) - 1, -1, -1):
 			# odstranenie
 			if self.__informations[i][4]:
-				self.__treeWidget.removeItemWidget(self.__informations[i][1])
+				for j in range(5):
+					self.__treeWidget.removeItemWidget(self.__informations[i][1], j)
 				self.__informations.pop(i)
 			# aktualizacia
 			else:

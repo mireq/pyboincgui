@@ -161,7 +161,32 @@ class BoincConnectionStruct(QObject):
 	def __recvProjectAllowmorework(self, data):
 		self.emit(SIGNAL('projectAllowmoreworkRecv(PyQt_PyObject)'), data)
 
+	# praca s workunitom
 
+	# zobrazenie grafiky
+	def resultShowGraphics(self, url, name, typ = 'window'):
+		self.__bInterface.result_show_graphics(url, name, typ, self.__recvResultShowGraphics)
+
+	def __recvResultShowGraphics(self, data):
+		self.emit(SIGNAL('resultShowGraphicsRecv(PyQt_PyObject)'), data)
+
+	def suspendResult(self, url, name):
+		self.__bInterface.suspend_result(url, name, self.__recvSuspendResult)
+
+	def __recvSuspendResult(self, data):
+		self.emit(SIGNAL('suspendResultRecv(PyQt_PyObject)'), data)
+
+	def resumeResult(self, url, name):
+		self.__bInterface.resume_result(url, name, self.__recvResumeResult)
+
+	def __recvResumeResult(self, data):
+		self.emit(SIGNAL('resumeResultRecv(PyQt_PyObject)'), data)
+
+	def abortResult(self, url, name):
+		self.__bInterface.abort_result(url, name, self.__recvAbortResult)
+
+	def __recvAbortResult(self, data):
+		self.emit(SIGNAL('abortResultRecv(PyQt_PyObject)'), data)
 
 	def boincConnect(self):
 		self.__bInterface.boincConnect(self.__connectStateChanged)
