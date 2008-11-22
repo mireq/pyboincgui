@@ -16,7 +16,7 @@ class statisticsInfoWidget(infoWidget):
 	__colors = [Qt.red, QColor(200, 160, 30), Qt.darkGreen, Qt.blue, Qt.black, Qt.darkRed, Qt.darkBlue]
 
 	def __init__(self, client, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 		self.__mainLayout = QHBoxLayout()
 		self.__chart = LineChartFrame()
 

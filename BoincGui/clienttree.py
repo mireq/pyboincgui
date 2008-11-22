@@ -80,6 +80,7 @@ class clientTreeWidget(QTreeWidget):
 		self.connect(conn, SIGNAL("projectState(PyQt_PyObject)"), self.__updateProjectStatus)
 		self.__changeConnectionState(conn.connected(), conn)
 		self.addTopLevelItem(item)
+		self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Client added"))
 
 	def __changeConnectionState(self, s, cn = None):
 		conn = None
@@ -172,7 +173,7 @@ class clientTreeWidget(QTreeWidget):
 		self.__updateProjectsList(projects, treeItem)
 		for poradie in range(treeItem.childCount()):
 			if treeItem.child(poradie).data(0, Qt.UserRole).toString() == "project":
-				self.__updateProject(self.sender().getProject(treeItem.child(poradie).data(0, Qt.UserRole + 1).toString()), treeItem.child(poradie))
+				self.__updateProject(conn.getProject(treeItem.child(poradie).data(0, Qt.UserRole + 1).toString()), treeItem.child(poradie))
 
 	def __updateProject(self, project, uzol):
 		pixmap = QPixmap(':project')
@@ -222,6 +223,7 @@ class clientTreeWidget(QTreeWidget):
 			projectItem.setData(0, Qt.UserRole + 1, QVariant(pridat[i]['master_url']))
 			projectItem.setData(0, Qt.UserRole + 2, QVariant(4))
 			pridat[i] = projectItem;
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Client added"))
 
 		self.__removeSubNodeList(projektyUzol, odobrat)
 		self.__addSubNodeList(projektyUzol, pridat)

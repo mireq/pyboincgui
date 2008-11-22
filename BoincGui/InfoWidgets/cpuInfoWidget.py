@@ -13,7 +13,7 @@ class cpuInfoWidget(infoWidget):
 	__featuresLabel = None
 
 	def __init__(self, client, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 		self.__client = client
 
 		self.__mainLayout = QGridLayout();

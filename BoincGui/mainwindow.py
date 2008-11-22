@@ -44,7 +44,11 @@ class MainWindow(QMainWindow):
 		self.queueThread = ProcessQueeueThread(self.__connManager.queue(), self)
 		self.queueThread.start()
 		self.__connManager.loadConnections()
+		self.connect(self.centralWidget, SIGNAL('showStatusBarMsg(QString)'), self.__showStatusBarMsg)
 		self.resize(800, 500)
+
+	def __showStatusBarMsg(self, msg):
+		self.statusBar().showMessage(msg, 3000)
 
 	def connManager(self):
 		return self.__connManager

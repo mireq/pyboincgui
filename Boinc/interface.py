@@ -101,6 +101,14 @@ class Interface:
 					slovnik[n.nodeName] = self.__xmlToDict(n)
 		return slovnik
 
+	def __getReplyState(self, reply):
+		if len(reply.getElementsByTagName('success')) > 0:
+			return False
+		else:
+			errorNodes = reply.getElementsByTagName('error')
+			if len(errorNodes) > 0:
+				return self.__getText(errorNodes[0])
+
 	def createRpcRequest(self):
 		doc = minidom.Document();
 		boincGuiRpcRequestElement = doc.createElement("boinc_gui_rpc_request")
@@ -217,17 +225,20 @@ class Interface:
 	def get_file_transfers(self, callback = None):
 		self.__conn.sendData("<?xml version=\"1.0\" ?><boinc_gui_rpc_request><get_file_transfers /></boinc_gui_rpc_request>", self.__recvFileTransfers, callback)
 
-	def __getStr(self, node, name):
-		nodes = node.getElementsByTagName(name)
-		if len(nodes) != 1:
-			return None
-		childNodes = nodes[0].childNodes
+	def __getText(self, node):
+		childNodes = node.childNodes
 		if len(childNodes) != 1:
 			return None
 		vysledokNode = childNodes[0]
 		if vysledokNode.nodeType != Node.TEXT_NODE:
 			return None
 		return vysledokNode.nodeValue
+
+	def __getStr(self, node, name):
+		nodes = node.getElementsByTagName(name)
+		if len(nodes) != 1:
+			return None
+		return self.__getText(nodes[0])
 
 	def __getFloat(self, node, name):
 		string = self.__getStr(node, name)
@@ -299,3 +310,49 @@ class Interface:
 			out.append(fileTransfer)
 		dom.unlink()
 		call(out)
+
+	def __add_project_url_node(self, dom, node, nodeName, text):
+		newNode = dom.createElement(nodeName)
+		node.appendChild(newNode)
+
+		textNode = dom.createTextNode(text)
+		newNode.appendChild(textNode)
+
+	def __createProjectActionRequest(self, actionName, projectUrl):
+		(dom, request) = self.createRpcRequest()
+		actionNode = dom.createElement(actionName)
+		request.appendChild(actionNode)
+
+		self.__add_project_url_node(dom, actionNode, 'project_url', projectUrl)
+
+		request = dom.toxml()
+		dom.unlink()
+		return request
+
+	# jednoduche akcie s projektom
+	def __recvProjectAction(self, data, callback = None):
+		dom, reply = self.getReply(data)
+		state = self.__getReplyState(reply)
+		dom.unlink()
+		if not callback is None:
+			callback(state)
+
+	def project_update(self, project, callback = None):
+		request = self.__createProjectActionRequest('project_update', project)
+		self.__conn.sendData(request, self.__recvProjectAction, callback)
+
+	def project_suspend(self, project, callback = None):
+		request = self.__createProjectActionRequest('project_suspend', project)
+		self.__conn.sendData(request, self.__recvProjectAction, callback)
+
+	def project_resume(self, project, callback = None):
+		request = self.__createProjectActionRequest('project_resume', project)
+		self.__conn.sendData(request, self.__recvProjectAction, callback)
+
+	def project_nomorework(self, project, callback = None):
+		request = self.__createProjectActionRequest('project_nomorework', project)
+		self.__conn.sendData(request, self.__recvProjectAction, callback)
+
+	def project_allowmorework(self, project, callback = None):
+		request = self.__createProjectActionRequest('project_allowmorework', project)
+		self.__conn.sendData(request, self.__recvProjectAction, callback)

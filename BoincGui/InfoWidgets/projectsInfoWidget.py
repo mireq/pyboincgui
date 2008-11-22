@@ -12,7 +12,7 @@ class projectsInfoWidget(infoWidget):
 	__angles = []
 
 	def __init__(self, client, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 		self.__angles = []
 
 		self.__tabWidget = QTabWidget()

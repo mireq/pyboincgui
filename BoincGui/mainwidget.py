@@ -1,5 +1,5 @@
 from PyQt4.QtGui import QWidget, QHBoxLayout, QTableView, QTreeView, QStackedWidget, QLabel
-from PyQt4.QtCore import QSize, SIGNAL, Qt
+from PyQt4.QtCore import QSize, SIGNAL, Qt, QString
 from clienttree import clientTreeWidget
 import InfoWidgets
 
@@ -35,6 +35,10 @@ class mainWidget(QWidget):
 		self.layout.addWidget(self.infoWidget)
 
 		self.connect(self.tree, SIGNAL("currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)"), self.changeActive)
+		self.connect(self.tree, SIGNAL("showStatusBarMsg(QString)"), self.emitStatusBarMsg)
+
+	def emitStatusBarMsg(self, msg):
+		self.emit(SIGNAL("showStatusBarMsg(QString)"), msg)
 
 	def changeActive(self, next, prev):
 		if next is None:
@@ -61,25 +65,33 @@ class mainWidget(QWidget):
 				self.tree.setCurrentItem(self.tree.topLevelItem(0))
 				return
 
+		iw = None
+
 		if len(cesta) == 1:
-			self.infoWidget.setWidget(InfoWidgets.clientInfoWidget(connection))
+			iw = InfoWidgets.clientInfoWidget(connection)
 		elif len(cesta) == 2:
 			pol = cesta[1]
 			typ = pol.data(0, Qt.UserRole).toString()
 			if typ == 'cpu':
-				self.infoWidget.setWidget(InfoWidgets.cpuInfoWidget(connection))
+				iw = InfoWidgets.cpuInfoWidget(connection)
 			elif typ == 'projects':
-				self.infoWidget.setWidget(InfoWidgets.projectsInfoWidget(connection))
+				iw = InfoWidgets.projectsInfoWidget(connection)
 			elif typ == 'statistics':
-				self.infoWidget.setWidget(InfoWidgets.statisticsInfoWidget(connection))
+				iw = InfoWidgets.statisticsInfoWidget(connection)
 			elif typ == 'filetransfers':
-				self.infoWidget.setWidget(InfoWidgets.filetransfersInfoWidget(connection))
+				iw = InfoWidgets.filetransfersInfoWidget(connection)
 			elif typ == 'project':
-				self.infoWidget.setWidget(InfoWidgets.projectInfoWidget(connection, pol))
+				iw = InfoWidgets.projectInfoWidget(connection, pol)
 		elif len(cesta) == 3:
 			typ = cesta[1].data(0, Qt.UserRole).toString()
 			if typ == "project":
 				pol = cesta[2]
 				if pol.data(0, Qt.UserRole).toString() == 'workunit':
-					self.infoWidget.setWidget(InfoWidgets.workunitInfoWidget(connection, cesta[1], cesta[2]))
+					iw = InfoWidgets.workunitInfoWidget(connection, cesta[1], cesta[2])
+
+		if iw is None:
+			self.infoWidget.unsetWidget()
+		else:
+			self.connect(iw, SIGNAL("showStatusBarMsg(QString)"), self.emitStatusBarMsg)
+			self.infoWidget.setWidget(iw)
 

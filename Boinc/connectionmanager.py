@@ -130,6 +130,39 @@ class BoincConnectionStruct(QObject):
 	def __recvFileTransfers(self, data):
 		self.emit(SIGNAL("getFileTransfersRecv(PyQt_PyObject)"), data)
 
+	# jednoduche akcie s projektom
+	def projectUpdate(self, url):
+		self.__bInterface.project_update(url, self.__recvProjectUpdate)
+
+	def __recvProjectUpdate(self, data):
+		self.emit(SIGNAL('projectUpdateRecv(PyQt_PyObject)'), data)
+
+	def projectSuspend(self, url):
+		self.__bInterface.project_suspend(url, self.__recvProjectSuspend)
+
+	def __recvProjectSuspend(self, data):
+		self.emit(SIGNAL('projectSuspendRecv(PyQt_PyObject)'), data)
+
+	def projectResume(self, url):
+		self.__bInterface.project_resume(url, self.__recvProjectResume)
+
+	def __recvProjectResume(self, data):
+		self.emit(SIGNAL('projectResumeRecv(PyQt_PyObject)'), data)
+
+	def projectNomorework(self, url):
+		self.__bInterface.project_nomorework(url, self.__recvProjectNomorework)
+
+	def __recvProjectNomorework(self, data):
+		self.emit(SIGNAL('projectNomoreworkRecv(PyQt_PyObject)'), data)
+
+	def projectAllowmorework(self, url):
+		self.__bInterface.project_allowmorework(url, self.__recvProjectAllowmorework)
+
+	def __recvProjectAllowmorework(self, data):
+		self.emit(SIGNAL('projectAllowmoreworkRecv(PyQt_PyObject)'), data)
+
+
+
 	def boincConnect(self):
 		self.__bInterface.boincConnect(self.__connectStateChanged)
 

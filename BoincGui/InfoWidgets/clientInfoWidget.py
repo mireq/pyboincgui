@@ -6,7 +6,7 @@ from Boinc.interface import Interface
 
 class clientInfoWidget(infoWidget):
 	def __init__(self, client, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 		self.__client = client;
 		#self.setLayout(self.__mainLayout)
 

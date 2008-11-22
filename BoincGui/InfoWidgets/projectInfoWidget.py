@@ -1,6 +1,6 @@
 from infoWidget import infoWidget
 from PyQt4.QtCore import Qt, SIGNAL
-from PyQt4.QtGui import QAction, QLabel, QGridLayout, QGroupBox, QHBoxLayout, QToolButton, QMenu
+from PyQt4.QtGui import QAction, QLabel, QGridLayout, QGroupBox, QHBoxLayout, QToolButton, QMenu, QPushButton
 from BoincGui.titleframe import titleFrame
 from os import execlp, fork
 from platform import system
@@ -34,7 +34,7 @@ class projectInfoWidget(infoWidget):
 
 	__projectInfo = None
 	__projectInfoLayout = None
-	__projectLinks = None
+	__projectSettings = None
 
 	#informacie o projekte
 	__masterUrlLabel       = None
@@ -51,10 +51,10 @@ class projectInfoWidget(infoWidget):
 	__hostTotalCreditText  = None
 
 	__projectLinksButton = None
-	__projectLinksMenu   = None
+	__projectSettingsMenu   = None
 
 	def __init__(self, client, project, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 
 		self.__mainLayout = QGridLayout()
 		self.__mainLayout.setRowStretch(1, 1)
@@ -64,15 +64,44 @@ class projectInfoWidget(infoWidget):
 		self.__projectInfoLayout = QGridLayout()
 		self.__projectInfo.setLayout(self.__projectInfoLayout)
 
-		self.__projectLinks = QHBoxLayout()
+		self.__projectSettings = QHBoxLayout()
 		self.__projectLinksButton = QToolButton()
 		self.__projectLinksButton.setText(self.tr("Project Links"))
 		self.__projectLinksButton.hide()
-		self.__projectLinks.addWidget(self.__projectLinksButton)
-		self.__projectLinks.addStretch(1)
+
+		self.__updateProjectButton  = QPushButton(self.tr("Update"))
+		self.__suspendProjectButton = QPushButton()
+		self.__allowNewTasksButton  = QPushButton()
+		self.__resetProjectButton   = QPushButton(self.tr("Reset project"))
+		self.__detachProjectButton  = QPushButton(self.tr("Detach project"))
+
+		self.__resetProjectButton.setEnabled(False)
+		self.__detachProjectButton.setEnabled(False)
+
+		self.__updateProjectButton.hide()
+		self.__suspendProjectButton.hide()
+		self.__allowNewTasksButton.hide()
+		self.__resetProjectButton.hide()
+		self.__detachProjectButton.hide()
+
+		self.connect(self.__updateProjectButton, SIGNAL('clicked()'), self.__updateProject)
+		self.connect(self.__suspendProjectButton, SIGNAL('clicked()'), self.__suspendProject)
+		self.connect(self.__allowNewTasksButton, SIGNAL('clicked()'), self.__allowNewTasksProject)
+
+		self.__projectSettings.addWidget(self.__projectLinksButton)
+		self.__projectSettings.addWidget(self.__updateProjectButton)
+		self.__projectSettings.addWidget(self.__suspendProjectButton)
+		self.__projectSettings.addWidget(self.__allowNewTasksButton)
+		self.__projectSettings.addStretch(1)
+
+		self.__projectAdmin = QHBoxLayout()
+		self.__projectAdmin.addWidget(self.__resetProjectButton)
+		self.__projectAdmin.addWidget(self.__detachProjectButton)
+		self.__projectAdmin.addStretch(1)
 
 		self.__mainLayout.addWidget(self.__projectInfo, 0, 0)
-		self.__mainLayout.addLayout(self.__projectLinks, 2, 0)
+		self.__mainLayout.addLayout(self.__projectSettings, 2, 0)
+		self.__mainLayout.addLayout(self.__projectAdmin, 3, 0)
 
 		self.__masterUrlLabel       = QLabel(self.tr("Master URL"))
 		self.__projectNameLabel     = QLabel(self.tr("Project Name"))
@@ -126,16 +155,86 @@ class projectInfoWidget(infoWidget):
 		self.__master_url = project.data(0, Qt.UserRole + 1).toString()
 		self.__projectCached = None
 
-		self.__projectLinksMenu = QMenu()
+		self.__projectSettingsMenu = QMenu()
 		self.__projectLinksButton.setPopupMode(QToolButton.InstantPopup)
-		self.__projectLinksButton.setMenu(self.__projectLinksMenu)
+		self.__projectLinksButton.setMenu(self.__projectSettingsMenu)
 
 		projects = client.projectState()
 		if not projects is None:
 			self.updateProjects(projects)
 		self.connect(client, SIGNAL("projectState(PyQt_PyObject)"), self.updateProjects)
+		self.connect(client, SIGNAL("projectUpdateRecv(PyQt_PyObject)"), self.__updateProjectRecv)
+		self.connect(client, SIGNAL("projectSuspendRecv(PyQt_PyObject)"), self.__suspendProjectRecv)
+		self.connect(client, SIGNAL("projectResumeRecv(PyQt_PyObject)"), self.__resumeProjectRecv)
+		self.connect(client, SIGNAL("projectNomoreworkRecv(PyQt_PyObject)"), self.__nomoreworkProjectRecv)
+		self.connect(client, SIGNAL("projectAllowmoreworkRecv(PyQt_PyObject)"), self.__allowmoreworkProjectRecv)
 
+	def __updateProject(self):
+		self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Updating project"))
+		self.client().projectUpdate(self.__projectCached['master_url'])
 
+	def __suspendProject(self):
+		if self.__projectCached['suspended_via_gui']:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Resuming project"))
+			self.client().projectResume(self.__projectCached['master_url'])
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Suspending project"))
+			self.client().projectSuspend(self.__projectCached['master_url'])
+
+	def __allowNewTasksProject(self):
+		if self.__projectCached['dont_request_more_work']:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Allowing new tasks"))
+			self.client().projectAllowmorework(self.__projectCached['master_url'])
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Disallowing new tasks"))
+			self.client().projectNomorework(self.__projectCached['master_url'])
+
+	def __updateProjectRecv(self, status):
+		if status:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), status)
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Project updated"))
+		self.client().getState()
+
+	def __suspendProjectRecv(self, status):
+		if status:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), status)
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Project suspended"))
+			self.__projectCached['suspended_via_gui'] = 1
+			self.__suspendProjectButton.setText(self.tr("Resume"))
+
+		self.client().getState()
+
+	def __resumeProjectRecv(self, status):
+		if status:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), status)
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("Project restored"))
+			self.__projectCached['suspended_via_gui'] = 0
+			self.__suspendProjectButton.setText(self.tr("Suspend"))
+
+		self.client().getState()
+
+	def __nomoreworkProjectRecv(self, status):
+		if status:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), status)
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("New tasks disallowed"))
+			self.__projectCached['dont_request_more_work'] = 1
+			self.__allowNewTasksButton.setText(self.tr("Allow new tasks"))
+
+		self.client().getState()
+
+	def __allowmoreworkProjectRecv(self, status):
+		if status:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), status)
+		else:
+			self.emit(SIGNAL("showStatusBarMsg(QString)"), self.tr("New tasks allowed"))
+			self.__projectCached['dont_request_more_work'] = 0
+			self.__allowNewTasksButton.setText(self.tr("No new tasks"))
+
+		self.client().getState()
 
 	def __changeLabels(self, project, key, label, text):
 		try:
@@ -175,24 +274,40 @@ class projectInfoWidget(infoWidget):
 			self.__changeLabels(project, 'user_total_credit', self.__userTotalCreditLabel, self.__userTotalCreditText)
 			self.__changeLabels(project, 'host_total_credit', self.__hostTotalCreditLabel, self.__hostTotalCreditText)
 
+			if project['suspended_via_gui']:
+				self.__suspendProjectButton.setText(self.tr("Resume"))
+			else:
+				self.__suspendProjectButton.setText(self.tr("Suspend"))
+
+			if project['dont_request_more_work']:
+				self.__allowNewTasksButton.setText(self.tr("Allow new tasks"))
+			else:
+				self.__allowNewTasksButton.setText(self.tr("No new tasks"))
+
+			self.__updateProjectButton.show()
+			self.__suspendProjectButton.show()
+			self.__allowNewTasksButton.show()
+			self.__resetProjectButton.show()
+			self.__detachProjectButton.show()
+
 			try:
-				self.__projectLinksMenu.clear()
+				self.__projectSettingsMenu.clear()
 				guiUrls = project['gui_urls']['gui_url']
 
 				if type(guiUrls) == type({}):
-					self.__projectLinksMenu.addAction(urlAction(guiUrls['url'], guiUrls['name'], guiUrls['description'], self.__projectLinksMenu))
+					self.__projectSettingsMenu.addAction(urlAction(guiUrls['url'], guiUrls['name'], guiUrls['description'], self.__projectSettingsMenu))
 				else:
 					for url in guiUrls:
-						self.__projectLinksMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectLinksMenu))
+						self.__projectSettingsMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectSettingsMenu))
 
 				try:
 					ifTeamUrls = project['gui_urls']['ifteam']['gui_url']
-					self.__projectLinksMenu.addSeparator()
+					self.__projectSettingsMenu.addSeparator()
 					if type(ifTeamUrls) == type({}):
-						self.__projectLinksMenu.addAction(urlAction(ifTeamUrls['url'], ifTeamUrls['name'], ifTeamUrls['description'], self.__projectLinksMenu))
+						self.__projectSettingsMenu.addAction(urlAction(ifTeamUrls['url'], ifTeamUrls['name'], ifTeamUrls['description'], self.__projectSettingsMenu))
 					else:
 						for url in ifTeamUrls:
-							self.__projectLinksMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectLinksMenu))
+							self.__projectSettingsMenu.addAction(urlAction(url['url'], url['name'], url['description'], self.__projectSettingsMenu))
 				except KeyError, msg:
 					pass
 				self.__projectLinksButton.show()

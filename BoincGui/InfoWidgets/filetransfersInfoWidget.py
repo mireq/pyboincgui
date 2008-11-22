@@ -6,7 +6,7 @@ from PyQt4.QtGui import QVBoxLayout, QTreeWidget, QTreeWidgetItem, QProgressBar
 class filetransfersInfoWidget(infoWidget):
 
 	def __init__(self, client, parent = None):
-		infoWidget.__init__(self, parent)
+		infoWidget.__init__(self, client, parent)
 
 		self.__informations = []
 		self.__loc = QLocale()

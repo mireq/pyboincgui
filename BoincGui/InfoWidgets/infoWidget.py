@@ -16,8 +16,11 @@ class infoWidget(QWidget):
 	__advClientInfoLayout   = None
 	__advClientInfoGroupBox = None
 
-	def __init__(self, parent = None):
+	__client = None
+
+	def __init__(self, client, parent = None):
 		QWidget.__init__(self, parent)
+		self.__client = client
 		self.__mainLayout = QVBoxLayout(self)
 
 	def setMainLayout(self, layout, scroll = True):
@@ -57,3 +60,9 @@ class infoWidget(QWidget):
 		if not title is None:
 			self.__mainLayout.insertWidget(0, title)
 		self.__title = title;
+
+	def __del__(self):
+		self.__client = None
+
+	def client(self):
+		return self.__client
