@@ -9,45 +9,64 @@ class BoincConnectionException(Exception):
 	pass
 
 class Connection:
-	"""Pripojenie ku klientovi BOINC
+	"""
+	Pripojenie ku klientovi BOINC
 	
 	Tato trieda zabezpecuje len pripojenie ku klientovi.
-	O veci ako autorizacia sa musi starat uzivatel tejto triedy."""
+	O veci ako autorizacia sa musi starat uzivatel tejto triedy.
+	"""
 
 	__host = None
 	__port = None
 	__sock = None
 
+	
 	__sendQueue = None
-	__callback = None
+	__connStateCallback = None
 
 	__mutex = None
 	__thread = None
 
 	__quit = False
 
-	def __init__(self,  host,  port, queue, callback = None):
+	def __init__(self,  host,  port, errQueue, connStateCallback = None):
+		"""
+		Pripojenie sa k zvolenemu pc
+
+		Host moze byt IP alebo dns adresa pocitaca. Dalej je potrebne uviest
+		port na ktory sa pripajame a frontu do ktorej budu posielane chyby.
+		Poslednym nepovinnym parametrom (connStateCallback je funkcia ktora
+		sa bude volat v pripade zmeny stavu pripojenia)
+		"""
 		self.__host = host
 		self.__port = port
 		self.__commLock = thread.allocate_lock()
-		self.__queue = queue
-		self.__callback = callback
+		self.__errQueue = errQueue
+		self.__connStateCallback = connStateCallback
 		self.__sendQueue = Queue()
 		self.__mutex = Lock()
 		self.__thread = None
-		thread.start_new_thread(self.connectThread, (callback, ))
+		thread.start_new_thread(self.__connectThread, (connStateCallback, ))
 
 	def disconnect(self):
+		"""
+		Odpojenie sa od klienta, cakanie na ukoncenie sietovych operacii.
+		"""
 		self.__quit = True
 		self.__mutex.acquire()
 		if not self.__thread is None:
 			self.sendData("")
 			self.__thread.join()
 			self.__thread = None
+			if not self.__sock is None:
+				self.__sock.close()
 		self.__mutex.release()
 
 
-	def connectThread(self, callback):
+	def __connectThread(self, callback):
+		"""
+		Tato cast sa vykonava vo vlakne
+		"""
 		try:
 			self.__sock = None
 			time.sleep(0.5)
@@ -69,16 +88,30 @@ class Connection:
 			return
 
 		self.__mutex.acquire()
-		#thread.start_new_thread(self.sendDataThread, ())
-		self.__thread = Thread(target = self.sendDataThread)
+		#thread.start_new_thread(self.__sendDataThread, ())
+		self.__thread = Thread(target = self.__sendDataThread)
 		self.__quit = False
 		self.__thread.start()
 		self.__mutex.release()
 
 	def sendData(self, data, recvHandler = None, *params):
+		"""
+		Poslanie dat klientovi
+
+		Prvym parametrom su data ktore chceme poslat. Dalsi parameter
+		je funkcia ktora sa vola po odoslani. Dalsie parametre su volitelne
+		parametre pre predchadzajucu funkciu. Tato funkcia nic neblokuje
+		pretoze data vlozi do fronty a k samotnemu odoslaniu dojde neskor.
+		"""
 		self.__sendQueue.put((data, recvHandler, params))
 
-	def sendDataThread(self):
+	def __sendDataThread(self):
+		"""
+		Cyklicke odosielanie a prijem dat
+
+		Ukoncenie sa da dosiahnut nastavenim atributu __quit na True a poslanim
+		prazdneho stringu ("") metode sendData
+		"""
 		while True:
 			data, recvHandler, params = self.__sendQueue.get()
 			try:
@@ -106,8 +139,8 @@ class Connection:
 				if len(rec) == 0:
 					self.__sock.close()
 					self.__sock = None
-					if not self.__callback is None:
-						self.__callback(0)
+					if not self.__connStateCallback is None:
+						self.__connStateCallback(0)
 					return
 
 				#koniec
@@ -130,6 +163,6 @@ class Connection:
 					params = (string[:-1], ) + params
 					recvHandler(*params)
 			except Exception, msg:
-				self.__queue.put(msg)
+				self.__errQueue.put(msg)
 			self.__sendQueue.task_done()
 

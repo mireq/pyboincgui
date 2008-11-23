@@ -6,7 +6,7 @@ import Queue
 import sys
 import gc
 
-class BoincConnectionStruct(QObject):
+class BoincConnectionInterface(QObject):
 
 	__projects = {}
 
@@ -268,7 +268,7 @@ class ConnectionManager(QObject):
 			self.saveConnections()
 
 	def addConnection(self, local, path, host, port, password, autoConnect = True):
-		conn = BoincConnectionStruct(local, path, host, port, password, self.__queue)
+		conn = BoincConnectionInterface(local, path, host, port, password, self.__queue)
 		self.connections.append(conn)
 		self.saveConnections()
 		self.emit(SIGNAL('clientAdded(int)'), len(self.connections) - 1)
