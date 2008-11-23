@@ -171,6 +171,7 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.sender()
 		treeItem = conn.treeItem
 		self.__updateProjectsList(projects, treeItem)
+		return
 		for poradie in range(treeItem.childCount()):
 			if treeItem.child(poradie).data(0, Qt.UserRole).toString() == "project":
 				self.__updateProject(conn.getProject(treeItem.child(poradie).data(0, Qt.UserRole + 1).toString()), treeItem.child(poradie))
@@ -194,7 +195,6 @@ class clientTreeWidget(QTreeWidget):
 		polozky = []
 		"""Zoznam aktualnych projektov - string"""
 		projAct = []
-
 		for poradie in range(projektyUzol.childCount()):
 			projekt = projektyUzol.child(poradie)
 			polozky.append(projekt.data(0, Qt.UserRole + 1).toString())
@@ -318,9 +318,13 @@ class clientTreeWidget(QTreeWidget):
 		except KeyError:
 			suspViaGui = False
 
-		data = QVariant.fromList([QVariant(status), QVariant(processStatus), QVariant(done), QVariant(suspViaGui)])
-		if data.toList() == item.data(0, Qt.UserRole + 3).toList():
+		zoznam = [QVariant(int(status)), QVariant(int(processStatus)), QVariant(int(done)), QVariant(bool(suspViaGui))]
+
+		if zoznam == item.data(0, Qt.UserRole + 3).toList():
 			return
+
+		#pozor memory leak
+		data = QVariant.fromList(zoznam)
 		item.setData(0, Qt.UserRole + 3, data)
 
 		emblem = None
