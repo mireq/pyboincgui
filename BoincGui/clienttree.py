@@ -309,7 +309,7 @@ class clientTreeWidget(QTreeWidget):
 			done = int(float(workunit['active_task']['fraction_done']) * 100.0)
 			processStatus = int(workunit['active_task']['active_task_state'])
 		except KeyError:
-			processStatus = 0
+			processStatus = -1
 			done = 0
 
 		try:
@@ -318,7 +318,7 @@ class clientTreeWidget(QTreeWidget):
 		except KeyError:
 			suspViaGui = False
 
-		data = QVariant.fromList([QVariant(status), QVariant(processStatus), QVariant(done)])
+		data = QVariant.fromList([QVariant(status), QVariant(processStatus), QVariant(done), QVariant(suspViaGui)])
 		if data.toList() == item.data(0, Qt.UserRole + 3).toList():
 			return
 		item.setData(0, Qt.UserRole + 3, data)
@@ -332,12 +332,12 @@ class clientTreeWidget(QTreeWidget):
 			if processStatus == 1:
 				emblem = QPixmap(":status_running.png")
 				item.setData(0, Qt.UserRole + 2, QVariant(0))
-			elif processStatus == 9 or suspViaGui:
+			elif (processStatus != -1) or (processStatus == 9):
 				emblem = QPixmap(":status_suspended.png")
 				item.setData(0, Qt.UserRole + 2, QVariant(4))
 			else:
 				item.setData(0, Qt.UserRole + 2, QVariant(5))
-			if not suspViaGui and processStatus == 0:
+			if processStatus == -1:
 				self.__setProgressPixmapInactive(pixmap)
 			else:
 				self.__modifyProgressPixmap(pixmap, done)
@@ -357,6 +357,9 @@ class clientTreeWidget(QTreeWidget):
 		else:
 			item.setData(0, Qt.UserRole + 2, QVariant(8))
 			self.__setProgressPixmapInactive(pixmap)
+
+		if (suspViaGui):
+			emblem = QPixmap(":workunit_suspended.png")
 
 		self.__addEmblem(pixmap, emblem)
 
