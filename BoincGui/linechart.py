@@ -69,6 +69,7 @@ class LineChart(QWidget):
 	def removeGraphs(self):
 		self.__graphs = []
 		self.__initRange()
+		self.update()
 
 	def __calcCoordRanges(self):
 		self.__xRange = self.__maxDay - self.__minDay
