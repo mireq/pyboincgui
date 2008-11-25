@@ -1,4 +1,4 @@
-from PyQt4.QtCore import SIGNAL, SLOT, QThread
+from PyQt4.QtCore import SIGNAL, SLOT, QThread, QSize, QSettings, QVariant
 from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox, QIcon, QPixmap
 from addclientwizard import addClientWizard
 from mainwidget import mainWidget
@@ -40,12 +40,27 @@ class MainWindow(QMainWindow):
 		self.createActions()
 		self.createMenu()
 		self.createMainWin()
+		self.readSettings()
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
 		self.queueThread = ProcessQueeueThread(self.__connManager.queue(), self)
 		self.queueThread.start()
 		self.__connManager.loadConnections()
 		self.connect(self.centralWidget, SIGNAL('showStatusBarMsg(QString)'), self.__showStatusBarMsg)
-		self.resize(800, 500)
+
+	def readSettings(self):
+		settings = QSettings()
+		settings.beginGroup("MainWindow")
+		self.resize(settings.value("size", QVariant(QSize(800, 500))).toSize());
+		settings.endGroup()
+
+	def writeSettings(self):
+		settings = QSettings()
+		settings.beginGroup("MainWindow")
+		settings.setValue("size", QVariant(self.size()));
+		settings.endGroup()
+
+	def closeEvent(self, event):
+		self.writeSettings()
 
 	def __showStatusBarMsg(self, msg):
 		self.statusBar().showMessage(msg, 3000)
@@ -83,7 +98,7 @@ class MainWindow(QMainWindow):
 		#prepojime akcie so slotmi
 		self.connect(self.addClientAction, SIGNAL("triggered()"), self.showWizard)
 		self.connect(self.remClientAction, SIGNAL("triggered()"), self.removeClient)
-		self.connect(self.quitAction, SIGNAL("triggered()"), qApp, SLOT("quit()"))
+		self.connect(self.quitAction, SIGNAL("triggered()"), self.close)
 
 	def removeClient(self):
 		if self.__activeClient != -1:

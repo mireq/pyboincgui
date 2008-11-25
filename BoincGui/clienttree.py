@@ -171,7 +171,6 @@ class clientTreeWidget(QTreeWidget):
 		conn = self.sender()
 		treeItem = conn.treeItem
 		self.__updateProjectsList(projects, treeItem)
-		return
 		for poradie in range(treeItem.childCount()):
 			if treeItem.child(poradie).data(0, Qt.UserRole).toString() == "project":
 				self.__updateProject(conn.getProject(treeItem.child(poradie).data(0, Qt.UserRole + 1).toString()), treeItem.child(poradie))
