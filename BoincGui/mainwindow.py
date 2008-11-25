@@ -1,5 +1,5 @@
 from PyQt4.QtCore import SIGNAL, SLOT, QThread, QSize, QSettings, QVariant
-from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox, QIcon, QPixmap
+from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QKeySequence, qApp, QWidget, QMessageBox, QIcon, QPixmap, QSystemTrayIcon
 from addclientwizard import addClientWizard
 from mainwidget import mainWidget
 from Boinc.connection import BoincConnectionException
@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
 		self.createActions()
 		self.createMenu()
 		self.createMainWin()
+		self.createTrayIcon()
 		self.readSettings()
 		self.statusBar().showMessage(self.tr("Ready"), 3000)
 		self.queueThread = ProcessQueeueThread(self.__connManager.queue(), self)
@@ -60,7 +61,9 @@ class MainWindow(QMainWindow):
 		settings.endGroup()
 
 	def closeEvent(self, event):
-		self.writeSettings()
+		if self.__trayIcon.isVisible():
+			event.ignore()
+			self.hide()
 
 	def __showStatusBarMsg(self, msg):
 		self.statusBar().showMessage(msg, 3000)
@@ -69,6 +72,7 @@ class MainWindow(QMainWindow):
 		return self.__connManager
 
 	def __del__(self):
+		self.writeSettings()
 		self.queueThread.stop()
 		self.__connManager.queue().put("")
 		self.queueThread.wait()
@@ -78,6 +82,23 @@ class MainWindow(QMainWindow):
 		self.connect(self.centralWidget, SIGNAL('clientChanged(int)'), self.changeClient)
 		self.setCentralWidget(self.centralWidget)
 		self.setWindowIcon(QIcon(QPixmap(":boinc.png")))
+
+	def createTrayIcon(self):
+		self.__trayIcon = QSystemTrayIcon(self)
+		self.__trayIcon.setIcon(QIcon(QPixmap(":boinc.png")))
+		self.__trayIconMenu = QMenu(self);
+		self.__trayIconMenu.addAction(self.quitAction)
+		self.__trayIcon.setContextMenu(self.__trayIconMenu)
+		self.connect(self.__trayIcon, SIGNAL('activated(QSystemTrayIcon::ActivationReason)'), self.iconActivated)
+		self.__trayIcon.show()
+
+	def iconActivated(self, dovod):
+		if dovod == QSystemTrayIcon.Trigger:
+			if self.isVisible():
+				self.hide()
+			else:
+				self.show()
+
 
 	def changeClient(self, client):
 		self.__activeClient = client
@@ -98,7 +119,7 @@ class MainWindow(QMainWindow):
 		#prepojime akcie so slotmi
 		self.connect(self.addClientAction, SIGNAL("triggered()"), self.showWizard)
 		self.connect(self.remClientAction, SIGNAL("triggered()"), self.removeClient)
-		self.connect(self.quitAction, SIGNAL("triggered()"), self.close)
+		self.connect(self.quitAction, SIGNAL("triggered()"), qApp, SLOT("quit()"))
 
 	def removeClient(self):
 		if self.__activeClient != -1:
