@@ -350,10 +350,10 @@ class clientTreeWidget(QTreeWidget):
 			item.setData(0, Qt.UserRole + 2, QVariant(7))
 		elif status == 4:
 			emblem = QPixmap(":status_uploading.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(2))
+			item.setData(0, Qt.UserRole + 2, QVariant(1))
 		elif status == 5:
 			emblem = QPixmap(":status_uploaded.png")
-			item.setData(0, Qt.UserRole + 2, QVariant(1))
+			item.setData(0, Qt.UserRole + 2, QVariant(2))
 		elif status == 6:
 			emblem = QPixmap(":status_aborted.png")
 			item.setData(0, Qt.UserRole + 2, QVariant(6))

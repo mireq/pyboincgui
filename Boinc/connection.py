@@ -69,7 +69,7 @@ class Connection:
 		"""
 		try:
 			self.__sock = None
-			time.sleep(0.5)
+			#time.sleep(0.5)
 			self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		except socket.error, msg:
 			sys.stderr.write("Error " + msg[1] + "\n")
@@ -78,7 +78,7 @@ class Connection:
 			return
 
 		try:
-			time.sleep(0.5)
+			#time.sleep(0.5)
 			self.__sock.connect((self.__host,  self.__port))
 		except socket.error, msg:
 			self.__sock = None
@@ -127,7 +127,7 @@ class Connection:
 				sys.stdout.flush()
 
 				while len(data) > 0:
-					time.sleep(0.01)
+					#time.sleep(0.01)
 					ns = self.__sock.send(data)
 					data = data[ns:]
 
@@ -149,7 +149,7 @@ class Connection:
 
 				string = rec
 				while rec[-1] != "\003":
-					time.sleep(0.01)
+					#time.sleep(0.01)
 					rec = self.__sock.recv(1024)
 					string = string + rec
 
