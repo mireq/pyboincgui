@@ -1,8 +1,69 @@
 import sys
 from xml.dom import minidom
 from xml.dom import Node
+from xml.sax import make_parser
+from xml.sax.handler import ContentHandler
 import md5
 from connection import Connection
+
+class stateHandler(ContentHandler):
+
+	def __init__(self):
+		ContentHandler.__init__(self)
+		self.__data = {'platform_name':'', 'core_client_major_version':'', 'core_client_minor_version':'', 'core_client_release':''}
+		self.__data['host_info'] = {}
+		self.__data['project'] = []
+		self.__data['result'] = []
+		self.__section = None
+		self.__sectionFunc = {'host_info':self.__hostInfo, 'project':self.__project, 'result':self.__result}
+		self.__text = ''
+		self.__sections = ['host_info', 'project', 'result']
+		self.__mInfo = ['platform_name', 'core_client_major_version', 'core_client_minor_version', 'core_client_release']
+
+	def __hostInfo(self, name, opTag):
+		if not opTag:
+			self.__data['host_info'][name] = self.__text
+
+	def __project(self, name, opTag):
+		pass
+
+	def __result(self, name, opTag):
+		pass
+
+	def __processSection(self, section, name):
+		self.__sectionFunc[section](name, True)
+
+	def startElement(self, name, attrs):
+		self.__text = ''
+		if self.__section is None:
+			try:
+				i = self.__sections.index(name)
+				self.__section = name
+			except ValueError:
+				pass
+		else:
+			self.__sectionFunc[self.__section](name, True)
+
+	def endElement(self, name):
+		if self.__section is None:
+			try:
+				i = self.__mInfo.index(name)
+				self.__data[name] = self.__text
+			except ValueError:
+				pass
+		else:
+			if name == self.__section:
+				self.__section = None
+			else:
+				self.__sectionFunc[self.__section](name, False)
+		self.__text = ''
+
+	def characters(self, ch):
+		self.__text = self.__text + ch
+
+	def data(self):
+		return self.__data
+
 
 class BoincCommException(Exception):
 	pass
@@ -249,6 +310,14 @@ class Interface:
 		if not call is None:
 			call(self.__stateData)
 		dom.unlink()
+		#print(data)
+		#parser = make_parser()
+		#handler = stateHandler()
+		#parser.setContentHandler(handler)
+		#parser.feed(data)
+		#call(handler.data())
+		#del(handler)
+		#del(parser)
 
 	def get_project_status(self, callback = None):
 		"""
