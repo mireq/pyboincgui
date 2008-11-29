@@ -92,7 +92,7 @@ class LineChart(QWidget):
 		rozsah = float(dataMax - dataMin)
 		krok = rozsah / kroky;
 
-		mocnina = 1
+		mocnina = -1
 		cislo = 10
 		zaokruhlenyKrok = cislo**mocnina
 		while zaokruhlenyKrok < krok:
@@ -106,7 +106,7 @@ class LineChart(QWidget):
 			zaokruhlenyKrok = cislo**mocnina
 
 		hodnoty = []
-		for i in range(int(dataMin) / zaokruhlenyKrok, int(dataMax) / zaokruhlenyKrok + 1):
+		for i in range(int(dataMin / zaokruhlenyKrok), int(dataMax / zaokruhlenyKrok + 1)):
 			hodnota = i * zaokruhlenyKrok
 			if hodnota >= dataMin and hodnota <= dataMax:
 				hodnoty.append(hodnota)
