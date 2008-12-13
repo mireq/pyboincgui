@@ -20,7 +20,7 @@ class LineChart(QWidget):
 	def __initRange(self):
 		self.__minDay = 0
 		self.__maxDay = 0
-		self.__minPoints = 0
+		self.__minPoints = -1
 		self.__maxPoints = 0
 
 	def __recompRange(self):
@@ -38,12 +38,13 @@ class LineChart(QWidget):
 			if data[len(data) - 1].day > self.__maxDay:
 				self.__maxDay = data[len(data) - 1].day
 
-			if self.__minPoints == 0:
+			if self.__minPoints == -1:
 				self.__minPoints = data[0].data(self.__index)
-			if data[0].data(self.__index) < self.__minPoints:
-				self.__minPoints = data[0].data(self.__index)
-			if data[len(data) - 1].data(self.__index) > self.__maxPoints:
-				self.__maxPoints = data[len(data) - 1].data(self.__index)
+			for i in range(len(data)):
+				if data[i].data(self.__index) < self.__minPoints:
+					self.__minPoints = data[i].data(self.__index)
+				if data[i].data(self.__index) > self.__maxPoints:
+					self.__maxPoints = data[i].data(self.__index)
 
 	def addGraph(self, data, name, color):
 		if len(data) == 0:
@@ -56,12 +57,13 @@ class LineChart(QWidget):
 		if data[len(data) - 1].day > self.__maxDay:
 			self.__maxDay = data[len(data) - 1].day
 
-		if self.__minPoints == 0:
+		if self.__minPoints == -1:
 			self.__minPoints = data[0].data(self.__index)
-		if data[0].data(self.__index) < self.__minPoints:
-			self.__minPoints = data[0].data(self.__index)
-		if data[len(data) - 1].data(self.__index) > self.__maxPoints:
-			self.__maxPoints = data[len(data) - 1].data(self.__index)
+		for i in range(len(data)):
+			if data[i].data(self.__index) < self.__minPoints:
+				self.__minPoints = data[i].data(self.__index)
+			if data[i].data(self.__index) > self.__maxPoints:
+				self.__maxPoints = data[i].data(self.__index)
 
 		self.__graphs.append((data, name, color))
 		self.update()
